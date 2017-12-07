@@ -26,13 +26,13 @@
 Init()
 	{
 
-	local QPKG_NAME='sort-my-qpkgs'
+	local THIS_QPKG_NAME='sort-my-qpkgs'
  	CONFIG_PATHFILE='/etc/config/qpkg.conf'
  	SHUTDOWN_PATHFILE='/etc/init.d/shutdown_check.sh'
-	local QPKG_PATH="$(/sbin/getcfg $QPKG_NAME Install_Path -f "$CONFIG_PATHFILE")"
+	local QPKG_PATH="$(/sbin/getcfg $THIS_QPKG_NAME Install_Path -f "$CONFIG_PATHFILE")"
 
-	REAL_LOG_PATHFILE="${QPKG_PATH}/${QPKG_NAME}.log"
-	SERVER_LOG_PATHFILE="/home/httpd/${QPKG_NAME}.log"
+	REAL_LOG_PATHFILE="${QPKG_PATH}/${THIS_QPKG_NAME}.log"
+	SERVER_LOG_PATHFILE="/home/httpd/${THIS_QPKG_NAME}.log"
 	[[ ! -e $REAL_LOG_PATHFILE ]] && touch "$REAL_LOG_PATHFILE"
 	[[ ! -L $SERVER_LOG_PATHFILE ]] && ln -s "$REAL_LOG_PATHFILE" "$SERVER_LOG_PATHFILE"
 
@@ -80,9 +80,9 @@ ShowDataBlock()
 		returncode=1
 	else
 		if ($GREP_CMD -q $1 $CONFIG_PATHFILE); then
-			sl=$($GREP_CMD -nF "[$1]" "$CONFIG_PATHFILE" | cut -f1 -d':')
+			sl=$($GREP_CMD -n "^\[$1\]" "$CONFIG_PATHFILE" | cut -f1 -d':')
 			ll=$(wc -l < "$CONFIG_PATHFILE" | tr -d ' ')
-			bl=$(tail -n$((ll-sl)) < "$CONFIG_PATHFILE" | $GREP_CMD -nF "[" | head -n1 | cut -f1 -d':')
+			bl=$(tail -n$((ll-sl)) < "$CONFIG_PATHFILE" | $GREP_CMD -n '^\[' | head -n1 | cut -f1 -d':')
 			[[ ! -z $bl ]] && el=$((sl+bl-1)) || el=$ll
 
 			echo "$($SED_CMD -n "$sl,${el}p" "$CONFIG_PATHFILE")"
@@ -180,7 +180,7 @@ ShowPackagesCurrent()
 	local fmtacc=''
 	local buffer=''
 
-	for label in $($GREP_CMD -F '[' $CONFIG_PATHFILE); do
+	for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
 		((acc++)); a=${label//[}; package=${a//]}; fmtacc="$(printf "%02d\n" $acc)"
 		buffer=$(ShowLinePlain "$fmtacc" 'Φ' "$package")
 
@@ -206,7 +206,7 @@ ShowPackagesBefore()
 	local fmtacc=''
 	local buffer=''
 
-	for label in $($GREP_CMD -F '[' $CONFIG_PATHFILE); do
+	for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
 		((acc++)); a=${label//[}; package=${a//]}; fmtacc="$(printf "%02d\n" $acc)"
 		buffer=$(ShowLinePlain "$fmtacc" 'Φ' "$package")
 
@@ -246,7 +246,7 @@ ShowPackagesAfter()
 	local fmtacc=''
 	local buffer=''
 
-	for label in $($GREP_CMD -F '[' $CONFIG_PATHFILE); do
+	for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
 		((acc++)); a=${label//[}; package=${a//]}; fmtacc="$(printf "%02d\n" $acc)"
 		buffer=$(ShowLinePlain "$fmtacc" 'Φ' "$package")
 
@@ -282,14 +282,14 @@ SortPackages()
 
 	# read 'ALPHA' packages in reverse and prepend each to qpkg.conf
 	for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
-		for label in $($GREP_CMD -F '[' $CONFIG_PATHFILE); do
+		for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
 			a=${label//[}; package=${a//]}; [[ $package = ${PKGS_ALPHA_ORDERED[$i]} ]] && { SendToStart "$package"; break ;}
 		done
 	done
 
 	# now read 'OMEGA' packages and append each to qpkg.conf
 	for i in "${PKGS_OMEGA_ORDERED[@]}"; do
-		for label in $($GREP_CMD -F '[' $CONFIG_PATHFILE); do
+		for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
 			a=${label//[}; package=${a//]}; [[ $package = $i ]] && { SendToEnd "$package"; break ;}
 		done
 	done
@@ -388,7 +388,6 @@ case "$1" in
 		$0 start
 		$0 init
 		;;
-
 	start)
 		if ! ($GREP_CMD -q 'sort-my-qpkgs.sh' "$SHUTDOWN_PATHFILE"); then
 			findtext='#backup logs'
@@ -396,12 +395,10 @@ case "$1" in
 			$SED_CMD -i "s|$findtext|$inserttext\n$findtext|" "$SHUTDOWN_PATHFILE"
 		fi
 		;;
-
 	remove)
 		($GREP_CMD -q 'sort-my-qpkgs.sh' "$SHUTDOWN_PATHFILE") && $SED_CMD -i '/sort-my-qpkgs.sh/d' "$SHUTDOWN_PATHFILE"
 		[[ -L $SERVER_LOG_PATHFILE ]] && rm -f "$SERVER_LOG_PATHFILE"
 		;;
-
 	init|autofix)
 		colourised=false
 		echo "[$(date)] $1 requested" >> "$REAL_LOG_PATHFILE"
@@ -410,7 +407,6 @@ case "$1" in
 		SortPackages
 		echo -e "$(ShowPackagesAfter)\n" >> "$REAL_LOG_PATHFILE"
 		;;
-
 	--fix)
 		BackupConf
 		ShowPackagesBefore
@@ -418,17 +414,14 @@ case "$1" in
 		ShowPackagesAfter
 		echo -e "\n ! NOTE: you must restart your NAS to load QPKGs in this order.\n"
 		;;
-
 	--pref)
 		ShowPreferredList
 		echo
 		;;
-
 	stop|restart)
 		# do nothing
 		sleep 1
 		;;
-
 	*)
 		echo -e "\nUsage: $0 {--fix | --pref}"
 		ShowPackagesCurrent
