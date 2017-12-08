@@ -49,25 +49,6 @@ Init()
 
 	}
 
-BackupConf()
-	{
-
-	# if a backup file already exists, find a new name for it
-	local backup_pathfile="${CONFIG_PATHFILE}.prev"
-
-	if [[ -e $backup_pathfile ]]; then
-		for ((acc=2; acc<=1000; acc++)); do
-			[[ ! -e $backup_pathfile.$acc ]] && break
-		done
-
-		backup_pathfile="$backup_pathfile.$acc"
-	fi
-
-	cp "$CONFIG_PATHFILE" "$backup_pathfile"
-	echo -e "\n Your original QPKG list was saved as [$backup_pathfile]"
-
-	}
-
 ShowDataBlock()
 	{
 
@@ -280,6 +261,9 @@ ShowPackagesAfter()
 SortPackages()
 	{
 
+	# cruft: remove previous backup system files. This code can be removed once no-one is using sort-my-qpkgs.sh version earlier than 171207.
+	rm -f "$CONFIG_PATHFILE".prev*
+
 	# read 'ALPHA' packages in reverse and prepend each to qpkg.conf
 	for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
 		for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
@@ -293,6 +277,51 @@ SortPackages()
 			a=${label//[}; package=${a//]}; [[ $package = $i ]] && { SendToEnd "$package"; break ;}
 		done
 	done
+
+	}
+
+Upshift()
+	{
+
+	# move specified existing filename by incrementing extension value (upshift extension)
+	# if extension is not a number, then create new extension of '1' and copy file
+
+	# $1 = pathfilename to Upshift
+
+	[[ -z $1 ]] && return 1
+	[[ ! -e $1 ]] && return 1
+
+	local ext=''
+	local dest=''
+	local rotate_limit=10
+
+	# keep count of recursive calls
+	local rec_limit=$((rotate_limit*2))
+	local rec_count=0
+	local rec_track_file="/tmp/$FUNCNAME.count"
+	[[ -e $rec_track_file ]] && rec_count=$(<"$rec_track_file")
+	((rec_count++)); [[ $rec_count -gt $rec_limit ]] && { echo "recursive limit reached!"; rm "$rec_track_file"; exit 1 ;}
+	echo $rec_count > "$rec_track_file"
+
+	ext=${1##*.}
+	case $ext in
+		*[!0-9]*)	# specified file extension is not a number so add number and copy it
+			dest="$1.1"
+			[[ -e $dest ]] && Upshift "$dest"
+			cp "$1" "$dest"
+			;;
+		*)			# extension IS a number, so move it if possible
+			if [[ $ext -lt $((rotate_limit-1)) ]]; then
+				((ext++)); dest="${1%.*}.$ext"
+				[[ -e $dest ]] && Upshift "$dest"
+				mv "$1" "$dest"
+			else
+				rm "$1"
+			fi
+			;;
+	esac
+
+	[[ -e $rec_track_file ]] && { rec_count=$(<"$rec_track_file"); ((rec_count--)); echo $rec_count > "$rec_track_file" ;}
 
 	}
 
@@ -402,13 +431,13 @@ case "$1" in
 	init|autofix)
 		colourised=false
 		echo "[$(date)] $1 requested" >> "$REAL_LOG_PATHFILE"
-		BackupConf >> "$REAL_LOG_PATHFILE"
+		Upshift "$CONFIG_PATHFILE"
 		ShowPackagesBefore >> "$REAL_LOG_PATHFILE"
 		SortPackages
 		echo -e "$(ShowPackagesAfter)\n" >> "$REAL_LOG_PATHFILE"
 		;;
 	--fix)
-		BackupConf
+		Upshift "$CONFIG_PATHFILE"
 		ShowPackagesBefore
 		SortPackages
 		ShowPackagesAfter
