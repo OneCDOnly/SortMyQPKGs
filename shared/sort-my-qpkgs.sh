@@ -29,22 +29,20 @@ Init()
 	local THIS_QPKG_NAME='sort-my-qpkgs'
  	CONFIG_PATHFILE='/etc/config/qpkg.conf'
  	SHUTDOWN_PATHFILE='/etc/init.d/shutdown_check.sh'
-	local QPKG_PATH="$(/sbin/getcfg $THIS_QPKG_NAME Install_Path -f "$CONFIG_PATHFILE")"
+	local QPKG_PATH="$(getcfg $THIS_QPKG_NAME Install_Path -f "$CONFIG_PATHFILE")"
 
 	REAL_LOG_PATHFILE="${QPKG_PATH}/${THIS_QPKG_NAME}.log"
-	SERVER_LOG_PATHFILE="/home/httpd/${THIS_QPKG_NAME}.log"
+	GUI_LOG_PATHFILE="/home/httpd/${THIS_QPKG_NAME}.log"
 	[[ ! -e $REAL_LOG_PATHFILE ]] && touch "$REAL_LOG_PATHFILE"
-	[[ ! -L $SERVER_LOG_PATHFILE ]] && ln -s "$REAL_LOG_PATHFILE" "$SERVER_LOG_PATHFILE"
-
-	GREP_CMD='/bin/grep'
-	SED_CMD='/bin/sed'
+	[[ ! -L $GUI_LOG_PATHFILE ]] && ln -s "$REAL_LOG_PATHFILE" "$GUI_LOG_PATHFILE"
 
 	colourised=true
 
 	[[ ! -e $CONFIG_PATHFILE ]] && { echo "file not found [$CONFIG_PATHFILE]"; exit 1 ;}
 	[[ ! -e $SHUTDOWN_PATHFILE ]] && { echo "file not found [$SHUTDOWN_PATHFILE]"; exit 1 ;}
 
-	PKGS_ALPHA_ORDERED=(update_qpkg_conf DownloadStation Python QPython2 Python3 QPython3 Perl QPerl Optware Entware-ng Entware-3x QGit Mono Qmono DotNET nodejs nodejsv4 JRE QJDK7 QJDK8 Qapache QNginx Tomcat Tomcat8 ruby Plex Emby EmbyServer Par2 Par2cmdline-MT)
+	PKGS_ALPHA_ORDERED=(update_qpkg_conf DownloadStation Python QPython2 Python3 QPython3 Perl QPerl Optware Optware-NG Entware-ng Entware-3x QGit Mono Qmono DotNET nodejs nodejsv4 JRE QJDK7 QJDK8 Qapache QNginx Tomcat Tomcat8 ruby Plex Emby EmbyServer Par2 Par2cmdline-MT)
+
 	PKGS_OMEGA_ORDERED=(QNZBGet QSonarr Radarr SABnzbdplus SickBeard SickBeard-TVRage SickRage SurveillanceStation sort-my-qpkgs)
 
 	}
@@ -54,26 +52,15 @@ ShowDataBlock()
 
 	# returns the data block for the QPKG name specified as $1
 
-	local returncode=0
+	[[ -z $1 ]] && { echo "QPKG not specified"; return 1 ;}
+	! (grep -q $1 $CONFIG_PATHFILE) && { echo "QPKG not found"; return 2 ;}
 
-	if [[ -z $1 ]]; then
-		echo "QPKG not specified"
-		returncode=1
-	else
-		if ($GREP_CMD -q $1 $CONFIG_PATHFILE); then
-			sl=$($GREP_CMD -n "^\[$1\]" "$CONFIG_PATHFILE" | cut -f1 -d':')
-			ll=$(wc -l < "$CONFIG_PATHFILE" | tr -d ' ')
-			bl=$(tail -n$((ll-sl)) < "$CONFIG_PATHFILE" | $GREP_CMD -n '^\[' | head -n1 | cut -f1 -d':')
-			[[ ! -z $bl ]] && el=$((sl+bl-1)) || el=$ll
+	sl=$(grep -n "^\[$1\]" "$CONFIG_PATHFILE" | cut -f1 -d':')
+	ll=$(wc -l < "$CONFIG_PATHFILE" | tr -d ' ')
+	bl=$(tail -n$((ll-sl)) < "$CONFIG_PATHFILE" | grep -n '^\[' | head -n1 | cut -f1 -d':')
+	[[ ! -z $bl ]] && el=$((sl+bl-1)) || el=$ll
 
-			echo "$($SED_CMD -n "$sl,${el}p" "$CONFIG_PATHFILE")"
-		else
-			echo "QPKG not found"
-			returncode=2
-		fi
-	fi
-
-	return $returncode
+	echo "$(sed -n "$sl,${el}p" "$CONFIG_PATHFILE")"
 
 	}
 
@@ -82,21 +69,14 @@ SendToStart()
 
 	# sends $1 to the start of qpkg.conf
 
-	local returncode=0
 	local temp_pathfile="/tmp/$(basename $CONFIG_PATHFILE).tmp"
 	local buffer=$(ShowDataBlock "$1")
+	[[ $? -gt 0 ]] && { echo "error - ${buffer}!"; return 2 ;}
 
-	if [[ $? -gt 0 ]]; then
-		echo "error - ${buffer}!"
-		returncode=2
-	else
-		rmcfg "$1" -f "$CONFIG_PATHFILE"
-		echo -e "$buffer" > "$temp_pathfile"
-		cat "$CONFIG_PATHFILE" >> "$temp_pathfile"
-		mv "$temp_pathfile" "$CONFIG_PATHFILE"
-	fi
-
-	return $returncode
+	rmcfg "$1" -f "$CONFIG_PATHFILE"
+	echo -e "$buffer" > "$temp_pathfile"
+	cat "$CONFIG_PATHFILE" >> "$temp_pathfile"
+	mv "$temp_pathfile" "$CONFIG_PATHFILE"
 
 	}
 
@@ -105,18 +85,11 @@ SendToEnd()
 
 	# sends $1 to the end of qpkg.conf
 
-	local returncode=0
 	local buffer=$(ShowDataBlock "$1")
+	[[ $? -gt 0 ]] && { echo "error - ${buffer}!"; return 2 ;}
 
-	if [[ $? -gt 0 ]]; then
-		echo "error - ${buffer}!"
-		returncode=2
-	else
-		rmcfg "$1" -f "$CONFIG_PATHFILE"
-		echo -e "$buffer" >> "$CONFIG_PATHFILE"
-	fi
-
-	return $returncode
+	rmcfg "$1" -f "$CONFIG_PATHFILE"
+	echo -e "$buffer" >> "$CONFIG_PATHFILE"
 
 	}
 
@@ -130,7 +103,7 @@ ShowPreferredList()
 
     for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
 		((acc++)); fmtacc="$(printf "%02d\n" $acc)"
-		if ($GREP_CMD -qF "[$pref]" $CONFIG_PATHFILE); then
+		if (grep -qF "[$pref]" $CONFIG_PATHFILE); then
 			ShowLineTest "$fmtacc" 'A' "$pref"
 		else
 			ShowLinePlain "$fmtacc" 'A' "$pref"
@@ -143,7 +116,7 @@ ShowPreferredList()
 
 	for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
 		((acc++)); fmtacc="$(printf "%02d\n" $acc)"
-		if ($GREP_CMD -qF "[$pref]" $CONFIG_PATHFILE); then
+		if (grep -qF "[$pref]" $CONFIG_PATHFILE); then
 			ShowLineTest "$fmtacc" 'Ω' "$pref"
 		else
 			ShowLinePlain "$fmtacc" 'Ω' "$pref"
@@ -161,7 +134,7 @@ ShowPackagesCurrent()
 	local fmtacc=''
 	local buffer=''
 
-	for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
+	for label in $(grep '^\[' $CONFIG_PATHFILE); do
 		((acc++)); a=${label//[}; package=${a//]}; fmtacc="$(printf "%02d\n" $acc)"
 		buffer=$(ShowLinePlain "$fmtacc" 'Φ' "$package")
 
@@ -187,7 +160,7 @@ ShowPackagesBefore()
 	local fmtacc=''
 	local buffer=''
 
-	for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
+	for label in $(grep '^\[' $CONFIG_PATHFILE); do
 		((acc++)); a=${label//[}; package=${a//]}; fmtacc="$(printf "%02d\n" $acc)"
 		buffer=$(ShowLinePlain "$fmtacc" 'Φ' "$package")
 
@@ -227,7 +200,7 @@ ShowPackagesAfter()
 	local fmtacc=''
 	local buffer=''
 
-	for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
+	for label in $(grep '^\[' $CONFIG_PATHFILE); do
 		((acc++)); a=${label//[}; package=${a//]}; fmtacc="$(printf "%02d\n" $acc)"
 		buffer=$(ShowLinePlain "$fmtacc" 'Φ' "$package")
 
@@ -266,14 +239,14 @@ SortPackages()
 
 	# read 'ALPHA' packages in reverse and prepend each to qpkg.conf
 	for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
-		for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
+		for label in $(grep '^\[' $CONFIG_PATHFILE); do
 			a=${label//[}; package=${a//]}; [[ $package = ${PKGS_ALPHA_ORDERED[$i]} ]] && { SendToStart "$package"; break ;}
 		done
 	done
 
 	# now read 'OMEGA' packages and append each to qpkg.conf
 	for i in "${PKGS_OMEGA_ORDERED[@]}"; do
-		for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
+		for label in $(grep '^\[' $CONFIG_PATHFILE); do
 			a=${label//[}; package=${a//]}; [[ $package = $i ]] && { SendToEnd "$package"; break ;}
 		done
 	done
@@ -418,15 +391,15 @@ case "$1" in
 		$0 init
 		;;
 	start)
-		if ! ($GREP_CMD -q 'sort-my-qpkgs.sh' "$SHUTDOWN_PATHFILE"); then
+		if ! (grep -q 'sort-my-qpkgs.sh' "$SHUTDOWN_PATHFILE"); then
 			findtext='#backup logs'
 			inserttext='/etc/init.d/sort-my-qpkgs.sh autofix'
-			$SED_CMD -i "s|$findtext|$inserttext\n$findtext|" "$SHUTDOWN_PATHFILE"
+			sed -i "s|$findtext|$inserttext\n$findtext|" "$SHUTDOWN_PATHFILE"
 		fi
 		;;
 	remove)
-		($GREP_CMD -q 'sort-my-qpkgs.sh' "$SHUTDOWN_PATHFILE") && $SED_CMD -i '/sort-my-qpkgs.sh/d' "$SHUTDOWN_PATHFILE"
-		[[ -L $SERVER_LOG_PATHFILE ]] && rm -f "$SERVER_LOG_PATHFILE"
+		(grep -q 'sort-my-qpkgs.sh' "$SHUTDOWN_PATHFILE") && sed -i '/sort-my-qpkgs.sh/d' "$SHUTDOWN_PATHFILE"
+		[[ -L $GUI_LOG_PATHFILE ]] && rm -f "$GUI_LOG_PATHFILE"
 		;;
 	init|autofix)
 		colourised=false
