@@ -26,7 +26,7 @@
 Init()
 	{
 
-	local THIS_QPKG_NAME='sort-my-qpkgs'
+	local THIS_QPKG_NAME='SortMyQPKGs'
  	CONFIG_PATHFILE='/etc/config/qpkg.conf'
  	SHUTDOWN_PATHFILE='/etc/init.d/shutdown_check.sh'
 	local QPKG_PATH="$(getcfg $THIS_QPKG_NAME Install_Path -f "$CONFIG_PATHFILE")"
@@ -43,7 +43,7 @@ Init()
 
 	PKGS_ALPHA_ORDERED=(update_qpkg_conf DownloadStation Python QPython2 Python3 QPython3 Perl QPerl Optware Optware-NG Entware-ng Entware-3x QGit Mono Qmono DotNET nodejs nodejsv4 JRE QJDK7 QJDK8 Qapache QNginx Tomcat Tomcat8 ruby Plex Emby EmbyServer Par2 Par2cmdline-MT)
 
-	PKGS_OMEGA_ORDERED=(QNZBGet QSonarr Radarr SABnzbdplus SickBeard SickBeard-TVRage SickRage SurveillanceStation sort-my-qpkgs)
+	PKGS_OMEGA_ORDERED=(QNZBGet QSonarr Radarr SABnzbdplus SickBeard SickBeard-TVRage SickRage SurveillanceStation $THIS_QPKG_NAME)
 
 	}
 
@@ -409,14 +409,14 @@ case "$1" in
 		SortPackages
 		echo -e "$(ShowPackagesAfter)\n" >> "$REAL_LOG_PATHFILE"
 		;;
-	--fix)
+	fix)
 		Upshift "$CONFIG_PATHFILE"
 		ShowPackagesBefore
 		SortPackages
 		ShowPackagesAfter
 		echo -e "\n ! NOTE: you must restart your NAS to load QPKGs in this order.\n"
 		;;
-	--pref)
+	pref)
 		ShowPreferredList
 		echo
 		;;
@@ -425,9 +425,9 @@ case "$1" in
 		sleep 1
 		;;
 	*)
-		echo -e "\nUsage: $0 {--fix | --pref}"
+		echo -e "\nUsage: $0 {fix|pref}"
 		ShowPackagesCurrent
-		echo -e "\n Launch with '$0 --fix' to re-order packages."
+		echo -e "\n Launch with '$0 fix' to re-order packages."
 		echo
 		;;
 esac
