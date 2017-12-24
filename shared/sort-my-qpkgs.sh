@@ -41,9 +41,9 @@ Init()
 	[[ ! -e $CONFIG_PATHFILE ]] && { echo "file not found [$CONFIG_PATHFILE]"; exit 1 ;}
 	[[ ! -e $SHUTDOWN_PATHFILE ]] && { echo "file not found [$SHUTDOWN_PATHFILE]"; exit 1 ;}
 
-	PKGS_ALPHA_ORDERED=(update_qpkg_conf DownloadStation Python QPython2 Python3 QPython3 Perl QPerl Optware Optware-NG Entware-ng Entware-3x QGit Mono Qmono DotNET nodejs nodejsv4 JRE QJDK7 QJDK8 Qapache QNginx Tomcat Tomcat8 ruby Plex Emby EmbyServer Par2 Par2cmdline-MT)
+	PKGS_ALPHA_ORDERED=(update_qpkg_conf DownloadStation Python QPython2 Python3 QPython3 Perl QPerl Optware Optware-NG Entware-ng Entware-3x QGit Mono Qmono DotNET nodejs nodejsv4 NodeJS JRE QJDK7 QJDK8 ruby QRuby Go Qapache Tomcat Tomcat8 QNginx Plex Phlex Emby EmbyServer HD_Station)
 
-	PKGS_OMEGA_ORDERED=(QNZBGet QSonarr Radarr SABnzbdplus SickBeard SickBeard-TVRage SickRage SurveillanceStation $THIS_QPKG_NAME)
+	PKGS_OMEGA_ORDERED=(QNZBGet QSonarr Radarr SABnzbdplus QSabNZBdPlus SickBeard QSickBeard SickBeard-TVRage SickRage QSickRage MovieGrabber CouchPotato2 QCouchPotato Watcher3 Ombi Ombi3 SurveillanceStation $THIS_QPKG_NAME)
 
 	}
 
