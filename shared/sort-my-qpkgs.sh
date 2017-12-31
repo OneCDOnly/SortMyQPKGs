@@ -2,12 +2,11 @@
 ############################################################################
 # sort-my-qpkgs.sh
 #
-# (C)opyright 2017 OneCD
+# (C)opyright 2017-2018 OneCD - one.cd.only@gmail.com
 #
 # So, blame OneCD if it all goes horribly wrong. ;)
 #
-# for more info:
-#   https://forum.qnap.com/viewtopic.php?f=320&t=133132
+# For more info [https://forum.qnap.com/viewtopic.php?f=320&t=133132]
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -29,21 +28,24 @@ Init()
     local THIS_QPKG_NAME='SortMyQPKGs'
     CONFIG_PATHFILE='/etc/config/qpkg.conf'
     SHUTDOWN_PATHFILE='/etc/init.d/shutdown_check.sh'
-    local QPKG_PATH="$(getcfg $THIS_QPKG_NAME Install_Path -f "$CONFIG_PATHFILE")"
-
-    REAL_LOG_PATHFILE="${QPKG_PATH}/${THIS_QPKG_NAME}.log"
-    GUI_LOG_PATHFILE="/home/httpd/${THIS_QPKG_NAME}.log"
-    [[ ! -e $REAL_LOG_PATHFILE ]] && touch "$REAL_LOG_PATHFILE"
-    [[ ! -L $GUI_LOG_PATHFILE ]] && ln -s "$REAL_LOG_PATHFILE" "$GUI_LOG_PATHFILE"
-
-    colourised=true
 
     [[ ! -e $CONFIG_PATHFILE ]] && { echo "file not found [$CONFIG_PATHFILE]"; exit 1 ;}
     [[ ! -e $SHUTDOWN_PATHFILE ]] && { echo "file not found [$SHUTDOWN_PATHFILE]"; exit 1 ;}
 
-    PKGS_ALPHA_ORDERED=(update_qpkg_conf DownloadStation Python QPython2 Python3 QPython3 Perl QPerl Optware Optware-NG Entware-ng Entware-3x QGit Mono Qmono DotNET nodejs nodejsv4 NodeJS JRE QJDK7 QJDK8 ruby QRuby Go Qapache Tomcat Tomcat8 QNginx Plex Phlex Emby EmbyServer HD_Station)
+    local QPKG_PATH="$(getcfg $THIS_QPKG_NAME Install_Path -f "$CONFIG_PATHFILE")"
+    local ALPHA_PATHFILE="${QPKG_PATH}/ALPHA.list"
+    local OMEGA_PATHFILE="${QPKG_PATH}/OMEGA.list"
+    REAL_LOG_PATHFILE="${QPKG_PATH}/${THIS_QPKG_NAME}.log"
+    GUI_LOG_PATHFILE="/home/httpd/${THIS_QPKG_NAME}.log"
+    [[ ! -e $REAL_LOG_PATHFILE ]] && touch "$REAL_LOG_PATHFILE"
+    [[ ! -L $GUI_LOG_PATHFILE ]] && ln -s "$REAL_LOG_PATHFILE" "$GUI_LOG_PATHFILE"
+    [[ ! -e $ALPHA_PATHFILE ]] && { echo "file not found [$ALPHA_PATHFILE]"; exit 1 ;}
+    [[ ! -e $OMEGA_PATHFILE ]] && { echo "file not found [$OMEGA_PATHFILE]"; exit 1 ;}
 
-    PKGS_OMEGA_ORDERED=(QNZBGet QSonarr Radarr SABnzbdplus QSabNZBdPlus SickBeard QSickBeard SickBeard-TVRage SickRage QSickRage MovieGrabber CouchPotato2 QCouchPotato Watcher3 Ombi Ombi3 SurveillanceStation $THIS_QPKG_NAME)
+    PKGS_ALPHA_ORDERED=($(<$ALPHA_PATHFILE))
+    PKGS_OMEGA_ORDERED=($(<$OMEGA_PATHFILE) $THIS_QPKG_NAME)
+
+    colourised=true
 
     }
 
