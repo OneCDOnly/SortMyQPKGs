@@ -52,7 +52,7 @@ ShowPreferredList()
 
     ShowSectionTitle 'Preferred QPKG order'
     echo -e "< matching installed packages are indicated with '#' >\n"
-	ShowListsMarked
+    ShowListsMarked
 
     }
 
@@ -60,7 +60,7 @@ ShowPackagesBefore()
     {
 
     ShowSectionTitle 'Original QPKG order'
-	ShowPackagesMarked
+    ShowPackagesMarked
 
     }
 
@@ -68,7 +68,7 @@ ShowPackagesCurrent()
     {
 
     ShowSectionTitle 'Existing QPKG order'
-	ShowPackagesMarked
+    ShowPackagesMarked
 
     }
 
@@ -76,7 +76,7 @@ ShowPackagesAfter()
     {
 
     ShowSectionTitle 'New QPKG order'
-	ShowPackagesUnmarked
+    ShowPackagesUnmarked
 
     }
 
@@ -135,7 +135,7 @@ ShowPackagesMarked()
     }
 
 ShowPackagesUnmarked()
-	{
+    {
 
     local acc=0
     local fmtacc=''
@@ -156,7 +156,7 @@ ShowPackagesUnmarked()
         echo -e "$buffer"
     done
 
-	}
+    }
 
 SortPackages()
     {
@@ -298,7 +298,7 @@ ShowSectionTitle()
 
     # $1 = description
 
-	echo -e "\n * $1 *"
+    echo -e "\n * $1 *"
 
     }
 
