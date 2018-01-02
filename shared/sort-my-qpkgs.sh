@@ -45,24 +45,138 @@ Init()
     PKGS_ALPHA_ORDERED=($(<$ALPHA_PATHFILE))
     PKGS_OMEGA_ORDERED=($(<$OMEGA_PATHFILE) $THIS_QPKG_NAME)
 
-    colourised=true
+    }
+
+ShowPreferredList()
+    {
+
+    ShowSectionTitle 'Preferred QPKG order'
+    echo -e "< matching installed packages are indicated with '#' >\n"
+	ShowListsMarked
 
     }
 
-ShowDataBlock()
+ShowPackagesBefore()
     {
 
-    # returns the data block for the QPKG name specified as $1
+    ShowSectionTitle 'Original QPKG order'
+	ShowPackagesMarked
 
-    [[ -z $1 ]] && { echo "QPKG not specified"; return 1 ;}
-    ! (grep -q $1 $CONFIG_PATHFILE) && { echo "QPKG not found"; return 2 ;}
+    }
 
-    sl=$(grep -n "^\[$1\]" "$CONFIG_PATHFILE" | cut -f1 -d':')
-    ll=$(wc -l < "$CONFIG_PATHFILE" | tr -d ' ')
-    bl=$(tail -n$((ll-sl)) < "$CONFIG_PATHFILE" | grep -n '^\[' | head -n1 | cut -f1 -d':')
-    [[ ! -z $bl ]] && el=$((sl+bl-1)) || el=$ll
+ShowPackagesCurrent()
+    {
 
-    echo "$(sed -n "$sl,${el}p" "$CONFIG_PATHFILE")"
+    ShowSectionTitle 'Existing QPKG order'
+	ShowPackagesMarked
+
+    }
+
+ShowPackagesAfter()
+    {
+
+    ShowSectionTitle 'New QPKG order'
+	ShowPackagesUnmarked
+
+    }
+
+ShowListsMarked()
+    {
+
+    local acc=0
+    local fmtacc=''
+
+    for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
+        ((acc++)); fmtacc="$(printf "%02d\n" $acc)"
+        if (grep -qF "[$pref]" $CONFIG_PATHFILE); then
+            ShowLineMarked "$fmtacc" 'A' "$pref"
+        else
+            ShowLineUnmarked "$fmtacc" 'A' "$pref"
+        fi
+    done
+
+    echo
+    ((acc++)); fmtacc="$(printf "%02d\n" $acc)"; ShowLineUnmarked "$fmtacc" 'Φ' '< existing unspecified packages go here >'
+    echo
+
+    for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
+        ((acc++)); fmtacc="$(printf "%02d\n" $acc)"
+        if (grep -qF "[$pref]" $CONFIG_PATHFILE); then
+            ShowLineMarked "$fmtacc" 'Ω' "$pref"
+        else
+            ShowLineUnmarked "$fmtacc" 'Ω' "$pref"
+        fi
+    done
+
+    }
+
+ShowPackagesMarked()
+    {
+
+    local acc=0
+    local fmtacc=''
+    local buffer=''
+
+    for label in $(grep '^\[' $CONFIG_PATHFILE); do
+        ((acc++)); a=${label//[}; package=${a//]}; fmtacc="$(printf "%02d\n" $acc)"
+        buffer=$(ShowLineUnmarked "$fmtacc" 'Φ' "$package")
+
+        for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
+            [[ $package = $pref ]] && { buffer=$(ShowLineMarked "$fmtacc" 'A' "$package"); break ;}
+        done
+
+        for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
+            [[ $package = $pref ]] && { buffer=$(ShowLineMarked "$fmtacc" 'Ω' "$package"); break ;}
+        done
+
+        echo -e "$buffer"
+    done
+
+    }
+
+ShowPackagesUnmarked()
+	{
+
+    local acc=0
+    local fmtacc=''
+    local buffer=''
+
+    for label in $(grep '^\[' $CONFIG_PATHFILE); do
+        ((acc++)); a=${label//[}; package=${a//]}; fmtacc="$(printf "%02d\n" $acc)"
+        buffer=$(ShowLineUnmarked "$fmtacc" 'Φ' "$package")
+
+        for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
+            [[ $package = $pref ]] && { buffer=$(ShowLineUnmarked "$fmtacc" 'A' "$package"); break ;}
+        done
+
+        for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
+            [[ $package = $pref ]] && { buffer=$(ShowLineUnmarked "$fmtacc" 'Ω' "$package"); break ;}
+        done
+
+        echo -e "$buffer"
+    done
+
+	}
+
+SortPackages()
+    {
+
+    # cruft: remove previous backup system files. This code can be removed once no-one is using sort-my-qpkgs.sh version earlier than 171207.
+    rm -f "$CONFIG_PATHFILE".prev*
+
+    # read 'ALPHA' packages in reverse and prepend each to qpkg.conf
+    for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
+        for label in $(grep '^\[' $CONFIG_PATHFILE); do
+            a=${label//[}; package=${a//]}; [[ $package = ${PKGS_ALPHA_ORDERED[$i]} ]] && { SendToStart "$package"; break ;}
+        done
+    done
+
+    # now read 'OMEGA' packages and append each to qpkg.conf
+    for i in "${PKGS_OMEGA_ORDERED[@]}"; do
+        for label in $(grep '^\[' $CONFIG_PATHFILE); do
+            a=${label//[}; package=${a//]}; [[ $package = $i ]] && { SendToEnd "$package"; break ;}
+        done
+    done
 
     }
 
@@ -95,163 +209,20 @@ SendToEnd()
 
     }
 
-ShowPreferredList()
+ShowDataBlock()
     {
 
-    ShowSectionTitle 'Preferred QPKG order'
+    # returns the data block for the QPKG name specified as $1
 
-    local acc=0
-    local fmtacc=''
+    [[ -z $1 ]] && { echo "QPKG not specified"; return 1 ;}
+    ! (grep -q $1 $CONFIG_PATHFILE) && { echo "QPKG not found"; return 2 ;}
 
-    for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
-        ((acc++)); fmtacc="$(printf "%02d\n" $acc)"
-        if (grep -qF "[$pref]" $CONFIG_PATHFILE); then
-            ShowLineTest "$fmtacc" 'A' "$pref"
-        else
-            ShowLinePlain "$fmtacc" 'A' "$pref"
-        fi
-    done
+    sl=$(grep -n "^\[$1\]" "$CONFIG_PATHFILE" | cut -f1 -d':')
+    ll=$(wc -l < "$CONFIG_PATHFILE" | tr -d ' ')
+    bl=$(tail -n$((ll-sl)) < "$CONFIG_PATHFILE" | grep -n '^\[' | head -n1 | cut -f1 -d':')
+    [[ ! -z $bl ]] && el=$((sl+bl-1)) || el=$ll
 
-    echo
-    ((acc++)); fmtacc="$(printf "%02d\n" $acc)"; ShowLinePlain "$fmtacc" 'Φ' 'existing unspecified QPKGs go here'
-    echo
-
-    for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
-        ((acc++)); fmtacc="$(printf "%02d\n" $acc)"
-        if (grep -qF "[$pref]" $CONFIG_PATHFILE); then
-            ShowLineTest "$fmtacc" 'Ω' "$pref"
-        else
-            ShowLinePlain "$fmtacc" 'Ω' "$pref"
-        fi
-    done
-
-    }
-
-ShowPackagesCurrent()
-    {
-
-    ShowSectionTitle 'Existing QPKG order'
-
-    local acc=0
-    local fmtacc=''
-    local buffer=''
-
-    for label in $(grep '^\[' $CONFIG_PATHFILE); do
-        ((acc++)); a=${label//[}; package=${a//]}; fmtacc="$(printf "%02d\n" $acc)"
-        buffer=$(ShowLinePlain "$fmtacc" 'Φ' "$package")
-
-        for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
-            [[ $package = $pref ]] && { buffer=$(ShowLineTest "$fmtacc" 'A' "$package"); break ;}
-        done
-
-        for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
-            [[ $package = $pref ]] && { buffer=$(ShowLineTest "$fmtacc" 'Ω' "$package"); break ;}
-        done
-
-        echo -e "$buffer"
-    done
-
-    }
-
-ShowPackagesBefore()
-    {
-
-    ShowSectionTitle 'Original QPKG order'
-
-    local acc=0
-    local fmtacc=''
-    local buffer=''
-
-    for label in $(grep '^\[' $CONFIG_PATHFILE); do
-        ((acc++)); a=${label//[}; package=${a//]}; fmtacc="$(printf "%02d\n" $acc)"
-        buffer=$(ShowLinePlain "$fmtacc" 'Φ' "$package")
-
-        for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
-            if [[ $package = $pref ]]; then
-                if [[ $colourised = true ]]; then
-                    buffer=$(ShowLineTest "$fmtacc" 'A' "$package")
-                else
-                    buffer=$(ShowLinePlain "$fmtacc" 'A' "$package")
-                fi
-                break
-            fi
-        done
-
-        for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
-            if [[ $package = $pref ]]; then
-                if [[ $colourised = true ]]; then
-                    buffer=$(ShowLineTest "$fmtacc" 'Ω' "$package")
-                else
-                    buffer=$(ShowLinePlain "$fmtacc" 'Ω' "$package")
-                fi
-                break
-            fi
-        done
-
-        echo -e "$buffer"
-    done
-
-    }
-
-ShowPackagesAfter()
-    {
-
-    ShowSectionTitle 'New QPKG order'
-
-    local acc=0
-    local fmtacc=''
-    local buffer=''
-
-    for label in $(grep '^\[' $CONFIG_PATHFILE); do
-        ((acc++)); a=${label//[}; package=${a//]}; fmtacc="$(printf "%02d\n" $acc)"
-        buffer=$(ShowLinePlain "$fmtacc" 'Φ' "$package")
-
-        for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
-            if [[ $package = $pref ]]; then
-                if [[ $colourised = true ]]; then
-                    buffer=$(ShowLinePass "$fmtacc" 'A' "$package")
-                else
-                    buffer=$(ShowLinePlain "$fmtacc" 'A' "$package")
-                fi
-                break
-            fi
-        done
-
-        for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
-            if [[ $package = $pref ]]; then
-                if [[ $colourised = true ]]; then
-                    buffer=$(ShowLinePass "$fmtacc" 'Ω' "$package")
-                else
-                    buffer=$(ShowLinePlain "$fmtacc" 'Ω' "$package")
-                fi
-                break
-            fi
-        done
-
-        echo -e "$buffer"
-    done
-
-    }
-
-SortPackages()
-    {
-
-    # cruft: remove previous backup system files. This code can be removed once no-one is using sort-my-qpkgs.sh version earlier than 171207.
-    rm -f "$CONFIG_PATHFILE".prev*
-
-    # read 'ALPHA' packages in reverse and prepend each to qpkg.conf
-    for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
-        for label in $(grep '^\[' $CONFIG_PATHFILE); do
-            a=${label//[}; package=${a//]}; [[ $package = ${PKGS_ALPHA_ORDERED[$i]} ]] && { SendToStart "$package"; break ;}
-        done
-    done
-
-    # now read 'OMEGA' packages and append each to qpkg.conf
-    for i in "${PKGS_OMEGA_ORDERED[@]}"; do
-        for label in $(grep '^\[' $CONFIG_PATHFILE); do
-            a=${label//[}; package=${a//]}; [[ $package = $i ]] && { SendToEnd "$package"; break ;}
-        done
-    done
+    echo "$(sed -n "$sl,${el}p" "$CONFIG_PATHFILE")"
 
     }
 
@@ -300,40 +271,7 @@ Upshift()
 
     }
 
-ShowLinePlain()
-    {
-
-    # $1 = number
-    # $2 = symbol
-    # $3 = name
-
-    ShowLine "$1" "$2" "$3"
-
-    }
-
-ShowLineTest()
-    {
-
-    # $1 = number
-    # $2 = symbol
-    # $3 = name
-
-    ShowLine "$(ColourTextBrightOrange "$1")" "$(ColourTextBrightOrange "$2")" "$(ColourTextBrightOrange "$3")"
-
-    }
-
-ShowLinePass()
-    {
-
-    # $1 = number
-    # $2 = symbol
-    # $3 = name
-
-    ShowLine "$(ColourTextBrightGreen "$1")" "$(ColourTextBrightGreen "$2")" "$(ColourTextBrightGreen "$3")"
-
-    }
-
-ShowLine()
+ShowLineUnmarked()
     {
 
     # $1 = number
@@ -344,44 +282,23 @@ ShowLine()
 
     }
 
+ShowLineMarked()
+    {
+
+    # $1 = number
+    # $2 = symbol
+    # $3 = name
+
+    echo -e "($1)#($2) $3"
+
+    }
+
 ShowSectionTitle()
     {
 
     # $1 = description
 
-    if [[ $colourised = true ]]; then
-        echo -e "\n $(ColourTextBrightWhite "* $1 *")"
-    else
-        echo -e "\n * $1 *"
-    fi
-
-    }
-
-ColourTextBrightWhite()
-    {
-
-    echo -en '\E[1;97m'"$(PrintResetColours "$1")"
-
-    }
-
-ColourTextBrightGreen()
-    {
-
-    echo -en '\E[1;32m'"$(PrintResetColours "$1")"
-
-    }
-
-ColourTextBrightOrange()
-    {
-
-    echo -en '\E[1;38;5;214m'"$(PrintResetColours "$1")"
-
-    }
-
-PrintResetColours()
-    {
-
-    echo -en "$1"'\E[0m'
+	echo -e "\n * $1 *"
 
     }
 
@@ -404,19 +321,19 @@ case "$1" in
         [[ -L $GUI_LOG_PATHFILE ]] && rm -f "$GUI_LOG_PATHFILE"
         ;;
     init|autofix)
-        colourised=false
-        echo "[$(date)] $1 requested" >> "$REAL_LOG_PATHFILE"
+        echo "[$(date)] '$1' requested" >> "$REAL_LOG_PATHFILE"
         Upshift "$CONFIG_PATHFILE"
         ShowPackagesBefore >> "$REAL_LOG_PATHFILE"
         SortPackages
         echo -e "$(ShowPackagesAfter)\n" >> "$REAL_LOG_PATHFILE"
         ;;
     fix)
+        echo "[$(date)] '$1' requested" >> "$REAL_LOG_PATHFILE"
         Upshift "$CONFIG_PATHFILE"
-        ShowPackagesBefore
+        ShowPackagesBefore | tee -a "$REAL_LOG_PATHFILE"
         SortPackages
-        ShowPackagesAfter
-        echo -e "\n ! NOTE: you must restart your NAS to load QPKGs in this order.\n"
+        echo -e "$(ShowPackagesAfter)\n" | tee -a "$REAL_LOG_PATHFILE"
+        echo -e " ! NOTE: you must restart your NAS to load the QPKGs in this order.\n"
         ;;
     pref)
         ShowPreferredList
@@ -427,9 +344,8 @@ case "$1" in
         sleep 1
         ;;
     *)
-        echo -e "\nUsage: $0 {fix|pref}"
+        echo -e "\n Usage: $0 {fix|pref}"
         ShowPackagesCurrent
-        echo -e "\n Launch with '$0 fix' to re-order packages."
-        echo
+        echo -e "\n Launch with '$0 fix' to re-order packages.\n"
         ;;
 esac
