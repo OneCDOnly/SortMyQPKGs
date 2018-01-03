@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 ############################################################################
-# sort-my-qpkgs.sh
+# sort-my-qpkgs.sh - (C)opyright 2017-2018 OneCD [one.cd.only@gmail.com]
 #
-# (C)opyright 2017-2018 OneCD - one.cd.only@gmail.com
+# This script is part of the 'SortMyQPKGs' package
 #
-# So, blame OneCD if it all goes horribly wrong. ;)
+# For more info: [https://forum.qnap.com/viewtopic.php?f=320&t=133132]
 #
-# For more info [https://forum.qnap.com/viewtopic.php?f=320&t=133132]
+# Available in the Qnapclub Store: [https://qnapclub.eu/en/qpkg/508]
+# Project source: [https://github.com/OneCDOnly/SortMyQPKGs]
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -36,8 +37,10 @@ Init()
     local ALPHA_PATHFILE="${QPKG_PATH}/ALPHA.list"
     local OMEGA_PATHFILE="${QPKG_PATH}/OMEGA.list"
     REAL_LOG_PATHFILE="${QPKG_PATH}/${THIS_QPKG_NAME}.log"
+    TEMP_LOG_PATHFILE="${QPKG_PATH}/${THIS_QPKG_NAME}.log.tmp"
     GUI_LOG_PATHFILE="/home/httpd/${THIS_QPKG_NAME}.log"
     [[ ! -e $REAL_LOG_PATHFILE ]] && touch "$REAL_LOG_PATHFILE"
+    [[ -e $TEMP_LOG_PATHFILE ]] && rm -f "$TEMP_LOG_PATHFILE"
     [[ ! -L $GUI_LOG_PATHFILE ]] && ln -s "$REAL_LOG_PATHFILE" "$GUI_LOG_PATHFILE"
     [[ ! -e $ALPHA_PATHFILE ]] && { echo "file not found [$ALPHA_PATHFILE]"; exit 1 ;}
     [[ ! -e $OMEGA_PATHFILE ]] && { echo "file not found [$OMEGA_PATHFILE]"; exit 1 ;}
@@ -321,19 +324,21 @@ case "$1" in
         [[ -L $GUI_LOG_PATHFILE ]] && rm -f "$GUI_LOG_PATHFILE"
         ;;
     init|autofix)
-        echo "[$(date)] '$1' requested" >> "$REAL_LOG_PATHFILE"
+        echo "[$(date)] '$1' requested" >> "$TEMP_LOG_PATHFILE"
         Upshift "$CONFIG_PATHFILE"
-        ShowPackagesBefore >> "$REAL_LOG_PATHFILE"
+        ShowPackagesBefore >> "$TEMP_LOG_PATHFILE"
         SortPackages
-        echo -e "$(ShowPackagesAfter)\n" >> "$REAL_LOG_PATHFILE"
+        echo -e "$(ShowPackagesAfter)\n" >> "$TEMP_LOG_PATHFILE"
+        echo -e "$(<$TEMP_LOG_PATHFILE)\n\n\n$(<$REAL_LOG_PATHFILE)" > "$REAL_LOG_PATHFILE"
         ;;
     fix)
-        echo "[$(date)] '$1' requested" >> "$REAL_LOG_PATHFILE"
+        echo "[$(date)] '$1' requested" >> "$TEMP_LOG_PATHFILE"
         Upshift "$CONFIG_PATHFILE"
-        ShowPackagesBefore | tee -a "$REAL_LOG_PATHFILE"
+        ShowPackagesBefore | tee -a "$TEMP_LOG_PATHFILE"
         SortPackages
-        echo -e "$(ShowPackagesAfter)\n" | tee -a "$REAL_LOG_PATHFILE"
+        echo -e "$(ShowPackagesAfter)\n" | tee -a "$TEMP_LOG_PATHFILE"
         echo -e " ! NOTE: you must restart your NAS to load the QPKGs in this order.\n"
+        echo -e "$(<$TEMP_LOG_PATHFILE)\n\n\n$(<$REAL_LOG_PATHFILE)" > "$REAL_LOG_PATHFILE"
         ;;
     pref)
         ShowPreferredList
