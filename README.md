@@ -6,17 +6,17 @@
 
 Every QPKG will fit into one of three possible groups:
 
-1. **ALPHA** - must be launched *before* other packages and in a specific order (these are high-level apps like command interpreters, virtual environments and the like),
-2. **OMEGA** - packages that should be launched *after* everything else and in a specific order,
-3. **UNSPECIFIED** - the majority of QPKGs out there that are not explicitly named, but should be launched *after* ALPHA and *before* OMEGA packages. 
+1. **ALPHA** - must be launched *before* other packages, and in a specific order (these are high-level apps like command interpreters, virtual environments and the like),
+2. **UNSPECIFIED** - the majority of QPKGs out there that are not explicitly named, but should be launched *after* ALPHA and *before* OMEGA packages,
+3. **OMEGA** - packages that should be launched *after* everything else, and in a specific order. These are generally dependent on some other package.
 
 The order is hardcoded into this QPKG but can be modified on request by posting in this topic. Please advise of new QPKGs to add and where on the current lists the new package should be placed. Only packages that *must* be placed correctly should be requested.
 
 ## How to install
 
-- Available in the [Qnapclub Store!](https://www.qnapclub.eu/index.php?act=detail&qpkg_id=508)
+- Available in the [Qnapclub Store!](https://qnapclub.eu/en/qpkg/508)
 
-- [Click here](https://qnapclub.eu/index.php?act=howto) to see how to add the **Qnapclub Store** as an App Center repo in QTS.
+- [Click here](https://qnapclub.eu/en/howto/1) to see how to add the **Qnapclub Store** as an App Center repo in QTS.
 
 
 ## Notes
