@@ -26,7 +26,7 @@
 Init()
     {
 
-    local THIS_QPKG_NAME='SortMyQPKGs'
+    THIS_QPKG_NAME='SortMyQPKGs'
     CONFIG_PATHFILE='/etc/config/qpkg.conf'
     SHUTDOWN_PATHFILE='/etc/init.d/shutdown_check.sh'
 
@@ -63,7 +63,7 @@ ShowPackagesBefore()
     {
 
     ShowSectionTitle 'Original QPKG order'
-    ShowPackagesMarked
+    ShowPackagesUnmarked
 
     }
 
@@ -71,7 +71,7 @@ ShowPackagesCurrent()
     {
 
     ShowSectionTitle 'Existing QPKG order'
-    ShowPackagesMarked
+    ShowPackagesUnmarked
 
     }
 
@@ -296,6 +296,20 @@ ShowLineMarked()
 
     }
 
+ShowOperation()
+    {
+
+    # $1 = operation
+
+	local buffer="[$(date)] '$1' requested"
+	local length=${#buffer}
+
+	printf '%.s─' $(seq 1 $length)
+	echo -e "\n$THIS_QPKG_NAME ($(getcfg $THIS_QPKG_NAME Build -f $CONFIG_PATHFILE))"
+	echo "$buffer"
+
+    }
+
 ShowSectionTitle()
     {
 
@@ -324,21 +338,21 @@ case "$1" in
         [[ -L $GUI_LOG_PATHFILE ]] && rm -f "$GUI_LOG_PATHFILE"
         ;;
     init|autofix)
-        echo "[$(date)] '$1' requested" >> "$TEMP_LOG_PATHFILE"
+        ShowOperation "$1" >> "$TEMP_LOG_PATHFILE"
         Upshift "$CONFIG_PATHFILE"
         ShowPackagesBefore >> "$TEMP_LOG_PATHFILE"
         SortPackages
-        echo -e "$(ShowPackagesAfter)\n" >> "$TEMP_LOG_PATHFILE"
+        ShowPackagesAfter >> "$TEMP_LOG_PATHFILE"
         echo -e "$(<$TEMP_LOG_PATHFILE)\n\n\n$(<$REAL_LOG_PATHFILE)" > "$REAL_LOG_PATHFILE"
         ;;
     fix)
-        echo "[$(date)] '$1' requested" >> "$TEMP_LOG_PATHFILE"
+        ShowOperation "$1" >> "$TEMP_LOG_PATHFILE"
         Upshift "$CONFIG_PATHFILE"
         ShowPackagesBefore | tee -a "$TEMP_LOG_PATHFILE"
         SortPackages
-        echo -e "$(ShowPackagesAfter)\n" | tee -a "$TEMP_LOG_PATHFILE"
-        echo -e " ! NOTE: you must restart your NAS to load the QPKGs in this order.\n"
-        echo -e "$(<$TEMP_LOG_PATHFILE)\n\n\n$(<$REAL_LOG_PATHFILE)" > "$REAL_LOG_PATHFILE"
+        ShowPackagesAfter | tee -a "$TEMP_LOG_PATHFILE"
+        echo -e "$(<$TEMP_LOG_PATHFILE)\n\n$(<$REAL_LOG_PATHFILE)" > "$REAL_LOG_PATHFILE"
+        echo -e "\n ! NOTE: you must restart your NAS to load the QPKGs in this order.\n"
         ;;
     pref)
         ShowPreferredList
