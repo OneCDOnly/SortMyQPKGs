@@ -1,0 +1,63 @@
+* Minor update: (180105)
+- Added git, Nginx and PlexMediaServer packages to the ALPHA list,
+- Log is now trimmed so only the last 10 operations are kept. This will only work with recent SortMyQPKGs builds, but once a recent build has executed 10 times, log should look fine.
+
+* Minor update: (180104.1)
+- Moved SABnzbd and QSabNZBdPlus ahead of Sonarr, so Sonarr can find an operational downloader as it starts.
+
+* Minor update: (180104)
+- Sort operations will now be prepended to the log (instead of appended), so the most recent will be shown first in the GUI. This means the log will look a little bit odd for a while. ;)
+- Added the new SickGear package to the OMEGA list.
+
+* Minor update: (180102)
+- Manual 'fix' operations are now logged,
+- Removed the coloured display text during manual execution. Packages are now marked with a hash character "#" instead. The hash indicates packages that will-be or were affected by sorting ops. Colour was nice when this script was only run manually, but is not needed and the ANSI codes were making logging needlessly difficult.
+
+* Minor update: (180101)
+- Shifted the ALPHA and OMEGA lists into external files. This should make editing them a bit easier.
+
+* Minor update: (171224)
+- Added NodeJS QRuby Go Phlex HD_Station to the ALPHA list,
+- Moved QNginx ruby within the ALPHA list,
+- Removed Par2 Par2cmdline-MT from the ALPHA list,
+- Added QSabNZBdPlus QSickBeard QSickRage MovieGrabber CouchPotato2 QCouchPotato Watcher3 Ombi Ombi3 to the OMEGA list.
+
+** Major update: (171220)
+- New package name!
+- I've changed the package name from 'sort-my-qpkgs' to 'SortMyQPKGs'. Because the name has changed, your NAS should see this as a completely different package. This means all existing installations with the old name should be manually uninstalled, then the new package installed in it's place. Apologies - I chose to use the script name as the package name when creating the QPKG some time back, and I've regretted it ever since. This change finally corrects this error.
+
+* Minor update: (171209)
+- Change the method used to backup qpkg.conf. The sorter now performs a 'logrotate'-like backup and only keeps the last 10 copies.
+- All qpkg.conf.prev files will be removed.
+
+* Minor update: (171207)
+- Added QNginx to the ALPHA list,
+- Fixed package finder so it only sees lines starting with '[' as a package name,
+- Various bits of code "modernisation".
+- Existing installations should be updated ASAP. Particularly those running the Qcenter-Agent app.
+
+* Minor update: (171011)
+- QPKG is now available in the QNAP Club store!
+- Thanks to Stephane for the idea, and to Christophe from the QNAP Club for setting up the account.
+
+* Minor update: (171010)
+- Added DotNET to the ALPHA list.
+
+* Minor update: (170624)
+- Finally something to see! Click on the 'Open' button for this package to display the log file.
+- and it will now run when first installed.
+
+* Minor update: (170618)
+- Small display fixes,
+- Added sort-my-qpkgs to the end of the OMEGA list,
+- Reintroduced parameter naming as (--fix|--pref) instead of (fix|pref)
+
+* Minor update: (170603)
+- Display now uses Greek symbols to identify the installed packages. This should help if anyone has to post their display output here on the forum (the displayed colours cannot be seen without screen-shots).
+- Changed default (unspecified) action from fixing to display only. Use '--fix' to peform re-sorting.
+
+* Minor update: (170602)
+- As suggested by Paul, various programming interpreters (Python, Perl, Ruby, etc...) will now be launched early.
+
+* Minor update: (170602)
+- Changed things a bit so that higher-level packages (with many dependent packages) like Entware, Qmono and QJDK are moved to the start of qpkg.conf. This should hopefully negate the need to specify all dependent packages individually.
