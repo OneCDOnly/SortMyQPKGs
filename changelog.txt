@@ -6,7 +6,7 @@
 - Moved SABnzbd and QSabNZBdPlus ahead of Sonarr, so Sonarr can find an operational downloader as it starts.
 
 * Minor update: (180104)
-- Sort operations will now be prepended to the log (instead of appended), so the most recent will be shown first in the GUI. This means the log will look a little bit odd for a while. ;)
+- Sort operations will now be prepended to the log (instead of appended), so the most recent will be shown first in the web GUI. This means the log will look a little bit odd for a while.
 - Added the new SickGear package to the OMEGA list.
 
 * Minor update: (180102)
@@ -25,6 +25,7 @@
 ** Major update: (171220)
 - New package name!
 - I've changed the package name from 'sort-my-qpkgs' to 'SortMyQPKGs'. Because the name has changed, your NAS should see this as a completely different package. This means all existing installations with the old name should be manually uninstalled, then the new package installed in it's place. Apologies - I chose to use the script name as the package name when creating the QPKG some time back, and I've regretted it ever since. This change finally corrects this error.
+- Revert (--fix|--pref) back to (fix|pref). It didn't make sense for these two ops to be the only ones requiring a prefix.
 
 * Minor update: (171209)
 - Change the method used to backup qpkg.conf. The sorter now performs a 'logrotate'-like backup and only keeps the last 10 copies.
@@ -36,6 +37,12 @@
 - Various bits of code "modernisation".
 - Existing installations should be updated ASAP. Particularly those running the Qcenter-Agent app.
 
+* Minor update: (171115)
+- Added Emby, EmbyServer to the ALPHA list.
+
+* Minor update: (171022)
+- Created this project on GitHub.
+
 * Minor update: (171011)
 - QPKG is now available in the QNAP Club store!
 - Thanks to Stephane for the idea, and to Christophe from the QNAP Club for setting up the account.
@@ -44,13 +51,16 @@
 - Added DotNET to the ALPHA list.
 
 * Minor update: (170624)
-- Finally something to see! Click on the 'Open' button for this package to display the log file.
-- and it will now run when first installed.
+- Finally something to see! Click on the 'Open' button in the App Center to display the log file in a new web-page.
+- Now runs an 'autofix' when first installed.
 
 * Minor update: (170618)
 - Small display fixes,
 - Added sort-my-qpkgs to the end of the OMEGA list,
 - Reintroduced parameter naming as (--fix|--pref) instead of (fix|pref)
+
+** Major update: (170617)
+- Changed from a script-only to a QPKG.
 
 * Minor update: (170603)
 - Display now uses Greek symbols to identify the installed packages. This should help if anyone has to post their display output here on the forum (the displayed colours cannot be seen without screen-shots).
@@ -61,3 +71,6 @@
 
 * Minor update: (170602)
 - Changed things a bit so that higher-level packages (with many dependent packages) like Entware, Qmono and QJDK are moved to the start of qpkg.conf. This should hopefully negate the need to specify all dependent packages individually.
+
+* Initial release: (170601)
+- First public script release.
