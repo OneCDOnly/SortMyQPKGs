@@ -275,19 +275,19 @@ Upshift()
     }
 
 TrimLog()
-	{
+    {
 
-	local max_ops=10
-	local op_lines=$(grep -n "^──" "$REAL_LOG_PATHFILE")
-	local op_count=$(echo "$op_lines" | wc -l)
+    local max_ops=10
+    local op_lines=$(grep -n "^──" "$REAL_LOG_PATHFILE")
+    local op_count=$(echo "$op_lines" | wc -l)
 
-	if [[ $op_count -gt $max_ops ]]; then
-		local last_op_line_num=$(echo "$op_lines" | head -n$((max_ops+1)) | tail -n1 | cut -f1 -d:)
-		head -n${last_op_line_num} "$REAL_LOG_PATHFILE" > "$TEMP_LOG_PATHFILE"
-		mv "$TEMP_LOG_PATHFILE" "$REAL_LOG_PATHFILE"
-	fi
+    if [[ $op_count -gt $max_ops ]]; then
+        local last_op_line_num=$(echo "$op_lines" | head -n$((max_ops+1)) | tail -n1 | cut -f1 -d:)
+        head -n${last_op_line_num} "$REAL_LOG_PATHFILE" > "$TEMP_LOG_PATHFILE"
+        mv "$TEMP_LOG_PATHFILE" "$REAL_LOG_PATHFILE"
+    fi
 
-	}
+    }
 
 ShowLineUnmarked()
     {
@@ -316,13 +316,13 @@ ShowOperation()
 
     # $1 = operation
 
-	local buffer="[$(date)] '$1' requested"
-	local length=${#buffer}
-	local temp=$(printf "%${length}s")
+    local buffer="[$(date)] '$1' requested"
+    local length=${#buffer}
+    local temp=$(printf "%${length}s")
 
-	echo "${temp// /─}"
-	echo -e "$THIS_QPKG_NAME ($(getcfg $THIS_QPKG_NAME Build -f $CONFIG_PATHFILE))"
-	echo "$buffer"
+    echo "${temp// /─}"
+    echo -e "$THIS_QPKG_NAME ($(getcfg $THIS_QPKG_NAME Build -f $CONFIG_PATHFILE))"
+    echo "$buffer"
 
     }
 
