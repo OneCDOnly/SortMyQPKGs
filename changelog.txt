@@ -1,6 +1,9 @@
 * Minor update: (180105)
 - Added [git Nginx PlexMediaServer] to the ALPHA list.
 - Log is now trimmed so only the last 10 operations are kept. This will only work with recent SortMyQPKGs builds, but once a recent build has executed 10 times, log should look fine.
+- Record this package version in log operations.
+- Add a nice separator line to the beginning of each operation.
+- Remove '#' char mark from display. We can already see which list a package belongs to.
 
 * Minor update: (180104.1)
 - Moved [SABnzbd QSabNZBdPlus] ahead of [Sonarr], so Sonarr can find an operational downloader as it starts.
@@ -27,8 +30,7 @@
 - Revert (--fix|--pref) back to (fix|pref). It didn't make sense for these two ops to be the only ones requiring a prefix.
 
 * Minor update: (171209)
-- Change the method used to backup qpkg.conf. The sorter now performs a 'logrotate'-like backup and only keeps the last 10 copies.
-- All qpkg.conf.prev files will be removed.
+- Change the method used to backup qpkg.conf. The sorter now performs a 'logrotate'-like backup and only keeps the last 10 copies. All (qpkg.conf.prev) files will be removed.
 
 * Minor update: (171207)
 - Added [QNginx] to the ALPHA list.
