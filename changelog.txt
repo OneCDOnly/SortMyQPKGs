@@ -1,3 +1,7 @@
+* Minor update: (180107)
+- Added [QVPN VyprVPN] to the ALPHA list.
+- Added [QHeadPhones Transmission QTransmission] to the OMEGA list.
+
 * Minor update: (180105)
 - Added [git Nginx PlexMediaServer] to the ALPHA list.
 - Log is now trimmed so only the last 10 operations are kept. This will only work with recent SortMyQPKGs builds, but once a recent build has executed 10 times, log should look fine.
