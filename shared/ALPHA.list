@@ -1,39 +1,54 @@
+# QNAP's own
 update_qpkg_conf
 DownloadStation
+
+# high-level language interpreters
 Python
 QPython2
 Python3
 QPython3
 Perl
 QPerl
+nodejs
+nodejsv4
+NodeJS
+ruby
+QRuby
+Go
+
+# package installers
 Optware
 Optware-NG
 Entware-ng
 Entware-3x
+
+# project development
 git
 QGit
+
+# virtual environments
 Mono
 Qmono
 DotNET
-nodejs
-nodejsv4
-NodeJS
 JRE
 QJDK7
 QJDK8
-ruby
-QRuby
-Go
+HD_Station
+
+# web servers
 Qapache
 Tomcat
 Tomcat8
 Nginx
 QNginx
+
+# media servers
 Plex
 PlexMediaServer
 Phlex
 Emby
 EmbyServer
-HD_Station
+
+# VPN
 QVPN
 VyprVPN

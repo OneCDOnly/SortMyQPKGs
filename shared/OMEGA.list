@@ -1,6 +1,9 @@
+# NZB downloaders
 QNZBGet
 SABnzbdplus
 QSabNZBdPlus
+
+# searchers
 QSonarr
 Radarr
 SickBeard
@@ -16,6 +19,10 @@ QCouchPotato
 Watcher3
 Ombi
 Ombi3
+
+# torrent downloaders
 Transmission
 QTransmission
+
+# QNAP's own
 SurveillanceStation

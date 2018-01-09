@@ -45,8 +45,13 @@ Init()
     [[ ! -e $ALPHA_PATHFILE ]] && { echo "file not found [$ALPHA_PATHFILE]"; exit 1 ;}
     [[ ! -e $OMEGA_PATHFILE ]] && { echo "file not found [$OMEGA_PATHFILE]"; exit 1 ;}
 
-    PKGS_ALPHA_ORDERED=($(<$ALPHA_PATHFILE))
-    PKGS_OMEGA_ORDERED=($(<$OMEGA_PATHFILE) $THIS_QPKG_NAME)
+    while read -r package_ref comment; do
+        [[ -n $package_ref && $package_ref != \#* ]] && PKGS_ALPHA_ORDERED+=($package_ref)
+    done < "$ALPHA_PATHFILE"
+
+    while read -r package_ref comment; do
+        [[ -n $package_ref && $package_ref != \#* ]] && PKGS_OMEGA_ORDERED+=($package_ref)
+    done < "$OMEGA_PATHFILE"
 
     }
 

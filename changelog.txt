@@ -1,3 +1,8 @@
+* Minor update: (180110)
+- Includes input file list processing which allows for new features like line comments, comment lines and empty lines.
+- Included list group headers for ALPHA & OMEGA.
+- Slight reshuffle to group [HD_Station] with other virtual environments. Moved [nodejs nodejsv4 NodeJS ruby QRuby Go] to load before package installers.
+
 * Minor update: (180107)
 - Added [QVPN VyprVPN] to the ALPHA list.
 - Added [QHeadPhones Transmission QTransmission] to the OMEGA list.
