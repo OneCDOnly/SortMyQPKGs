@@ -53,6 +53,8 @@ Init()
         [[ -n $package_ref && $package_ref != \#* ]] && PKGS_OMEGA_ORDERED+=($package_ref)
     done < "$OMEGA_PATHFILE"
 
+    PKGS_OMEGA_ORDERED+=($THIS_QPKG_NAME)
+
     }
 
 ShowPreferredList()
