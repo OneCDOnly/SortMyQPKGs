@@ -318,7 +318,7 @@ ShowLineMarked()
 
     }
 
-ShowOperation()
+RecordOperation()
     {
 
     # $1 = operation
@@ -326,10 +326,13 @@ ShowOperation()
     local buffer="[$(date)] '$1' requested"
     local length=${#buffer}
     local temp=$(printf "%${length}s")
+    local build=$(getcfg $THIS_QPKG_NAME Build -f $CONFIG_PATHFILE)
 
-    echo "${temp// /─}"
-    echo -e "$THIS_QPKG_NAME ($(getcfg $THIS_QPKG_NAME Build -f $CONFIG_PATHFILE))"
-    echo "$buffer"
+    echo "${temp// /─}" >> "$TEMP_LOG_PATHFILE"
+    echo -e "$THIS_QPKG_NAME ($build)" >> "$TEMP_LOG_PATHFILE"
+    echo "$buffer" >> "$TEMP_LOG_PATHFILE"
+
+    LogWrite "'$1' requested" 0
 
     }
 
@@ -339,6 +342,19 @@ ShowSectionTitle()
     # $1 = description
 
     echo -e "\n * $1 *"
+
+    }
+
+LogWrite()
+    {
+
+    # $1 = message to write into NAS system log
+    # $2 = event type:
+    #    0 : Information
+    #    1 : Warning
+    #    2 : Error
+
+    /sbin/log_tool --append "[$THIS_QPKG_NAME] $1" --type "$2"
 
     }
 
@@ -361,7 +377,7 @@ case "$1" in
         [[ -L $GUI_LOG_PATHFILE ]] && rm -f "$GUI_LOG_PATHFILE"
         ;;
     init|autofix)
-        ShowOperation "$1" >> "$TEMP_LOG_PATHFILE"
+        RecordOperation "$1"
         Upshift "$CONFIG_PATHFILE"
         ShowPackagesBefore >> "$TEMP_LOG_PATHFILE"
         SortPackages
@@ -370,7 +386,7 @@ case "$1" in
         TrimLog
         ;;
     fix)
-        ShowOperation "$1" >> "$TEMP_LOG_PATHFILE"
+        RecordOperation "$1"
         Upshift "$CONFIG_PATHFILE"
         ShowPackagesBefore | tee -a "$TEMP_LOG_PATHFILE"
         SortPackages
