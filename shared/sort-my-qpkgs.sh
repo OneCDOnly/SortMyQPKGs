@@ -303,7 +303,7 @@ ShowLineUnmarked()
     # $2 = symbol
     # $3 = name
 
-    echo -e "($1) ($2) $3"
+    echo "($1) ($2) $3"
 
     }
 
@@ -314,7 +314,7 @@ ShowLineMarked()
     # $2 = symbol
     # $3 = name
 
-    echo -e "($1)#($2) $3"
+    echo "($1)#($2) $3"
 
     }
 
@@ -328,9 +328,7 @@ RecordOperation()
     local temp=$(printf "%${length}s")
     local build=$(getcfg $THIS_QPKG_NAME Build -f $CONFIG_PATHFILE)
 
-    echo "${temp// /─}" >> "$TEMP_LOG_PATHFILE"
-    echo -e "$THIS_QPKG_NAME ($build)" >> "$TEMP_LOG_PATHFILE"
-    echo "$buffer" >> "$TEMP_LOG_PATHFILE"
+    echo -e "${temp// /─}\n$THIS_QPKG_NAME ($build)\n$buffer" >> "$TEMP_LOG_PATHFILE"
 
     LogWrite "'$1' requested" 0
 
@@ -354,7 +352,7 @@ LogWrite()
     #    1 : Warning
     #    2 : Error
 
-    /sbin/log_tool --append "[$THIS_QPKG_NAME] $1" --type "$2"
+    log_tool --append "[$THIS_QPKG_NAME] $1" --type "$2"
 
     }
 

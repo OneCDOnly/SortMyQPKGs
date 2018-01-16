@@ -1,3 +1,8 @@
+* Minor update: (180116)
+- Added [Medusa Mylar] to the OMEGA list.
+- Moved torrent downloaders ahead of search apps.
+- Shorten operation title logging code.
+
 * Minor update: (180110)
 - Includes input file list processing which allows for new features like line comments, comment lines and empty lines.
 - Included list group headers for ALPHA & OMEGA.
