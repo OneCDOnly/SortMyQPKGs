@@ -1,3 +1,6 @@
+* Minor update: (180122)
+- Added [QJDK9] to the ALPHA list.
+
 * Minor update: (180116)
 - Added [Medusa Mylar] to the OMEGA list.
 - Moved torrent downloaders ahead of search apps.
