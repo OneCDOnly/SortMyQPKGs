@@ -4,14 +4,12 @@
 * Minor update: (180116)
 - Added [Medusa Mylar] to the OMEGA list.
 - Moved torrent downloaders ahead of search apps.
-- Shorten operation title logging code.
 
 * Minor update: (180110)
 - Includes input file list processing which allows for new features like line comments, comment lines and empty lines.
 - Included list group headers for ALPHA & OMEGA.
 - Slight reshuffle to group [HD_Station] with other virtual environments. Moved [nodejs nodejsv4 NodeJS ruby QRuby Go] to load before package installers.
 - Record sort operations into NAS system log.
-- Removed old unzipped QPKGs from project source build path.
 
 * Minor update: (180107)
 - Added [QVPN VyprVPN] to the ALPHA list.
@@ -20,7 +18,7 @@
 * Minor update: (180105)
 - Added [git Nginx PlexMediaServer] to the ALPHA list.
 - Log is now trimmed so only the last 10 operations are kept. This will only work with recent SortMyQPKGs builds, but once a recent build has executed 10 times, log should look fine.
-- Record this package version in log operations.
+- Record package script version in log operations.
 - Add a nice separator line to the beginning of each operation.
 - Remove '#' char mark from display. We can already see which list a package belongs to.
 
@@ -33,10 +31,10 @@
 
 * Minor update: (180102)
 - Manual 'fix' operations are now logged.
-- Removed the coloured display text during manual execution. Packages are now marked with a hash character "#" instead. The hash indicates packages that will-be or were affected by sorting ops. Colour was nice when this script was only run manually, but is not needed and the ANSI codes were making logging needlessly difficult.
+- Removed the coloured display text during manual execution. Packages are now marked with a hash character "#" instead.
 
 * Minor update: (180101)
-- Shifted the ALPHA and OMEGA lists into external files. This should make editing them a bit easier.
+- Shifted the ALPHA and OMEGA lists into external files.
 
 * Minor update: (171224)
 - Added [NodeJS QRuby Go Phlex HD_Station] to the ALPHA list.
@@ -54,7 +52,6 @@
 * Minor update: (171207)
 - Added [QNginx] to the ALPHA list.
 - Fixed package finder so it only sees lines starting with '[' as a package name.
-- Various bits of code "modernisation".
 
 * Minor update: (171115)
 - Added [Emby EmbyServer] to the ALPHA list.
@@ -70,7 +67,7 @@
 
 * Minor update: (170624)
 - Click the 'Open' button in the App Center to display the log file in a new web-page.
-- Now runs an 'autofix' when first installed.
+- Will now run an 'autofix' when first installed.
 
 * Minor update: (170618)
 - Small display fixes.
@@ -85,7 +82,7 @@
 - Changed default (unspecified) action from fixing to display only. Use '--fix' to peform re-sorting.
 
 * Minor update: (170602)
-- As suggested by Paul (@Trexx), various programming interpreters (Python, Perl, Ruby, etc...) will now be launched early.
+- Various programming interpreters (Python, Perl, Ruby, etc...) will now launch early.
 
 * Minor update: (170602)
 - Changed things a bit so that higher-level packages (with many dependent packages) like Entware, Qmono and QJDK are moved to the start of qpkg.conf. This should hopefully negate the need to specify all dependent packages individually.
