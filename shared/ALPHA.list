@@ -35,6 +35,7 @@ QJDK7
 QJDK8
 QJDK9
 HD_Station
+container-station
 
 # web servers
 Qapache
