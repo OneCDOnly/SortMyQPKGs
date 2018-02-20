@@ -1,6 +1,5 @@
 # QNAP's own
 update_qpkg_conf
-DownloadStation
 
 # high-level language interpreters
 Python
@@ -50,6 +49,7 @@ PlexMediaServer
 Phlex
 Emby
 EmbyServer
+QSubSonic
 
 # VPN
 QVPN
