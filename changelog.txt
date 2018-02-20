@@ -1,3 +1,7 @@
+* Minor update: (180221)
+- Removed [DownloadStation] from the ALPHA list.
+- Added [QSubSonic] to the ALPHA list.
+
 * Minor update: (180128)
 - Added [container-station] to the ALPHA list.
 - Added [OMedusa] to the OMEGA list.
