@@ -359,22 +359,22 @@ LogWrite()
 Init
 
 case "$1" in
-    install)
-        $0 start
-        $0 init
-        ;;
-    start)
+    install|start)
         if ! (grep -q 'sort-my-qpkgs.sh' "$SHUTDOWN_PATHFILE"); then
             findtext='#backup logs'
             inserttext='/etc/init.d/sort-my-qpkgs.sh autofix'
             sed -i "s|$findtext|$inserttext\n$findtext|" "$SHUTDOWN_PATHFILE"
+        fi
+        if [[ $1 = install ]]; then
+            RecordOperation "$1"
+            echo -e "$(<$TEMP_LOG_PATHFILE)\n\n$(<$REAL_LOG_PATHFILE)" > "$REAL_LOG_PATHFILE"
         fi
         ;;
     remove)
         (grep -q 'sort-my-qpkgs.sh' "$SHUTDOWN_PATHFILE") && sed -i '/sort-my-qpkgs.sh/d' "$SHUTDOWN_PATHFILE"
         [[ -L $GUI_LOG_PATHFILE ]] && rm -f "$GUI_LOG_PATHFILE"
         ;;
-    init|autofix)
+    autofix)
         RecordOperation "$1"
         Upshift "$CONFIG_PATHFILE"
         ShowPackagesBefore >> "$TEMP_LOG_PATHFILE"
@@ -397,7 +397,7 @@ case "$1" in
         ShowPreferredList
         echo
         ;;
-    stop|restart)
+    init|stop|restart)
         # do nothing
         sleep 1
         ;;
