@@ -1,3 +1,7 @@
+** Major update: (180224)
+- Will not perform a sort when installing or updating this package. If another package is updated or installed at the same time, this could create a corrupt [qpkg.conf] file. To mitigate this risk, SortMyQPKGs will now only sort on shutdown, or when manually requested at the CLI.
+- Added [AirSonic QMadSonic] to the ALPHA list.
+
 * Minor update: (180221)
 - Removed [DownloadStation] from the ALPHA list.
 - Added [QSubSonic] to the ALPHA list.
