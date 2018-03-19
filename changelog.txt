@@ -1,3 +1,6 @@
+* Minor update: (180320)
+- Added [Entware] to the ALPHA list.
+
 ** Major update: (180224)
 - Will not perform a sort when installing or updating this package. If another package is updated or installed at the same time, this could create a corrupt [qpkg.conf] file. To mitigate this risk, SortMyQPKGs will now only sort on shutdown, or when manually requested at the CLI.
 - Added [AirSonic QMadSonic] to the ALPHA list.
