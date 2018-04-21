@@ -1,8 +1,12 @@
-![icon](images/sort-my-qpkgs-cs.png) 
+![icon](images/sort-my-qpkgs-cs.png)
 
 ## Description
 
-**SortMyQPKGs** is an automatic sorter for installed QPKGs so they launch in a predetermined order when your NAS next boots-up. Certain packages need to launch sequentially (example: Qmono before QSonarr) but due to flaws in QNAP's QPKG installation / reintegration process, this may not occur. This package will help ensure these specific QPKGs are correctly ordered.
+**SortMyQPKGs** is a sorter for your installed QPKGs to ensure they launch in a preset order when your NAS next boots-up.
+
+There are a few known packages need to launch sequentially (example: Qmono before QSonarr) but due to flaws in QNAP's package registration process, this may not occur.
+
+This package will ensure the launch-order of these QPKGs is corrected automatically.
 
 Every QPKG will fit into one of three possible groups:
 
@@ -16,17 +20,22 @@ This package was initially suggested by @father_mande & @zyxmon in [this thread]
 
 ## How to install
 
-- Available in the [Qnapclub Store!](https://qnapclub.eu/en/qpkg/508)
+- It's available in the [Qnapclub Store!](https://qnapclub.eu/en/qpkg/508)
 
 - [Click here](https://qnapclub.eu/en/howto/1) to learn how to add the **Qnapclub Store** as an App Center repository in QTS.
 
 
 ## Notes
 
-- When the sorter is installed, there's not much to see. Find the package icon and click the 'Open' button to display the current log file - any changes made to your package order will be shown here. Sorting is automatically performed during each NAS shutdown and when *this* package is installed. No need to run it manually.
+- When the sorter is installed, there's not much to see. Find the package icon and click the 'Open' button to display the current log file - any changes made to your package order will be shown here. Sorting is automatically performed during each NAS shutdown. No need to run it manually.
+
+- The log is viewable via your web browser but is not a real web document, so it can change without your browser noticing. Whenever viewing the log, ensure you force a page refresh: CTRL+F5.
+
 
 - The current internal order preference list can be viewed with:
 
 ```
     /etc/init.d/sort-my-qpkgs.sh pref
 ```
+
+- [Changelog](changelog.txt)

@@ -1,5 +1,7 @@
 # QNAP's own
 update_qpkg_conf
+Qsirch              # load before Qfiling
+NVIDIA_GPU_DRV      # load before HD Station & Linux Station
 
 # high-level language interpreters
 Python
@@ -10,6 +12,8 @@ Perl
 QPerl
 nodejs
 nodejsv4
+nodejsv6
+nodejsv8
 NodeJS
 ruby
 QRuby
@@ -34,7 +38,9 @@ JRE
 QJDK7
 QJDK8
 QJDK9
-HD_Station
+QVS             # 'Virtualization Station'
+HD_Station      # note: 'HD Station' or 'Linux Station' - only one can be enabled at any time
+linux-station
 container-station
 
 # web servers

@@ -1,3 +1,6 @@
+* Minor update: (180422)
+- Added [Qsirch NVIDIA_GPU_DRV nodejsv6 nodejsv8 QVS linux-station] to the ALPHA list.
+
 * Minor update: (180320)
 - Added [Entware] to the ALPHA list.
 
