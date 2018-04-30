@@ -128,7 +128,7 @@ ShowPackagesMarked()
     local buffer=''
 
     for label in $(grep '^\[' $CONFIG_PATHFILE); do
-        ((acc++)); a=${label//[}; package=${a//]}; fmtacc="$(printf "%02d\n" $acc)"
+        ((acc++)); package=${label//[\[\]]}; fmtacc="$(printf "%02d\n" $acc)"
         buffer=$(ShowLineUnmarked "$fmtacc" 'Φ' "$package")
 
         for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
@@ -152,7 +152,7 @@ ShowPackagesUnmarked()
     local buffer=''
 
     for label in $(grep '^\[' $CONFIG_PATHFILE); do
-        ((acc++)); a=${label//[}; package=${a//]}; fmtacc="$(printf "%02d\n" $acc)"
+        ((acc++)); package=${label//[\[\]]}; fmtacc="$(printf "%02d\n" $acc)"
         buffer=$(ShowLineUnmarked "$fmtacc" 'Φ' "$package")
 
         for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
@@ -177,14 +177,14 @@ SortPackages()
     # read 'ALPHA' packages in reverse and prepend each to qpkg.conf
     for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
         for label in $(grep '^\[' $CONFIG_PATHFILE); do
-            a=${label//[}; package=${a//]}; [[ $package = ${PKGS_ALPHA_ORDERED[$i]} ]] && { SendToStart "$package"; break ;}
+            package=${label//[\[\]]}; [[ $package = ${PKGS_ALPHA_ORDERED[$i]} ]] && { SendToStart "$package"; break ;}
         done
     done
 
     # now read 'OMEGA' packages and append each to qpkg.conf
     for i in "${PKGS_OMEGA_ORDERED[@]}"; do
         for label in $(grep '^\[' $CONFIG_PATHFILE); do
-            a=${label//[}; package=${a//]}; [[ $package = $i ]] && { SendToEnd "$package"; break ;}
+            package=${label//[\[\]]}; [[ $package = $i ]] && { SendToEnd "$package"; break ;}
         done
     done
 
