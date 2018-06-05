@@ -1,3 +1,8 @@
+* Minor update: (180606)
+- Added new databases section with [QMongoDB QMariaDB CubeSQL PimCore] to the ALPHA list.
+- Added [Caddy] to the ALPHA list.
+- Added [Lidarr] to the OMEGA list.
+
 * Minor update: (180422)
 - Added [Qsirch NVIDIA_GPU_DRV nodejsv6 nodejsv8 QVS linux-station] to the ALPHA list.
 

@@ -49,6 +49,13 @@ Tomcat
 Tomcat8
 Nginx
 QNginx
+Caddy
+
+#databases
+QMongoDB
+QMariaDB
+CubeSQL
+PimCore
 
 # media servers
 Plex
