@@ -1,3 +1,6 @@
+* Minor update: (180612)
+- Added [PostgreSQL QPostgreSQL] to the ALPHA list.
+
 * Minor update: (180606)
 - Added new databases section with [QMongoDB QMariaDB CubeSQL PimCore] to the ALPHA list.
 - Added [Caddy] to the ALPHA list.
