@@ -1,7 +1,6 @@
-# QNAP's own
+# QNAP packages
 update_qpkg_conf
-Qsirch              # load before Qfiling
-NVIDIA_GPU_DRV      # load before HD Station & Linux Station
+NVIDIA_GPU_DRV      # load before HD_Station & linux-station
 
 # high-level language interpreters
 Python
@@ -72,3 +71,6 @@ QSubSonic
 # VPN
 QVPN
 VyprVPN
+
+# QNAP packages
+Qsirch              # load after JRE and before Qfiling

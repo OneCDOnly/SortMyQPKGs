@@ -1,3 +1,6 @@
+* Minor update: (180615)
+- Moved [Qsirch] to load after [JRE] in the ALPHA list.
+
 * Minor update: (180612)
 - Added [PostgreSQL QPostgreSQL] to the ALPHA list.
 
