@@ -1,3 +1,8 @@
+* Minor update: (180617)
+- Added [HybridBackup] to the ALPHA list.
+- Added [HappyGet2] to the OMEGA list.
+- Moved [linux-station] to load after [container-station] in the ALPHA list.
+
 * Minor update: (180615)
 - Moved [Qsirch] to load after [JRE] in the ALPHA list.
 
