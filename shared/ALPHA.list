@@ -18,14 +18,14 @@ ruby
 QRuby
 Go
 
-# package installers
+# package managers
 Optware
 Optware-NG
 Entware-ng
 Entware-3x
 Entware
 
-# project development
+# version control systems
 git
 QGit
 
@@ -50,13 +50,14 @@ Nginx
 QNginx
 Caddy
 
-#databases
+# databases
 QMongoDB
 QMariaDB
 CubeSQL
 PimCore
 PostgreSQL
 QPostgreSQL
+InfluxDB            # load before Chronograf
 
 # media servers
 Plex
@@ -68,9 +69,11 @@ AirSonic
 QMadSonic
 QSubSonic
 
-# VPN
+# VPN               # load all these before DownloadStation
 QVPN
+QOpenVPN
 VyprVPN
+TincVPN
 
 # assorted QNAP packages
 Qsirch              # load after JRE and before Qfiling

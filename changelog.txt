@@ -1,3 +1,7 @@
+* Minor update: (180620)
+- Added [InfluxDB QOpenVPN TincVPN] to the ALPHA list.
+- Moved [QHeadPhones] to load after [Headphones] in the OMEGA list.
+
 * Minor update: (180617)
 - Added [HybridBackup] to the ALPHA list.
 - Added [HappyGet2] to the OMEGA list.
