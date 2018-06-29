@@ -6,6 +6,10 @@ QSabNZBdPlus
 # torrent downloaders
 Transmission
 QTransmission
+Deluge
+QBittorrent
+QBittorrent4
+rtorrent
 
 # searchers
 QSonarr

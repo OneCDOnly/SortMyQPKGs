@@ -1,3 +1,7 @@
+* Minor update: (180630)
+- Added new 'multimedia tools' section with [ffmpeg Qffmpeg] to the ALPHA list.
+- Added [Deluge QBittorrent QBittorrent4 rtorrent] to the OMEGA list.
+
 * Minor update: (180620)
 - Added [InfluxDB QOpenVPN TincVPN] to the ALPHA list.
 - Moved [QHeadPhones] to load after [Headphones] in the OMEGA list.
@@ -14,7 +18,7 @@
 - Added [PostgreSQL QPostgreSQL] to the ALPHA list.
 
 * Minor update: (180606)
-- Added new databases section with [QMongoDB QMariaDB CubeSQL PimCore] to the ALPHA list.
+- Added new 'databases' section with [QMongoDB QMariaDB CubeSQL PimCore] to the ALPHA list.
 - Added [Caddy] to the ALPHA list.
 - Added [Lidarr] to the OMEGA list.
 

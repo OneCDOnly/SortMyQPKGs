@@ -59,6 +59,10 @@ PostgreSQL
 QPostgreSQL
 InfluxDB            # load before Chronograf
 
+# multimedia tools
+ffmpeg
+Qffmpeg
+
 # media servers
 Plex
 PlexMediaServer
