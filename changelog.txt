@@ -1,3 +1,6 @@
+* Minor update: (180706)
+- Added [QJDK10] to the ALPHA list.
+
 * Minor update: (180630)
 - Added new 'multimedia tools' section with [ffmpeg Qffmpeg] to the ALPHA list.
 - Added [Deluge QBittorrent QBittorrent4 rtorrent] to the OMEGA list.

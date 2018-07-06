@@ -37,6 +37,7 @@ JRE
 QJDK7
 QJDK8
 QJDK9
+QJDK10
 QVS                 # 'Virtualization Station'
 HD_Station          # note: 'HD Station' or 'Linux Station' - only one can be enabled at any time
 container-station
