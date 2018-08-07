@@ -3,7 +3,7 @@ Optware
 Optware-NG
 Entware-ng
 Entware-3x
-Entware				# load before NVIDIA_GPU_DRV - affects Resource Monitor metrics if loaded after
+Entware             # load before NVIDIA_GPU_DRV - affects Resource Monitor metrics if loaded after
 
 # assorted QNAP packages
 update_qpkg_conf
