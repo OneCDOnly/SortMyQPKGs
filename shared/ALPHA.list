@@ -33,6 +33,7 @@ QGit
 Mono
 Qmono
 DotNET
+DotNETSDK
 JRE
 QJDK7
 QJDK8
@@ -59,6 +60,7 @@ PimCore
 PostgreSQL
 QPostgreSQL
 InfluxDB            # load before Chronograf
+firebird
 
 # multimedia tools
 ffmpeg

@@ -1,5 +1,8 @@
+* Minor update: (180909)
+- Added [DotNETSDK firebird] to the ALPHA list.
+
 * Minor update: (180808)
-- Moved package managers group ahead of [NVIDIA_GPU_DRV] in the ALPHA list.
+- Moved 'package managers' section ahead of [NVIDIA_GPU_DRV] in the ALPHA list.
 
 * Minor update: (180706)
 - Added [QJDK10] to the ALPHA list.
