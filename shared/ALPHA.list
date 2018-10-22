@@ -61,6 +61,7 @@ PostgreSQL
 QPostgreSQL
 InfluxDB            # load before Chronograf
 firebird
+Neo4J
 
 # multimedia tools
 ffmpeg
@@ -81,6 +82,7 @@ QVPN
 QOpenVPN
 VyprVPN
 TincVPN
+WireGuard
 
 # assorted QNAP packages
 Qsirch              # load after JRE and before Qfiling

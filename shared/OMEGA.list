@@ -12,7 +12,9 @@ QBittorrent4
 rtorrent
 
 # searchers
+SonarrTrackTV       # load before QSonarr
 QSonarr
+QSonarr3
 Radarr
 SickBeard
 QSickBeard
@@ -20,6 +22,8 @@ SickBeard-TVRage
 SickRage
 QSickRage
 SickGear
+SickChill
+QSickChill
 Medusa
 OMedusa
 Headphones

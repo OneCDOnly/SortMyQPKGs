@@ -1,3 +1,7 @@
+* Minor update: (181022)
+- Added [Neo4J WireGuard] to the ALPHA list.
+- Added [SonarrTrackTV QSonarr3 SickChill QSickChill] to the OMEGA list.
+
 * Minor update: (180909)
 - Added [DotNETSDK firebird] to the ALPHA list.
 
