@@ -34,24 +34,45 @@ Init()
     [[ ! -e $SHUTDOWN_PATHFILE ]] && { echo "file not found [$SHUTDOWN_PATHFILE]"; exit 1 ;}
 
     local QPKG_PATH="$(getcfg $THIS_QPKG_NAME Install_Path -f "$CONFIG_PATHFILE")"
-    local ALPHA_PATHFILE="${QPKG_PATH}/ALPHA.list"
-    local OMEGA_PATHFILE="${QPKG_PATH}/OMEGA.list"
+    local ALPHA_PATHFILE_DEFAULT="${QPKG_PATH}/ALPHA.default"
+    local OMEGA_PATHFILE_DEFAULT="${QPKG_PATH}/OMEGA.default"
+    local ALPHA_PATHFILE_CUSTOM="${QPKG_PATH}/ALPHA.custom"
+    local OMEGA_PATHFILE_CUSTOM="${QPKG_PATH}/OMEGA.custom"
+    local ALPHA_PATHFILE_ACTUAL=''
+    local OMEGA_PATHFILE_ACTUAL=''
     REAL_LOG_PATHFILE="${QPKG_PATH}/${THIS_QPKG_NAME}.log"
     TEMP_LOG_PATHFILE="${QPKG_PATH}/${THIS_QPKG_NAME}.log.tmp"
     GUI_LOG_PATHFILE="/home/httpd/${THIS_QPKG_NAME}.log"
+
     [[ ! -e $REAL_LOG_PATHFILE ]] && touch "$REAL_LOG_PATHFILE"
     [[ -e $TEMP_LOG_PATHFILE ]] && rm -f "$TEMP_LOG_PATHFILE"
     [[ ! -L $GUI_LOG_PATHFILE ]] && ln -s "$REAL_LOG_PATHFILE" "$GUI_LOG_PATHFILE"
-    [[ ! -e $ALPHA_PATHFILE ]] && { echo "file not found [$ALPHA_PATHFILE]"; exit 1 ;}
-    [[ ! -e $OMEGA_PATHFILE ]] && { echo "file not found [$OMEGA_PATHFILE]"; exit 1 ;}
+    [[ ! -e $ALPHA_PATHFILE_DEFAULT && ! -e $ALPHA_PATHFILE_CUSTOM ]] && { echo "ALPHA package list file not found"; exit 1 ;}
+    [[ ! -e $OMEGA_PATHFILE_DEFAULT && ! -e $OMEGA_PATHFILE_CUSTOM ]] && { echo "OMEGA package list file not found"; exit 1 ;}
+
+    if [[ -e $ALPHA_PATHFILE_CUSTOM ]]; then
+        ALPHA_PATHFILE_ACTUAL=$ALPHA_PATHFILE_CUSTOM
+        alpha_source=custom
+    else
+        ALPHA_PATHFILE_ACTUAL=$ALPHA_PATHFILE_DEFAULT
+        alpha_source=default
+    fi
+
+    if [[ -e $OMEGA_PATHFILE_CUSTOM ]]; then
+        OMEGA_PATHFILE_ACTUAL=$OMEGA_PATHFILE_CUSTOM
+        omega_source=custom
+    else
+        OMEGA_PATHFILE_ACTUAL=$OMEGA_PATHFILE_DEFAULT
+        omega_source=default
+    fi
 
     while read -r package_ref comment; do
         [[ -n $package_ref && $package_ref != \#* ]] && PKGS_ALPHA_ORDERED+=($package_ref)
-    done < "$ALPHA_PATHFILE"
+    done < "$ALPHA_PATHFILE_ACTUAL"
 
     while read -r package_ref comment; do
         [[ -n $package_ref && $package_ref != \#* ]] && PKGS_OMEGA_ORDERED+=($package_ref)
-    done < "$OMEGA_PATHFILE"
+    done < "$OMEGA_PATHFILE_ACTUAL"
 
     PKGS_OMEGA_ORDERED+=($THIS_QPKG_NAME)
 
@@ -60,7 +81,7 @@ Init()
 ShowPreferredList()
     {
 
-    ShowSectionTitle 'Preferred QPKG order'
+    ShowSectionTitle "Preferred QPKG order (ALPHA=$alpha_source, OMEGA=$omega_source)"
     echo -e "< matching installed packages are indicated with '#' >\n"
     ShowListsMarked
 
@@ -85,7 +106,7 @@ ShowPackagesCurrent()
 ShowPackagesAfter()
     {
 
-    ShowSectionTitle 'New QPKG order'
+    ShowSectionTitle "New QPKG order (ALPHA=$alpha_source, OMEGA=$omega_source)"
     ShowPackagesUnmarked
 
     }
@@ -359,7 +380,7 @@ ShowSectionTitle()
 CommitLog()
     {
 
-    echo -e "$(<$TEMP_LOG_PATHFILE)\n\n$(<$REAL_LOG_PATHFILE)" > "$REAL_LOG_PATHFILE"
+    echo -e "$(<$TEMP_LOG_PATHFILE)\n$(<$REAL_LOG_PATHFILE)" > "$REAL_LOG_PATHFILE"
 
     TrimLog
 
@@ -418,7 +439,7 @@ case "$1" in
         ;;
     pref)
         ShowPreferredList
-        echo
+        echo -e "\n Launch with '$0 fix' to re-order packages.\n"
         ;;
     init|stop|restart)
         # do nothing
