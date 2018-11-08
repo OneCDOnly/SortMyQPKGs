@@ -1,3 +1,7 @@
+* Minor update: (181109)
+- Prefer custom package lists if found. [ALPHA.custom] will be used in place of [ALPHA.default], same for OMEGA.
+- Include 'completed' after each logged operation.
+
 * Minor update: (181022)
 - Added [Neo4J WireGuard] to the ALPHA list.
 - Added [SonarrTrackTV QSonarr3 SickChill QSickChill] to the OMEGA list.
