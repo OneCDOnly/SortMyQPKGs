@@ -318,7 +318,7 @@ ShowLineMarked()
 
     }
 
-RecordOperation()
+RecordOperationRequest()
     {
 
     # $1 = operation
@@ -334,12 +334,34 @@ RecordOperation()
 
     }
 
+RecordOperationComplete()
+    {
+
+    # $1 = operation
+
+    local buffer="\n[$(date)] '$1' completed"
+
+    echo -e "$buffer" >> "$TEMP_LOG_PATHFILE"
+
+    LogWrite "'$1' completed" 0
+
+    }
+
 ShowSectionTitle()
     {
 
     # $1 = description
 
     echo -e "\n * $1 *"
+
+    }
+
+CommitLog()
+    {
+
+    echo -e "$(<$TEMP_LOG_PATHFILE)\n\n$(<$REAL_LOG_PATHFILE)" > "$REAL_LOG_PATHFILE"
+
+    TrimLog
 
     }
 
@@ -366,8 +388,9 @@ case "$1" in
             sed -i "s|$findtext|$inserttext\n$findtext|" "$SHUTDOWN_PATHFILE"
         fi
         if [[ $1 = install ]]; then
-            RecordOperation "$1"
-            echo -e "$(<$TEMP_LOG_PATHFILE)\n\n$(<$REAL_LOG_PATHFILE)" > "$REAL_LOG_PATHFILE"
+            RecordOperationRequest "$1"
+            RecordOperationComplete "$1"
+            CommitLog
         fi
         ;;
     remove)
@@ -375,22 +398,22 @@ case "$1" in
         [[ -L $GUI_LOG_PATHFILE ]] && rm -f "$GUI_LOG_PATHFILE"
         ;;
     autofix)
-        RecordOperation "$1"
+        RecordOperationRequest "$1"
         Upshift "$CONFIG_PATHFILE"
         ShowPackagesBefore >> "$TEMP_LOG_PATHFILE"
         SortPackages
         ShowPackagesAfter >> "$TEMP_LOG_PATHFILE"
-        echo -e "$(<$TEMP_LOG_PATHFILE)\n\n$(<$REAL_LOG_PATHFILE)" > "$REAL_LOG_PATHFILE"
-        TrimLog
+        RecordOperationComplete "$1"
+        CommitLog
         ;;
     fix)
-        RecordOperation "$1"
+        RecordOperationRequest "$1"
         Upshift "$CONFIG_PATHFILE"
         ShowPackagesBefore | tee -a "$TEMP_LOG_PATHFILE"
         SortPackages
         ShowPackagesAfter | tee -a "$TEMP_LOG_PATHFILE"
-        echo -e "$(<$TEMP_LOG_PATHFILE)\n\n$(<$REAL_LOG_PATHFILE)" > "$REAL_LOG_PATHFILE"
-        TrimLog
+        RecordOperationComplete "$1"
+        CommitLog
         echo -e "\n ! NOTE: you must restart your NAS to load the QPKGs in this order.\n"
         ;;
     pref)
