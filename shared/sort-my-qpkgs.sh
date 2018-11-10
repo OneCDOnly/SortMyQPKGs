@@ -26,9 +26,9 @@
 Init()
     {
 
-    THIS_QPKG_NAME='SortMyQPKGs'
-    CONFIG_PATHFILE='/etc/config/qpkg.conf'
-    SHUTDOWN_PATHFILE='/etc/init.d/shutdown_check.sh'
+    THIS_QPKG_NAME=SortMyQPKGs
+    CONFIG_PATHFILE=/etc/config/qpkg.conf
+    SHUTDOWN_PATHFILE=/etc/init.d/shutdown_check.sh
 
     [[ ! -e $CONFIG_PATHFILE ]] && { echo "file not found [$CONFIG_PATHFILE]"; exit 1 ;}
     [[ ! -e $SHUTDOWN_PATHFILE ]] && { echo "file not found [$SHUTDOWN_PATHFILE]"; exit 1 ;}
@@ -47,23 +47,27 @@ Init()
     [[ ! -e $REAL_LOG_PATHFILE ]] && touch "$REAL_LOG_PATHFILE"
     [[ -e $TEMP_LOG_PATHFILE ]] && rm -f "$TEMP_LOG_PATHFILE"
     [[ ! -L $GUI_LOG_PATHFILE ]] && ln -s "$REAL_LOG_PATHFILE" "$GUI_LOG_PATHFILE"
-    [[ ! -e $ALPHA_PATHFILE_DEFAULT && ! -e $ALPHA_PATHFILE_CUSTOM ]] && { echo "ALPHA package list file not found"; exit 1 ;}
-    [[ ! -e $OMEGA_PATHFILE_DEFAULT && ! -e $OMEGA_PATHFILE_CUSTOM ]] && { echo "OMEGA package list file not found"; exit 1 ;}
 
     if [[ -e $ALPHA_PATHFILE_CUSTOM ]]; then
         ALPHA_PATHFILE_ACTUAL=$ALPHA_PATHFILE_CUSTOM
         alpha_source=custom
-    else
+    elif [[ -e $ALPHA_PATHFILE_DEFAULT ]]; then
         ALPHA_PATHFILE_ACTUAL=$ALPHA_PATHFILE_DEFAULT
         alpha_source=default
+    else
+        echo "ALPHA package list file not found"
+        exit 1
     fi
 
     if [[ -e $OMEGA_PATHFILE_CUSTOM ]]; then
         OMEGA_PATHFILE_ACTUAL=$OMEGA_PATHFILE_CUSTOM
         omega_source=custom
-    else
+    elif [[ -e $OMEGA_PATHFILE_DEFAULT ]]; then
         OMEGA_PATHFILE_ACTUAL=$OMEGA_PATHFILE_DEFAULT
         omega_source=default
+    else
+        echo "OMEGA package list file not found"
+        exit 1
     fi
 
     while read -r package_ref comment; do
