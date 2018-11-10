@@ -1,3 +1,6 @@
+* Minor update: (181111)
+- Added [MySQL8 Brook] to the ALPHA list.
+
 * Minor update: (181109)
 - Prefer custom package lists if found. [ALPHA.custom] will be used in place of [ALPHA.default], same for OMEGA.
 - Include 'completed' after each logged operation.

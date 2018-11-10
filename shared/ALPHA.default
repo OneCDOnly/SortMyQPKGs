@@ -59,6 +59,7 @@ CubeSQL
 PimCore
 PostgreSQL
 QPostgreSQL
+MySQL8
 InfluxDB            # load before Chronograf
 firebird
 Neo4J
@@ -83,6 +84,7 @@ QOpenVPN
 VyprVPN
 TincVPN
 WireGuard
+Brook
 
 # assorted QNAP packages
 Qsirch              # load after JRE and before Qfiling
