@@ -1,3 +1,8 @@
+* Minor update: (181113)
+- Added [netmgr] to the ALPHA list.
+- Small processing speed improvements.
+- Shorter log messages.
+
 * Minor update: (181111)
 - Added [MySQL8 Brook] to the ALPHA list.
 

@@ -29,6 +29,7 @@ Init()
     THIS_QPKG_NAME=SortMyQPKGs
     CONFIG_PATHFILE=/etc/config/qpkg.conf
     SHUTDOWN_PATHFILE=/etc/init.d/shutdown_check.sh
+    LC_ALL=C
 
     [[ ! -e $CONFIG_PATHFILE ]] && { echo "file not found [$CONFIG_PATHFILE]"; exit 1 ;}
     [[ ! -e $SHUTDOWN_PATHFILE ]] && { echo "file not found [$SHUTDOWN_PATHFILE]"; exit 1 ;}
@@ -41,7 +42,7 @@ Init()
     local ALPHA_PATHFILE_ACTUAL=''
     local OMEGA_PATHFILE_ACTUAL=''
     REAL_LOG_PATHFILE="${QPKG_PATH}/${THIS_QPKG_NAME}.log"
-    TEMP_LOG_PATHFILE="${QPKG_PATH}/${THIS_QPKG_NAME}.log.tmp"
+    TEMP_LOG_PATHFILE="${REAL_LOG_PATHFILE}.tmp"
     GUI_LOG_PATHFILE="/home/httpd/${THIS_QPKG_NAME}.log"
 
     [[ ! -e $REAL_LOG_PATHFILE ]] && touch "$REAL_LOG_PATHFILE"
@@ -85,7 +86,7 @@ Init()
 ShowPreferredList()
     {
 
-    ShowSectionTitle "Preferred QPKG order (ALPHA=$alpha_source, OMEGA=$omega_source)"
+    ShowSectionTitle "Preferred order (ALPHA=$alpha_source, OMEGA=$omega_source)"
     echo -e "< matching installed packages are indicated with '#' >\n"
     ShowListsMarked
 
@@ -94,7 +95,7 @@ ShowPreferredList()
 ShowPackagesBefore()
     {
 
-    ShowSectionTitle 'Original QPKG order'
+    ShowSectionTitle 'Original order'
     ShowPackagesUnmarked
 
     }
@@ -102,7 +103,7 @@ ShowPackagesBefore()
 ShowPackagesCurrent()
     {
 
-    ShowSectionTitle 'Existing QPKG order'
+    ShowSectionTitle 'Existing order'
     ShowPackagesUnmarked
 
     }
@@ -110,7 +111,7 @@ ShowPackagesCurrent()
 ShowPackagesAfter()
     {
 
-    ShowSectionTitle "New QPKG order (ALPHA=$alpha_source, OMEGA=$omega_source)"
+    ShowSectionTitle "New order (ALPHA=$alpha_source, OMEGA=$omega_source)"
     ShowPackagesUnmarked
 
     }
@@ -141,30 +142,6 @@ ShowListsMarked()
         else
             ShowLineUnmarked "$fmtacc" 'Ω' "$pref"
         fi
-    done
-
-    }
-
-ShowPackagesMarked()
-    {
-
-    local acc=0
-    local fmtacc=''
-    local buffer=''
-
-    for label in $(grep '^\[' $CONFIG_PATHFILE); do
-        ((acc++)); package=${label//[\[\]]}; fmtacc="$(printf "%02d\n" $acc)"
-        buffer=$(ShowLineUnmarked "$fmtacc" 'Φ' "$package")
-
-        for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
-            [[ $package = $pref ]] && { buffer=$(ShowLineMarked "$fmtacc" 'A' "$package"); break ;}
-        done
-
-        for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
-            [[ $package = $pref ]] && { buffer=$(ShowLineMarked "$fmtacc" 'Ω' "$package"); break ;}
-        done
-
-        echo -e "$buffer"
     done
 
     }
@@ -439,7 +416,7 @@ case "$1" in
         ShowPackagesAfter | tee -a "$TEMP_LOG_PATHFILE"
         RecordOperationComplete "$1"
         CommitLog
-        echo -e "\n ! NOTE: you must restart your NAS to load the QPKGs in this order.\n"
+        echo -e "\n Packages will be loaded in this order during next boot-up.\n"
         ;;
     pref)
         ShowPreferredList
