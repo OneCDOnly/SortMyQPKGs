@@ -40,6 +40,7 @@ QJDK7
 QJDK8
 QJDK9
 QJDK10
+QJDK11
 QVS                 # 'Virtualization Station'
 HD_Station          # note: 'HD Station' or 'Linux Station' - only one can be enabled at any time
 container-station
@@ -72,6 +73,7 @@ Qffmpeg
 # media servers
 Plex
 PlexMediaServer
+PlexPlayer
 Phlex
 Emby
 EmbyServer
@@ -86,6 +88,7 @@ VyprVPN
 TincVPN
 WireGuard
 Brook
+Windscribe
 
 # assorted QNAP packages
 Qsirch              # load after JRE and before Qfiling

@@ -40,3 +40,6 @@ Lidarr
 # assorted QNAP packages
 HappyGet2           # load after MusicStation & Python3
 SurveillanceStation # load last due to long startup time
+
+# only run after everything else...
+RunLast

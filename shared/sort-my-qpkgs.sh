@@ -86,7 +86,7 @@ Init()
 ShowPreferredList()
     {
 
-    ShowSectionTitle "Preferred order (ALPHA=$alpha_source, OMEGA=$omega_source)"
+    ShowSectionTitle 'Preferred order'
     echo -e "< matching installed packages are indicated with '#' >\n"
     ShowListsMarked
 
@@ -111,7 +111,7 @@ ShowPackagesCurrent()
 ShowPackagesAfter()
     {
 
-    ShowSectionTitle "New order (ALPHA=$alpha_source, OMEGA=$omega_source)"
+    ShowSectionTitle 'New order'
     ShowPackagesUnmarked
 
     }
@@ -167,6 +167,13 @@ ShowPackagesUnmarked()
 
         echo -e "$buffer"
     done
+
+    }
+
+ShowSources()
+    {
+
+    echo "ALPHA=$alpha_source, OMEGA=$omega_source"
 
     }
 
@@ -401,6 +408,7 @@ case "$1" in
         ;;
     autofix)
         RecordOperationRequest "$1"
+        ShowSources >> "$TEMP_LOG_PATHFILE"
         Upshift "$CONFIG_PATHFILE"
         ShowPackagesBefore >> "$TEMP_LOG_PATHFILE"
         SortPackages
@@ -410,6 +418,7 @@ case "$1" in
         ;;
     fix)
         RecordOperationRequest "$1"
+        ShowSources | tee -a "$TEMP_LOG_PATHFILE"
         Upshift "$CONFIG_PATHFILE"
         ShowPackagesBefore | tee -a "$TEMP_LOG_PATHFILE"
         SortPackages
@@ -419,6 +428,7 @@ case "$1" in
         echo -e "\n Packages will be loaded in this order during next boot-up.\n"
         ;;
     pref)
+        ShowSources
         ShowPreferredList
         echo -e "\n Launch with '$0 fix' to re-order packages.\n"
         ;;
@@ -427,7 +437,8 @@ case "$1" in
         sleep 1
         ;;
     *)
-        echo -e "\n Usage: $0 {fix|pref}"
+        echo -e "\n Usage: $0 {fix|pref}\n"
+        ShowSources
         ShowPackagesCurrent
         echo -e "\n Launch with '$0 fix' to re-order packages.\n"
         ;;
