@@ -16,6 +16,7 @@ SonarrTrackTV       # load before QSonarr
 QSonarr
 QSonarr3
 Radarr
+QBazarr             # load after Sonarr & Radarr
 SickBeard
 QSickBeard
 SickBeard-TVRage
@@ -33,6 +34,7 @@ MovieGrabber
 CouchPotato2
 QCouchPotato
 Watcher3
+OWatcher3
 Ombi
 Ombi3
 Lidarr

@@ -1,3 +1,7 @@
+* Minor update: (190205)
+- Added [HideThatBanner] to the ALPHA list.
+- Added [QBazarr OWatcher3] to the OMEGA list.
+
 * Minor update: (181217)
 - Added [QJDK11 PlexPlayer Windscribe] to the ALPHA list.
 - Added [RunLast] to the OMEGA list.

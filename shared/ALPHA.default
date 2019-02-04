@@ -1,3 +1,6 @@
+# assorted packages
+HideThatBanner      # load early in case user opens App Center immediately after bootup
+
 # package managers
 Optware
 Optware-NG
@@ -5,7 +8,7 @@ Entware-ng
 Entware-3x
 Entware             # load before NVIDIA_GPU_DRV - affects Resource Monitor metrics if loaded after
 
-# assorted QNAP packages
+# assorted packages
 update_qpkg_conf
 NVIDIA_GPU_DRV      # load before HD_Station & linux-station
 netmgr              # 'Network & Virtual Switch'

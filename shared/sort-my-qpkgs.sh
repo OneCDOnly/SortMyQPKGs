@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ############################################################################
-# sort-my-qpkgs.sh - (C)opyright 2017-2018 OneCD [one.cd.only@gmail.com]
+# sort-my-qpkgs.sh - (C)opyright 2017-2019 OneCD [one.cd.only@gmail.com]
 #
 # This script is part of the 'SortMyQPKGs' package
 #
@@ -179,9 +179,6 @@ ShowSources()
 
 SortPackages()
     {
-
-    # cruft: remove previous backup system files. This code can be removed once no-one is using sort-my-qpkgs.sh version earlier than 171207.
-    rm -f "$CONFIG_PATHFILE".prev*
 
     # read 'ALPHA' packages in reverse and prepend each to qpkg.conf
     for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
