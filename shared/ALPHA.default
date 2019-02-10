@@ -64,6 +64,7 @@ CubeSQL
 PimCore
 PostgreSQL
 QPostgreSQL
+PostgreSQLPremium   # load after Qapache
 MySQL8
 InfluxDB            # load before Chronograf
 firebird

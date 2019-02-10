@@ -1,3 +1,7 @@
+* Minor update: (190211)
+- Added [PostgreSQLPremium] to the ALPHA list.
+- minor code cleanup - no changes to functionality.
+
 * Minor update: (190205)
 - Added [HideThatBanner] to the ALPHA list.
 - Added [QBazarr OWatcher3] to the OMEGA list.
