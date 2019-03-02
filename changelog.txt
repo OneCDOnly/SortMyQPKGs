@@ -1,3 +1,6 @@
+* Minor update: (190303)
+- Added [MediaInfoCLI MediaInfoShared pmp] to the ALPHA list.
+
 * Minor update: (190211)
 - Added [PostgreSQLPremium] to the ALPHA list.
 - minor code cleanup - no changes to functionality.
