@@ -1,5 +1,5 @@
 * Minor update: (190303)
-- Added [MediaInfoCLI MediaInfoShared pmp] to the ALPHA list.
+- Added [MediaInfoCLI, MediaInfoShared, pmp] to the ALPHA list.
 
 * Minor update: (190211)
 - Added [PostgreSQLPremium] to the ALPHA list.
@@ -7,10 +7,10 @@
 
 * Minor update: (190205)
 - Added [HideThatBanner] to the ALPHA list.
-- Added [QBazarr OWatcher3] to the OMEGA list.
+- Added [QBazarr, OWatcher3] to the OMEGA list.
 
 * Minor update: (181217)
-- Added [QJDK11 PlexPlayer Windscribe] to the ALPHA list.
+- Added [QJDK11, PlexPlayer, Windscribe] to the ALPHA list.
 - Added [RunLast] to the OMEGA list.
 - Move source list display location.
 
@@ -20,18 +20,18 @@
 - Shorter log messages.
 
 * Minor update: (181111)
-- Added [MySQL8 Brook] to the ALPHA list.
+- Added [MySQL8, Brook] to the ALPHA list.
 
 * Minor update: (181109)
 - Prefer custom package lists if found. [ALPHA.custom] will be used in place of [ALPHA.default], same for OMEGA.
 - Include 'completed' after each logged operation.
 
 * Minor update: (181022)
-- Added [Neo4J WireGuard] to the ALPHA list.
-- Added [SonarrTrackTV QSonarr3 SickChill QSickChill] to the OMEGA list.
+- Added [Neo4J, WireGuard] to the ALPHA list.
+- Added [SonarrTrackTV, QSonarr3, SickChill, QSickChill] to the OMEGA list.
 
 * Minor update: (180909)
-- Added [DotNETSDK firebird] to the ALPHA list.
+- Added [DotNETSDK, firebird] to the ALPHA list.
 
 * Minor update: (180808)
 - Moved 'package managers' section ahead of [NVIDIA_GPU_DRV] in the ALPHA list.
@@ -40,11 +40,11 @@
 - Added [QJDK10] to the ALPHA list.
 
 * Minor update: (180630)
-- Added new 'multimedia tools' section with [ffmpeg Qffmpeg] to the ALPHA list.
-- Added [Deluge QBittorrent QBittorrent4 rtorrent] to the OMEGA list.
+- Added new 'multimedia tools' section with [ffmpeg, Qffmpeg] to the ALPHA list.
+- Added [Deluge, QBittorrent, QBittorrent4, rtorrent] to the OMEGA list.
 
 * Minor update: (180620)
-- Added [InfluxDB QOpenVPN TincVPN] to the ALPHA list.
+- Added [InfluxDB, QOpenVPN, TincVPN] to the ALPHA list.
 - Moved [QHeadPhones] to load after [Headphones] in the OMEGA list.
 
 * Minor update: (180617)
@@ -56,7 +56,7 @@
 - Moved [Qsirch] to load after [JRE] in the ALPHA list.
 
 * Minor update: (180612)
-- Added [PostgreSQL QPostgreSQL] to the ALPHA list.
+- Added [PostgreSQL, QPostgreSQL] to the ALPHA list.
 
 * Minor update: (180606)
 - Added new 'databases' section with [QMongoDB QMariaDB CubeSQL PimCore] to the ALPHA list.
@@ -64,14 +64,14 @@
 - Added [Lidarr] to the OMEGA list.
 
 * Minor update: (180422)
-- Added [Qsirch NVIDIA_GPU_DRV nodejsv6 nodejsv8 QVS linux-station] to the ALPHA list.
+- Added [Qsirch, NVIDIA_GPU_DRV, nodejsv6, nodejsv8, QVS, linux-station] to the ALPHA list.
 
 * Minor update: (180320)
 - Added [Entware] to the ALPHA list.
 
 ** Major update: (180224)
 - Will not perform a sort when installing or updating this package. If another package is updated or installed at the same time, this could create a corrupt [qpkg.conf] file. To mitigate this risk, SortMyQPKGs will now only sort on shutdown, or when manually requested at the CLI.
-- Added [AirSonic QMadSonic] to the ALPHA list.
+- Added [AirSonic, QMadSonic] to the ALPHA list.
 
 * Minor update: (180221)
 - Removed [DownloadStation] from the ALPHA list.
@@ -85,28 +85,28 @@
 - Added [QJDK9] to the ALPHA list.
 
 * Minor update: (180116)
-- Added [Medusa Mylar] to the OMEGA list.
+- Added [Medusa, Mylar] to the OMEGA list.
 - Moved torrent downloaders ahead of search apps.
 
 * Minor update: (180110)
 - Includes input file list processing which allows for new features like line comments, comment lines and empty lines.
 - Included list group headers for ALPHA & OMEGA.
-- Slight reshuffle to group [HD_Station] with other virtual environments. Moved [nodejs nodejsv4 NodeJS ruby QRuby Go] to load before package installers.
+- Slight reshuffle to group [HD_Station] with other virtual environments. Moved [nodejs, nodejsv4, NodeJS, ruby, QRuby, Go] to load before package installers.
 - Record sort operations into NAS system log.
 
 * Minor update: (180107)
-- Added [QVPN VyprVPN] to the ALPHA list.
-- Added [QHeadPhones Transmission QTransmission] to the OMEGA list.
+- Added [QVPN, VyprVPN] to the ALPHA list.
+- Added [QHeadPhones, Transmission, QTransmission] to the OMEGA list.
 
 * Minor update: (180105)
-- Added [git Nginx PlexMediaServer] to the ALPHA list.
+- Added [git, Nginx, PlexMediaServer] to the ALPHA list.
 - Log is now trimmed so only the last 10 operations are kept. This will only work with recent SortMyQPKGs builds, but once a recent build has executed 10 times, log should look fine.
 - Record package script version in log operations.
 - Added a nice separator line to the beginning of each operation.
 - Removed '#' char mark from display. We can already see which list a package belongs to.
 
 * Minor update: (180104.1)
-- Moved [SABnzbd QSabNZBdPlus] ahead of [Sonarr], so Sonarr can find an operational downloader as it starts.
+- Moved [SABnzbd, QSabNZBdPlus] ahead of [Sonarr], so Sonarr can find an operational downloader as it starts.
 
 * Minor update: (180104)
 - Sort operations will now be prepended to the log (instead of appended), so the most recent will be shown first in the web GUI. This means the log will look a little bit odd for a while.
@@ -120,10 +120,10 @@
 - Shifted the ALPHA and OMEGA lists into external files.
 
 * Minor update: (171224)
-- Added [NodeJS QRuby Go Phlex HD_Station] to the ALPHA list.
-- Moved [QNginx ruby] within the ALPHA list.
-- Removed [Par2 Par2cmdline-MT] from the ALPHA list.
-- Added [QSabNZBdPlus QSickBeard QSickRage MovieGrabber CouchPotato2 QCouchPotato Watcher3 Ombi Ombi3] to the OMEGA list.
+- Added [NodeJS, QRuby, Go, Phlex, HD_Station] to the ALPHA list.
+- Moved [QNginx, ruby] within the ALPHA list.
+- Removed [Par2, Par2cmdline-MT] from the ALPHA list.
+- Added [QSabNZBdPlus, QSickBeard, QSickRage, MovieGrabber, CouchPotato2, QCouchPotato, Watcher3, Ombi, Ombi3] to the OMEGA list.
 
 ** Major update: (171220)
 - New package name! I've changed the package name from 'sort-my-qpkgs' to 'SortMyQPKGs'. Because the name has changed, your NAS should see this as a completely different package. This means all existing installations with the old name should be manually uninstalled, then the new package installed in it's place. Apologies - I chose to use the script name as the package name when creating the QPKG some time back, and I've regretted it ever since. This change finally corrects this error.
@@ -137,7 +137,7 @@
 - Fixed package finder so it only sees lines starting with '[' as a package name.
 
 * Minor update: (171115)
-- Added [Emby EmbyServer] to the ALPHA list.
+- Added [Emby, EmbyServer] to the ALPHA list.
 
 * Minor update: (171022)
 - Created this project on GitHub.
