@@ -1,3 +1,6 @@
+* Minor update: (190417)
+- Added [Apache73, XTeve] to the ALPHA list.
+
 * Minor update: (190303)
 - Added [MediaInfoCLI, MediaInfoShared, pmp] to the ALPHA list.
 
