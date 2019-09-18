@@ -1,3 +1,7 @@
+# malware detection and removal
+MalwareRemover
+MCAFEE_QNAP
+
 # assorted packages
 HideThatBanner      # load early in case user opens App Center immediately after bootup
 
@@ -10,6 +14,7 @@ Entware             # load before NVIDIA_GPU_DRV - affects Resource Monitor metr
 
 # assorted packages
 update_qpkg_conf
+NvKernelDriver      # load before NVIDIA_GPU_DRV
 NVIDIA_GPU_DRV      # load before HD_Station & linux-station
 netmgr              # 'Network & Virtual Switch'
 
@@ -76,6 +81,9 @@ ffmpeg              # load before FileBot
 Qffmpeg             # load before FileBot
 MediaInfoShared     # load before FileBot
 MediaInfoCLI
+MultimediaConsole   # * this item is untested *
+QuMagieCore         # load after container-station and MultimediaConsole
+qumagie             # load after QuMagieCore
 
 # media servers
 XTeve

@@ -1,3 +1,7 @@
+* Minor update: (190919)
+- Added new 'malware detection and removal' section with [MalwareRemover, MCAFEE_QNAP] to the ALPHA list.
+- Added [NvKernelDriver, MultimediaConsole,QuMagieCore, qumagie] to the ALPHA list.
+
 * Minor update: (190417)
 - Added [Apache73, XTeve] to the ALPHA list.
 
