@@ -2,7 +2,7 @@
 
 ## Description
 
-**SortMyQPKGs** is a sorter for your installed QPKGs to ensure they launch in a preset order when your NAS next boots-up.
+**SortMyQPKGs** is an automated sorter for installed QPKGs to ensure they launch in correct sequence when your NAS next powers-up.
 
 There are a few known packages need to launch sequentially (example: Qmono before QSonarr) but due to flaws in QNAP's package registration process, this may not occur.
 
