@@ -6,7 +6,7 @@
 
 There are a few known packages need to launch sequentially (example: Qmono before QSonarr) but due to flaws in QNAP's package registration process, this may not occur.
 
-This package will ensure the launch-order of these QPKGs is corrected automatically.
+This package will automatically ensure the launch-order of your other QPKGs is correct.
 
 Every QPKG will fit into one of three possible groups:
 
