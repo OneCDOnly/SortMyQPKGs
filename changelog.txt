@@ -1,3 +1,8 @@
+* Minor update: (190929)
+- Added [USBSerialdrivers, TomCat9, postgresql, OpenPlexTheatre] to the ALPHA list.
+- Disabled [AirSonic, QMadSonic, QSubSonic] in the ALPHA list.
+- Added [NZBGet] to the OMEGA list.
+
 * Minor update: (190919)
 - Added new 'malware detection and removal' section with [MalwareRemover, MCAFEE_QNAP] to the ALPHA list.
 - Added [NvKernelDriver, MultimediaConsole, QuMagieCore, qumagie] to the ALPHA list.

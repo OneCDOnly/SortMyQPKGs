@@ -4,6 +4,7 @@ MCAFEE_QNAP
 
 # assorted packages
 HideThatBanner      # load early in case user opens App Center immediately after bootup
+USBSerialdrivers
 
 # package managers
 Optware
@@ -58,6 +59,7 @@ linux-station       # load after container-station
 Qapache
 Tomcat
 Tomcat8
+TomCat9
 Nginx
 QNginx
 Caddy
@@ -68,6 +70,7 @@ QMongoDB
 QMariaDB
 CubeSQL
 PimCore
+postgresql
 PostgreSQL
 QPostgreSQL
 PostgreSQLPremium   # load after Qapache
@@ -91,12 +94,13 @@ Plex
 PlexMediaServer
 PlexPlayer
 Phlex
+OpenPlexTheatre
 pmp
 Emby
 EmbyServer
-AirSonic
-QMadSonic
-QSubSonic
+#AirSonic           # test disable as per https://forum.qnap.com/viewtopic.php?p=727190#p727190
+#QMadSonic          # test disable as per https://forum.qnap.com/viewtopic.php?p=727190#p727190
+#QSubSonic          # test disable as per https://forum.qnap.com/viewtopic.php?p=727190#p727190
 
 # VPN               # load all these before DownloadStation
 QVPN
