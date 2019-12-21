@@ -5,6 +5,7 @@ MCAFEE_QNAP
 # assorted packages
 HideThatBanner      # load early in case user opens App Center immediately after bootup
 USBSerialdrivers
+ELFx31
 
 # package managers
 Optware
@@ -64,6 +65,7 @@ Nginx
 QNginx
 Caddy
 Apache73
+Apache74
 
 # databases
 QMongoDB

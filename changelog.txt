@@ -1,3 +1,6 @@
+* Minor update: (191222)
+- Added [ELFx31, Apache74] to the ALPHA list.
+
 * Minor update: (190929)
 - Added [USBSerialdrivers, TomCat9, postgresql, OpenPlexTheatre] to the ALPHA list.
 - Disabled [AirSonic, QMadSonic, QSubSonic] in the ALPHA list.
