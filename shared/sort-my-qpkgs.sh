@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ############################################################################
-# sort-my-qpkgs.sh - (C)opyright 2017-2019 OneCD [one.cd.only@gmail.com]
+# sort-my-qpkgs.sh - (C)opyright 2017-2020 OneCD [one.cd.only@gmail.com]
 #
 # This script is part of the 'SortMyQPKGs' package
 #
@@ -31,10 +31,30 @@ Init()
     SHUTDOWN_PATHFILE=/etc/init.d/shutdown_check.sh
     LC_ALL=C
 
+    # cherry-pick required binaries
+    CAT_CMD=/bin/cat
+    DATE_CMD=/bin/date
+    GREP_CMD=/bin/grep
+    LN_CMD=/bin/ln
+    SED_CMD=/bin/sed
+    SLEEP_CMD=/bin/sleep
+    TOUCH_CMD=/bin/touch
+    TR_CMD=/bin/tr
+
+    GETCFG_CMD=/sbin/getcfg
+    RMCFG_CMD=/sbin/rmcfg
+
+    BASENAME_CMD=/usr/bin/basename
+    CUT_CMD=/usr/bin/cut
+    HEAD_CMD=/usr/bin/head
+    TAIL_CMD=/usr/bin/tail
+    TEE_CMD=/usr/bin/tee
+    WC_CMD=/usr/bin/wc
+
     [[ ! -e $CONFIG_PATHFILE ]] && { echo "file not found [$CONFIG_PATHFILE]"; exit 1 ;}
     [[ ! -e $SHUTDOWN_PATHFILE ]] && { echo "file not found [$SHUTDOWN_PATHFILE]"; exit 1 ;}
 
-    local QPKG_PATH=$(getcfg $THIS_QPKG_NAME Install_Path -f $CONFIG_PATHFILE)
+    local QPKG_PATH=$($GETCFG_CMD $THIS_QPKG_NAME Install_Path -f $CONFIG_PATHFILE)
     local ALPHA_PATHFILE_DEFAULT=$QPKG_PATH/ALPHA.default
     local OMEGA_PATHFILE_DEFAULT=$QPKG_PATH/OMEGA.default
     local ALPHA_PATHFILE_CUSTOM=$QPKG_PATH/ALPHA.custom
@@ -45,9 +65,9 @@ Init()
     TEMP_LOG_PATHFILE=$REAL_LOG_PATHFILE.tmp
     GUI_LOG_PATHFILE=/home/httpd/$THIS_QPKG_NAME.log
 
-    [[ ! -e $REAL_LOG_PATHFILE ]] && touch $REAL_LOG_PATHFILE
+    [[ ! -e $REAL_LOG_PATHFILE ]] && $TOUCH_CMD $REAL_LOG_PATHFILE
     [[ -e $TEMP_LOG_PATHFILE ]] && rm -f $TEMP_LOG_PATHFILE
-    [[ ! -L $GUI_LOG_PATHFILE ]] && ln -s $REAL_LOG_PATHFILE $GUI_LOG_PATHFILE
+    [[ ! -L $GUI_LOG_PATHFILE ]] && $LN_CMD -s $REAL_LOG_PATHFILE $GUI_LOG_PATHFILE
 
     if [[ -e $ALPHA_PATHFILE_CUSTOM ]]; then
         ALPHA_PATHFILE_ACTUAL=$ALPHA_PATHFILE_CUSTOM
@@ -124,7 +144,7 @@ ShowListsMarked()
 
     for pref in ${PKGS_ALPHA_ORDERED[@]}; do
         ((acc++)); fmtacc=$(printf "%02d\n" $acc)
-        if (grep -qF "[$pref]" $CONFIG_PATHFILE); then
+        if ($GREP_CMD -qF "[$pref]" $CONFIG_PATHFILE); then
             ShowLineMarked "$fmtacc" 'A' "$pref"
         else
             ShowLineUnmarked "$fmtacc" 'A' "$pref"
@@ -137,7 +157,7 @@ ShowListsMarked()
 
     for pref in ${PKGS_OMEGA_ORDERED[@]}; do
         ((acc++)); fmtacc=$(printf "%02d\n" $acc)
-        if (grep -qF "[$pref]" $CONFIG_PATHFILE); then
+        if ($GREP_CMD -qF "[$pref]" $CONFIG_PATHFILE); then
             ShowLineMarked "$fmtacc" 'Ω' "$pref"
         else
             ShowLineUnmarked "$fmtacc" 'Ω' "$pref"
@@ -154,7 +174,7 @@ ShowPackagesUnmarked()
     local buffer=''
     local label=''
 
-    for label in $(grep '^\[' $CONFIG_PATHFILE); do
+    for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
         ((acc++)); package=${label//[\[\]]}; fmtacc=$(printf "%02d\n" $acc)
         buffer=$(ShowLineUnmarked "$fmtacc" 'Φ' "$package")
 
@@ -185,14 +205,14 @@ SortPackages()
 
     # read 'ALPHA' packages in reverse and prepend each to qpkg.conf
     for ((index=${#PKGS_ALPHA_ORDERED[@]}-1; index>=0; index--)); do
-        for label in $(grep '^\[' $CONFIG_PATHFILE); do
+        for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
             package=${label//[\[\]]}; [[ $package = ${PKGS_ALPHA_ORDERED[$index]} ]] && { SendToStart "$package"; break ;}
         done
     done
 
     # now read 'OMEGA' packages and append each to qpkg.conf
     for index in ${PKGS_OMEGA_ORDERED[@]}; do
-        for label in $(grep '^\[' $CONFIG_PATHFILE); do
+        for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
             package=${label//[\[\]]}; [[ $package = $index ]] && { SendToEnd "$package"; break ;}
         done
     done
@@ -204,13 +224,13 @@ SendToStart()
 
     # sends $1 to the start of qpkg.conf
 
-    local temp_pathfile=/tmp/$(basename $CONFIG_PATHFILE).tmp
+    local temp_pathfile=/tmp/$($BASENAME_CMD $CONFIG_PATHFILE).tmp
     local buffer=$(ShowDataBlock $1)
     [[ $? -gt 0 ]] && { echo "error - ${buffer}!"; return 2 ;}
 
-    rmcfg $1 -f $CONFIG_PATHFILE
+    $RMCFG_CMD $1 -f $CONFIG_PATHFILE
     echo -e "$buffer" > $temp_pathfile
-    cat $CONFIG_PATHFILE >> $temp_pathfile
+    $CAT_CMD $CONFIG_PATHFILE >> $temp_pathfile
     mv $temp_pathfile $CONFIG_PATHFILE
 
     }
@@ -223,7 +243,7 @@ SendToEnd()
     local buffer=$(ShowDataBlock "$1")
     [[ $? -gt 0 ]] && { echo "error - ${buffer}!"; return 2 ;}
 
-    rmcfg $1 -f $CONFIG_PATHFILE
+    $RMCFG_CMD $1 -f $CONFIG_PATHFILE
     echo -e "$buffer" >> $CONFIG_PATHFILE
 
     }
@@ -239,14 +259,14 @@ ShowDataBlock()
     local el=''
 
     [[ -z $1 ]] && { echo "QPKG not specified"; return 1 ;}
-    ! (grep -q $1 $CONFIG_PATHFILE) && { echo "QPKG not found"; return 2 ;}
+    ! ($GREP_CMD -q $1 $CONFIG_PATHFILE) && { echo "QPKG not found"; return 2 ;}
 
-    sl=$(grep -n "^\[$1\]" $CONFIG_PATHFILE | cut -f1 -d':')
-    ll=$(wc -l < $CONFIG_PATHFILE | tr -d ' ')
-    bl=$(tail -n$((ll-sl)) < $CONFIG_PATHFILE | grep -n '^\[' | head -n1 | cut -f1 -d':')
+    sl=$($GREP_CMD -n "^\[$1\]" $CONFIG_PATHFILE | $CUT_CMD -f1 -d':')
+    ll=$($WC_CMD -l < $CONFIG_PATHFILE | $TR_CMD -d ' ')
+    bl=$($TAIL_CMD -n$((ll-sl)) < $CONFIG_PATHFILE | $GREP_CMD -n '^\[' | $HEAD_CMD -n1 | $CUT_CMD -f1 -d':')
     [[ ! -z $bl ]] && el=$((sl+bl-1)) || el=$ll
 
-    echo "$(sed -n "$sl,${el}p" $CONFIG_PATHFILE)"
+    $SED_CMD -n "$sl,${el}p" $CONFIG_PATHFILE
 
     }
 
@@ -299,12 +319,12 @@ TrimLog()
     {
 
     local max_ops=10
-    local op_lines=$(grep -n "^──" $REAL_LOG_PATHFILE)
-    local op_count=$(echo "$op_lines" | wc -l)
+    local op_lines=$($GREP_CMD -n "^──" $REAL_LOG_PATHFILE)
+    local op_count=$(echo "$op_lines" | $WC_CMD -l)
 
     if [[ $op_count -gt $max_ops ]]; then
-        local last_op_line_num=$(echo "$op_lines" | head -n$((max_ops+1)) | tail -n1 | cut -f1 -d:)
-        head -n${last_op_line_num} $REAL_LOG_PATHFILE > $TEMP_LOG_PATHFILE
+        local last_op_line_num=$(echo "$op_lines" | $HEAD_CMD -n$((max_ops+1)) | $TAIL_CMD -n1 | $CUT_CMD -f1 -d:)
+        $HEAD_CMD -n${last_op_line_num} $REAL_LOG_PATHFILE > $TEMP_LOG_PATHFILE
         mv $TEMP_LOG_PATHFILE $REAL_LOG_PATHFILE
     fi
 
@@ -337,10 +357,10 @@ RecordOperationRequest()
 
     # $1 = operation
 
-    local buffer="[$(date)] '$1' requested"
+    local buffer="[$($DATE_CMD)] '$1' requested"
     local length=${#buffer}
     local temp=$(printf "%${length}s")
-    local build=$(getcfg $THIS_QPKG_NAME Build -f $CONFIG_PATHFILE)
+    local build=$($GETCFG_CMD $THIS_QPKG_NAME Build -f $CONFIG_PATHFILE)
 
     echo -e "${temp// /─}\n$THIS_QPKG_NAME ($build)\n$buffer" >> $TEMP_LOG_PATHFILE
 
@@ -353,7 +373,7 @@ RecordOperationComplete()
 
     # $1 = operation
 
-    local buffer="\n[$(date)] '$1' completed"
+    local buffer="\n[$($DATE_CMD)] '$1' completed"
 
     echo -e "$buffer" >> $TEMP_LOG_PATHFILE
 
@@ -396,10 +416,10 @@ Init
 
 case $1 in
     install|start)
-        if ! (grep -q 'sort-my-qpkgs.sh' $SHUTDOWN_PATHFILE); then
+        if ! ($GREP_CMD -q 'sort-my-qpkgs.sh' $SHUTDOWN_PATHFILE); then
             findtext='#backup logs'
             inserttext='/etc/init.d/sort-my-qpkgs.sh autofix'
-            sed -i "s|$findtext|$inserttext\n$findtext|" $SHUTDOWN_PATHFILE
+            $SED_CMD -i "s|$findtext|$inserttext\n$findtext|" $SHUTDOWN_PATHFILE
         fi
         if [[ $1 = install ]]; then
             RecordOperationRequest "$1"
@@ -408,7 +428,7 @@ case $1 in
         fi
         ;;
     remove)
-        (grep -q 'sort-my-qpkgs.sh' $SHUTDOWN_PATHFILE) && sed -i '/sort-my-qpkgs.sh/d' $SHUTDOWN_PATHFILE
+        ($GREP_CMD -q 'sort-my-qpkgs.sh' $SHUTDOWN_PATHFILE) && $SED_CMD -i '/sort-my-qpkgs.sh/d' $SHUTDOWN_PATHFILE
         [[ -L $GUI_LOG_PATHFILE ]] && rm -f $GUI_LOG_PATHFILE
         ;;
     autofix)
@@ -423,11 +443,11 @@ case $1 in
         ;;
     fix)
         RecordOperationRequest "$1"
-        ShowSources | tee -a $TEMP_LOG_PATHFILE
+        ShowSources | $TEE_CMD -a $TEMP_LOG_PATHFILE
         Upshift $CONFIG_PATHFILE
-        ShowPackagesBefore | tee -a $TEMP_LOG_PATHFILE
+        ShowPackagesBefore | $TEE_CMD -a $TEMP_LOG_PATHFILE
         SortPackages
-        ShowPackagesAfter | tee -a $TEMP_LOG_PATHFILE
+        ShowPackagesAfter | $TEE_CMD -a $TEMP_LOG_PATHFILE
         RecordOperationComplete "$1"
         CommitLog
         echo -e "\n Packages will be loaded in this order during next boot-up.\n"
@@ -439,7 +459,7 @@ case $1 in
         ;;
     init|stop|restart)
         # do nothing
-        sleep 1
+        $SLEEP_CMD 1
         ;;
     *)
         echo -e "\n Usage: $0 {fix|pref}\n"

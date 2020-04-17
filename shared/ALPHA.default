@@ -89,6 +89,7 @@ MediaInfoCLI
 MultimediaConsole   # * this item is untested *
 QuMagieCore         # load after container-station and MultimediaConsole
 qumagie             # load after QuMagieCore
+QMultimedia
 
 # media servers
 XTeve

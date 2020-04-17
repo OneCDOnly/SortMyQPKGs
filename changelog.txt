@@ -1,3 +1,7 @@
+* Minor update: (200418)
+- code rewrite to use only QTS binaries.
+- Added [QMultimedia] to the ALPHA list.
+
 * Minor update: (191222)
 - Added [ELFx31, Apache74] to the ALPHA list.
 
