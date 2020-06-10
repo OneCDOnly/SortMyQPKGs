@@ -26,54 +26,54 @@
 Init()
     {
 
-    THIS_QPKG_NAME=SortMyQPKGs
-    CONFIG_PATHFILE=/etc/config/qpkg.conf
-    SHUTDOWN_PATHFILE=/etc/init.d/shutdown_check.sh
-    LC_ALL=C
+    readonly THIS_QPKG_NAME=SortMyQPKGs
+    readonly CONFIG_PATHFILE=/etc/config/qpkg.conf
+    readonly SHUTDOWN_PATHFILE=/etc/init.d/shutdown_check.sh
+    readonly LC_ALL=C
 
     # cherry-pick required binaries
-    CAT_CMD=/bin/cat
-    DATE_CMD=/bin/date
-    GREP_CMD=/bin/grep
-    LN_CMD=/bin/ln
-    SED_CMD=/bin/sed
-    SLEEP_CMD=/bin/sleep
-    TOUCH_CMD=/bin/touch
-    TR_CMD=/bin/tr
+    readonly CAT_CMD=/bin/cat
+    readonly DATE_CMD=/bin/date
+    readonly GREP_CMD=/bin/grep
+    readonly LN_CMD=/bin/ln
+    readonly SED_CMD=/bin/sed
+    readonly SLEEP_CMD=/bin/sleep
+    readonly TOUCH_CMD=/bin/touch
+    readonly TR_CMD=/bin/tr
 
-    GETCFG_CMD=/sbin/getcfg
-    RMCFG_CMD=/sbin/rmcfg
+    readonly GETCFG_CMD=/sbin/getcfg
+    readonly RMCFG_CMD=/sbin/rmcfg
 
-    BASENAME_CMD=/usr/bin/basename
-    CUT_CMD=/usr/bin/cut
-    HEAD_CMD=/usr/bin/head
-    TAIL_CMD=/usr/bin/tail
-    TEE_CMD=/usr/bin/tee
-    WC_CMD=/usr/bin/wc
+    readonly BASENAME_CMD=/usr/bin/basename
+    readonly CUT_CMD=/usr/bin/cut
+    readonly HEAD_CMD=/usr/bin/head
+    readonly TAIL_CMD=/usr/bin/tail
+    readonly TEE_CMD=/usr/bin/tee
+    readonly WC_CMD=/usr/bin/wc
 
     [[ ! -e $CONFIG_PATHFILE ]] && { echo "file not found [$CONFIG_PATHFILE]"; exit 1 ;}
     [[ ! -e $SHUTDOWN_PATHFILE ]] && { echo "file not found [$SHUTDOWN_PATHFILE]"; exit 1 ;}
 
-    local QPKG_PATH=$($GETCFG_CMD $THIS_QPKG_NAME Install_Path -f $CONFIG_PATHFILE)
-    local ALPHA_PATHFILE_DEFAULT=$QPKG_PATH/ALPHA.default
-    local OMEGA_PATHFILE_DEFAULT=$QPKG_PATH/OMEGA.default
-    local ALPHA_PATHFILE_CUSTOM=$QPKG_PATH/ALPHA.custom
-    local OMEGA_PATHFILE_CUSTOM=$QPKG_PATH/OMEGA.custom
-    local ALPHA_PATHFILE_ACTUAL=''
-    local OMEGA_PATHFILE_ACTUAL=''
-    REAL_LOG_PATHFILE=$QPKG_PATH/$THIS_QPKG_NAME.log
-    TEMP_LOG_PATHFILE=$REAL_LOG_PATHFILE.tmp
-    GUI_LOG_PATHFILE=/home/httpd/$THIS_QPKG_NAME.log
+    local -r QPKG_PATH=$($GETCFG_CMD $THIS_QPKG_NAME Install_Path -f $CONFIG_PATHFILE)
+    local -r ALPHA_PATHFILE_DEFAULT=$QPKG_PATH/ALPHA.default
+    local -r OMEGA_PATHFILE_DEFAULT=$QPKG_PATH/OMEGA.default
+    local -r ALPHA_PATHFILE_CUSTOM=$QPKG_PATH/ALPHA.custom
+    local -r OMEGA_PATHFILE_CUSTOM=$QPKG_PATH/OMEGA.custom
+    local alpha_pathfile_actual=''
+    local omega_pathfile_actual=''
+    readonly REAL_LOG_PATHFILE=$QPKG_PATH/$THIS_QPKG_NAME.log
+    readonly TEMP_LOG_PATHFILE=$REAL_LOG_PATHFILE.tmp
+    readonly GUI_LOG_PATHFILE=/home/httpd/$THIS_QPKG_NAME.log
 
     [[ ! -e $REAL_LOG_PATHFILE ]] && $TOUCH_CMD $REAL_LOG_PATHFILE
     [[ -e $TEMP_LOG_PATHFILE ]] && rm -f $TEMP_LOG_PATHFILE
     [[ ! -L $GUI_LOG_PATHFILE ]] && $LN_CMD -s $REAL_LOG_PATHFILE $GUI_LOG_PATHFILE
 
     if [[ -e $ALPHA_PATHFILE_CUSTOM ]]; then
-        ALPHA_PATHFILE_ACTUAL=$ALPHA_PATHFILE_CUSTOM
+        alpha_pathfile_actual=$ALPHA_PATHFILE_CUSTOM
         alpha_source=custom
     elif [[ -e $ALPHA_PATHFILE_DEFAULT ]]; then
-        ALPHA_PATHFILE_ACTUAL=$ALPHA_PATHFILE_DEFAULT
+        alpha_pathfile_actual=$ALPHA_PATHFILE_DEFAULT
         alpha_source=default
     else
         echo "ALPHA package list file not found"
@@ -81,10 +81,10 @@ Init()
     fi
 
     if [[ -e $OMEGA_PATHFILE_CUSTOM ]]; then
-        OMEGA_PATHFILE_ACTUAL=$OMEGA_PATHFILE_CUSTOM
+        omega_pathfile_actual=$OMEGA_PATHFILE_CUSTOM
         omega_source=custom
     elif [[ -e $OMEGA_PATHFILE_DEFAULT ]]; then
-        OMEGA_PATHFILE_ACTUAL=$OMEGA_PATHFILE_DEFAULT
+        omega_pathfile_actual=$OMEGA_PATHFILE_DEFAULT
         omega_source=default
     else
         echo "OMEGA package list file not found"
@@ -93,11 +93,11 @@ Init()
 
     while read -r package_ref comment; do
         [[ -n $package_ref && $package_ref != \#* ]] && PKGS_ALPHA_ORDERED+=($package_ref)
-    done < $ALPHA_PATHFILE_ACTUAL
+    done < $alpha_pathfile_actual
 
     while read -r package_ref comment; do
         [[ -n $package_ref && $package_ref != \#* ]] && PKGS_OMEGA_ORDERED+=($package_ref)
-    done < $OMEGA_PATHFILE_ACTUAL
+    done < $omega_pathfile_actual
 
     PKGS_OMEGA_ORDERED+=($THIS_QPKG_NAME)
 
@@ -145,22 +145,22 @@ ShowListsMarked()
     for pref in ${PKGS_ALPHA_ORDERED[@]}; do
         ((acc++)); fmtacc=$(printf "%02d\n" $acc)
         if ($GREP_CMD -qF "[$pref]" $CONFIG_PATHFILE); then
-            ShowLineMarked "$fmtacc" 'A' "$pref"
+            ShowLineMarked "$fmtacc" A "$pref"
         else
-            ShowLineUnmarked "$fmtacc" 'A' "$pref"
+            ShowLineUnmarked "$fmtacc" A "$pref"
         fi
     done
 
     echo
-    ((acc++)); fmtacc=$(printf "%02d\n" $acc); ShowLineUnmarked "$fmtacc" 'Φ' '< existing unspecified packages go here >'
+    ((acc++)); fmtacc=$(printf "%02d\n" $acc); ShowLineUnmarked "$fmtacc" Φ '< existing unspecified packages go here >'
     echo
 
     for pref in ${PKGS_OMEGA_ORDERED[@]}; do
         ((acc++)); fmtacc=$(printf "%02d\n" $acc)
         if ($GREP_CMD -qF "[$pref]" $CONFIG_PATHFILE); then
-            ShowLineMarked "$fmtacc" 'Ω' "$pref"
+            ShowLineMarked "$fmtacc" Ω "$pref"
         else
-            ShowLineUnmarked "$fmtacc" 'Ω' "$pref"
+            ShowLineUnmarked "$fmtacc" Ω "$pref"
         fi
     done
 
@@ -176,14 +176,14 @@ ShowPackagesUnmarked()
 
     for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
         ((acc++)); package=${label//[\[\]]}; fmtacc=$(printf "%02d\n" $acc)
-        buffer=$(ShowLineUnmarked "$fmtacc" 'Φ' "$package")
+        buffer=$(ShowLineUnmarked "$fmtacc" Φ "$package")
 
         for pref in ${PKGS_ALPHA_ORDERED[@]}; do
-            [[ $package = $pref ]] && { buffer=$(ShowLineUnmarked "$fmtacc" 'A' "$package"); break ;}
+            [[ $package = $pref ]] && { buffer=$(ShowLineUnmarked "$fmtacc" A "$package"); break ;}
         done
 
         for pref in ${PKGS_OMEGA_ORDERED[@]}; do
-            [[ $package = $pref ]] && { buffer=$(ShowLineUnmarked "$fmtacc" 'Ω' "$package"); break ;}
+            [[ $package = $pref ]] && { buffer=$(ShowLineUnmarked "$fmtacc" Ω "$package"); break ;}
         done
 
         echo -e "$buffer"
@@ -408,7 +408,7 @@ LogWrite()
     #    1 : Warning
     #    2 : Error
 
-    log_tool --append "[$THIS_QPKG_NAME] $1" --type "$2"
+    log_tool --append "[$THIS_QPKG_NAME] $1" --type $2
 
     }
 

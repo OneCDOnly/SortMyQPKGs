@@ -1,6 +1,11 @@
+* Minor update: (200610)
+- Added [NMAP, Qemu] to the ALPHA list.
+- Added [SABnzbd, QTransmission3] to the OMEGA list.
+- Code: make constants readonly, remove a few extra characters.
+
 * Minor update: (200418)
-- code rewrite to use only QTS binaries.
 - Added [QMultimedia] to the ALPHA list.
+- Code: use only QTS binaries.
 
 * Minor update: (191222)
 - Added [ELFx31, Apache74] to the ALPHA list.

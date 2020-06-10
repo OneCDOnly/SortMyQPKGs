@@ -3,10 +3,12 @@ NZBGet
 QNZBGet
 SABnzbdplus
 QSabNZBdPlus
+SABnzbd
 
 # torrent downloaders
 Transmission
 QTransmission
+QTransmission3      # load after TransmissionWC
 Deluge
 QBittorrent
 QBittorrent4
