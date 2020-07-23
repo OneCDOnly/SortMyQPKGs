@@ -8,7 +8,8 @@ SABnzbd
 # torrent downloaders
 Transmission
 QTransmission
-QTransmission3      # load after TransmissionWC
+QTransmission3      # load before TransmissionWC
+TransmissionWC      # load after QTransmission3
 Deluge
 QBittorrent
 QBittorrent4
@@ -40,6 +41,7 @@ Watcher3
 OWatcher3
 Ombi
 Ombi3
+Ombi4
 Lidarr
 
 # assorted QNAP packages

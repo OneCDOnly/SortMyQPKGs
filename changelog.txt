@@ -1,3 +1,7 @@
+* Minor update: (200724)
+- Added [AcronisK, JRE_ARM, QJDK14, CACert, Teamspeak3] to the ALPHA list.
+- Added [TransmissionWC, Ombi4] to the OMEGA list.
+
 * Minor update: (200610)
 - Added [NMAP, Qemu] to the ALPHA list.
 - Added [SABnzbd, QTransmission3] to the OMEGA list.

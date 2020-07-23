@@ -3,7 +3,7 @@ MalwareRemover
 MCAFEE_QNAP
 
 # assorted packages
-HideThatBanner      # load early in case user opens App Center immediately after bootup
+HideThatBanner      # load early in case App Center is opened immediately after bootup and login to UI
 USBSerialdrivers
 ELFx31
 
@@ -20,6 +20,7 @@ NvKernelDriver      # load before NVIDIA_GPU_DRV
 NVIDIA_GPU_DRV      # load before HD_Station & linux-station
 netmgr              # 'Network & Virtual Switch'
 NMAP                # load before WMAP
+AcronisK            # load before AcronisAgent
 
 # high-level language interpreters
 Python
@@ -47,16 +48,21 @@ Qmono
 DotNET
 DotNETSDK
 JRE
+JRE_ARM
 QJDK7
 QJDK8
 QJDK9
 QJDK10
 QJDK11
+QJDK14
 QVS                 # 'Virtualization Station'
 HD_Station          # note: 'HD Station' or 'Linux Station' - only one can be enabled at any time
 container-station
 linux-station       # load after container-station
 Qemu
+
+# certificate management
+CACert              # load after QPerl and before Qapache
 
 # web servers
 Qapache
@@ -76,7 +82,7 @@ CubeSQL
 PimCore
 postgresql
 PostgreSQL
-QPostgreSQL
+QPostgreSQL         # load before QOdOO, QOdoo11
 PostgreSQLPremium   # load after Qapache
 MySQL8
 InfluxDB            # load before Chronograf
@@ -84,8 +90,8 @@ firebird
 Neo4J
 
 # multimedia tools
-ffmpeg              # load before FileBot
-Qffmpeg             # load before FileBot
+ffmpeg              # load before FileBot, DigitalMediaServer, Soundscape
+Qffmpeg             # load before FileBot, QBubbleUPnP
 MediaInfoShared     # load before FileBot
 MediaInfoCLI
 MultimediaConsole   # * this item is untested *
@@ -96,16 +102,14 @@ QMultimedia
 # media servers
 XTeve
 Plex
-PlexMediaServer
+PlexMediaServer     # load before PlexRequests
 PlexPlayer
 Phlex
 OpenPlexTheatre
 pmp
 Emby
 EmbyServer
-#AirSonic           # test disable as per https://forum.qnap.com/viewtopic.php?p=727190#p727190
-#QMadSonic          # test disable as per https://forum.qnap.com/viewtopic.php?p=727190#p727190
-#QSubSonic          # test disable as per https://forum.qnap.com/viewtopic.php?p=727190#p727190
+TeamSpeak3          # load before Sinusbot
 
 # VPN               # load all these before DownloadStation
 QVPN
