@@ -1,9 +1,5 @@
-# malware detection and removal
-MalwareRemover
-MCAFEE_QNAP
-
 # assorted packages
-HideThatBanner      # load early in case App Center is opened immediately after bootup and login to UI
+HideThatBanner      # load early in-case App Center is opened immediately after bootup
 USBSerialdrivers
 ELFx31
 

@@ -1,3 +1,7 @@
+* Minor update: (200811)
+- Added [OTransmission, OSickGear, LazyLibrarian] to the OMEGA list.
+- Moved the malware detection packages from loading first to (almost) last. These are not "live" scanners, so makes more sense to load them after everything else.
+
 * Minor update: (200724)
 - Added [AcronisK, JRE_ARM, QJDK14, CACert, Teamspeak3] to the ALPHA list.
 - Added [TransmissionWC, Ombi4] to the OMEGA list.
