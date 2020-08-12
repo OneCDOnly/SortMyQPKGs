@@ -90,10 +90,11 @@ ffmpeg              # load before FileBot, DigitalMediaServer, Soundscape
 Qffmpeg             # load before FileBot, QBubbleUPnP
 MediaInfoShared     # load before FileBot
 MediaInfoCLI
-MultimediaConsole   # * this item is untested *
+MultimediaConsole
 QuMagieCore         # load after container-station and MultimediaConsole
 qumagie             # load after QuMagieCore
 QMultimedia
+HandBrake_CLI       # load before Tdarr
 
 # media servers
 XTeve
@@ -106,6 +107,7 @@ pmp
 Emby
 EmbyServer
 TeamSpeak3          # load before Sinusbot
+Komga               # load after QJDK8
 
 # VPN               # load all these before DownloadStation
 QVPN
