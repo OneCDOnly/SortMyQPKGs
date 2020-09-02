@@ -1,3 +1,6 @@
+* Minor update: (200903)
+- Added [Deluge-server, Deluge-web, RadarrDotNet, Mylar3, LidarrDotNET] to the OMEGA list.
+
 * Minor update: (200812)
 - Added [HandBrake_CLI, Komga] to the ALPHA list.
 - Added [QSabNZBd3] to the OMEGA list.

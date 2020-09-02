@@ -276,7 +276,7 @@ Upshift()
     # move specified existing filename by incrementing extension value (upshift extension)
     # if extension is not a number, then create new extension of '1' and copy file
 
-    # $1 = pathfilename to Upshift
+    # $1 = pathfilename to upshift
 
     [[ -z $1 ]] && return 1
     [[ ! -e $1 ]] && return 1

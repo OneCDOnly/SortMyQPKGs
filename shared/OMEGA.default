@@ -13,6 +13,8 @@ QTransmission3      # load before TransmissionWC
 TransmissionWC      # load after QTransmission3
 OTransmission
 Deluge
+Deluge-server
+Deluge-web
 QBittorrent
 QBittorrent4
 rtorrent
@@ -22,6 +24,7 @@ SonarrTrackTV       # load before QSonarr
 QSonarr
 QSonarr3
 Radarr
+RadarrDotNet
 QBazarr             # load after Sonarr & Radarr
 SickBeard
 QSickBeard
@@ -37,6 +40,7 @@ OMedusa
 Headphones
 QHeadPhones
 Mylar
+Mylar3
 MovieGrabber
 CouchPotato2
 QCouchPotato
@@ -46,6 +50,7 @@ Ombi
 Ombi3
 Ombi4
 Lidarr
+LidarrDotNET
 LazyLibrarian
 
 # assorted QNAP packages
