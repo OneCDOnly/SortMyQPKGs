@@ -1,3 +1,8 @@
+* Minor update: (201106)
+- Added [QSickChill3, PyMedusa3] to the OMEGA list.
+- Create a symlink to main log in /var/log/
+- Code: minor fixes for better readability.
+
 * Minor update: (200903)
 - Added [Deluge-server, Deluge-web, RadarrDotNet, Mylar3, LidarrDotNET] to the OMEGA list.
 

@@ -51,8 +51,15 @@ Init()
     readonly TEE_CMD=/usr/bin/tee
     readonly WC_CMD=/usr/bin/wc
 
-    [[ ! -e $CONFIG_PATHFILE ]] && { echo "file not found [$CONFIG_PATHFILE]"; exit 1 ;}
-    [[ ! -e $SHUTDOWN_PATHFILE ]] && { echo "file not found [$SHUTDOWN_PATHFILE]"; exit 1 ;}
+    if [[ ! -e $CONFIG_PATHFILE ]]; then
+        echo "file not found [$CONFIG_PATHFILE]"
+        exit 1
+    fi
+
+    if [[ ! -e $SHUTDOWN_PATHFILE ]]; then
+        echo "file not found [$SHUTDOWN_PATHFILE]"
+        exit 1
+    fi
 
     local -r QPKG_PATH=$($GETCFG_CMD $THIS_QPKG_NAME Install_Path -f $CONFIG_PATHFILE)
     local -r ALPHA_PATHFILE_DEFAULT=$QPKG_PATH/ALPHA.default
@@ -64,10 +71,12 @@ Init()
     readonly REAL_LOG_PATHFILE=$QPKG_PATH/$THIS_QPKG_NAME.log
     readonly TEMP_LOG_PATHFILE=$REAL_LOG_PATHFILE.tmp
     readonly GUI_LOG_PATHFILE=/home/httpd/$THIS_QPKG_NAME.log
+    readonly LINK_LOG_PATHFILE=/var/log/$THIS_QPKG_NAME.log
 
-    [[ ! -e $REAL_LOG_PATHFILE ]] && $TOUCH_CMD $REAL_LOG_PATHFILE
-    [[ -e $TEMP_LOG_PATHFILE ]] && rm -f $TEMP_LOG_PATHFILE
-    [[ ! -L $GUI_LOG_PATHFILE ]] && $LN_CMD -s $REAL_LOG_PATHFILE $GUI_LOG_PATHFILE
+    [[ ! -e $REAL_LOG_PATHFILE ]] && $TOUCH_CMD "$REAL_LOG_PATHFILE"
+    [[ -e $TEMP_LOG_PATHFILE ]] && rm -f "$TEMP_LOG_PATHFILE"
+    [[ ! -L $GUI_LOG_PATHFILE ]] && $LN_CMD -s "$REAL_LOG_PATHFILE" "$GUI_LOG_PATHFILE"
+    [[ ! -L $LINK_LOG_PATHFILE ]] && $LN_CMD -s "$REAL_LOG_PATHFILE" "$LINK_LOG_PATHFILE"
 
     if [[ -e $ALPHA_PATHFILE_CUSTOM ]]; then
         alpha_pathfile_actual=$ALPHA_PATHFILE_CUSTOM
@@ -170,6 +179,7 @@ ShowPackagesUnmarked()
     {
 
     local acc=0
+    local pref=''
     local fmtacc=''
     local buffer=''
     local label=''
@@ -201,6 +211,7 @@ ShowSources()
 SortPackages()
     {
 
+    local index=0
     local label=''
 
     # read 'ALPHA' packages in reverse and prepend each to qpkg.conf
@@ -226,7 +237,11 @@ SendToStart()
 
     local temp_pathfile=/tmp/$($BASENAME_CMD $CONFIG_PATHFILE).tmp
     local buffer=$(ShowDataBlock $1)
-    [[ $? -gt 0 ]] && { echo "error - ${buffer}!"; return 2 ;}
+
+    if [[ $? -gt 0 ]]; then
+        echo "error - ${buffer}!"
+        return 2
+    fi
 
     $RMCFG_CMD $1 -f $CONFIG_PATHFILE
     echo -e "$buffer" > $temp_pathfile
@@ -241,7 +256,11 @@ SendToEnd()
     # sends $1 to the end of qpkg.conf
 
     local buffer=$(ShowDataBlock "$1")
-    [[ $? -gt 0 ]] && { echo "error - ${buffer}!"; return 2 ;}
+
+    if [[ $? -gt 0 ]]; then
+        echo "error - ${buffer}!"
+        return 2
+    fi
 
     $RMCFG_CMD $1 -f $CONFIG_PATHFILE
     echo -e "$buffer" >> $CONFIG_PATHFILE
@@ -258,8 +277,14 @@ ShowDataBlock()
     local bl=''
     local el=''
 
-    [[ -z $1 ]] && { echo "QPKG not specified"; return 1 ;}
-    ! ($GREP_CMD -q $1 $CONFIG_PATHFILE) && { echo "QPKG not found"; return 2 ;}
+    if [[ -z $1 ]]; then
+        echo "QPKG not specified"
+        return 1
+    fi
+
+    if ! $GREP_CMD -q $1 $CONFIG_PATHFILE; then
+        echo "QPKG not found"; return 2
+    fi
 
     sl=$($GREP_CMD -n "^\[$1\]" $CONFIG_PATHFILE | $CUT_CMD -f1 -d':')
     ll=$($WC_CMD -l < $CONFIG_PATHFILE | $TR_CMD -d ' ')
@@ -290,7 +315,14 @@ Upshift()
     local rec_count=0
     local rec_track_file=/tmp/$FUNCNAME.count
     [[ -e $rec_track_file ]] && rec_count=$(<$rec_track_file)
-    ((rec_count++)); [[ $rec_count -gt $rec_limit ]] && { echo "recursive limit reached!"; rm $rec_track_file; exit 1 ;}
+    ((rec_count++))
+
+    if [[ $rec_count -gt $rec_limit ]]; then
+        echo "recursive limit reached!"
+        rm $rec_track_file
+        exit 1
+    fi
+
     echo $rec_count > $rec_track_file
 
     ext=${1##*.}
