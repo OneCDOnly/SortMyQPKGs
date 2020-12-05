@@ -71,6 +71,7 @@ QNginx
 Caddy
 Apache73
 Apache74
+Apache80
 
 # databases
 QMongoDB
