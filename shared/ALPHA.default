@@ -82,6 +82,7 @@ postgresql
 PostgreSQL
 QPostgreSQL         # load before QOdOO, QOdoo11
 PostgreSQLPremium   # load after Qapache
+PostgreSQLPremium13 # load after Apache80
 MySQL8
 InfluxDB            # load before Chronograf
 firebird

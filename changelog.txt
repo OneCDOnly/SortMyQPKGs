@@ -1,3 +1,7 @@
+* Minor update: (201228)
+- Added [PostgreSQLPremium13] to the ALPHA list.
+- include fix to enable App Center icon in QTS 4.5.1.
+
 * Minor update: (201206)
 - Added [Apache80] to the ALPHA list.
 

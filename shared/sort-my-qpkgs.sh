@@ -41,8 +41,10 @@ Init()
     readonly TOUCH_CMD=/bin/touch
     readonly TR_CMD=/bin/tr
 
+    readonly APP_CENTER_NOTIFIER=/sbin/qpkg_cli     # only needed for QTS 4.5.1-and-later
     readonly GETCFG_CMD=/sbin/getcfg
     readonly RMCFG_CMD=/sbin/rmcfg
+    readonly SETCFG_CMD=/sbin/setcfg
 
     readonly BASENAME_CMD=/usr/bin/basename
     readonly CUT_CMD=/usr/bin/cut
@@ -50,6 +52,11 @@ Init()
     readonly TAIL_CMD=/usr/bin/tail
     readonly TEE_CMD=/usr/bin/tee
     readonly WC_CMD=/usr/bin/wc
+
+    $SETCFG_CMD "$THIS_QPKG_NAME" Status complete -f "$CONFIG_PATHFILE"
+
+    # KLUDGE: 'clean' the QTS 4.5.1 App Center notifier status
+    [[ -e $APP_CENTER_NOTIFIER ]] && $APP_CENTER_NOTIFIER --clean "$THIS_QPKG_NAME" > /dev/null 2>&1
 
     if [[ ! -e $CONFIG_PATHFILE ]]; then
         echo "file not found [$CONFIG_PATHFILE]"
