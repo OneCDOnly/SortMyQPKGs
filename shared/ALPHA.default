@@ -1,6 +1,9 @@
 # assorted packages
 HideThatBanner      # load early in-case App Center is opened immediately after bootup
 USBSerialdrivers
+V4LDrivers
+RltkWifi2b
+RltkWifi1c
 ELFx31
 
 # package managers
@@ -33,6 +36,7 @@ NodeJS
 ruby
 QRuby
 Go
+Erlang
 
 # version control systems
 git
@@ -87,6 +91,8 @@ MySQL8
 InfluxDB            # load before Chronograf
 firebird
 Neo4J
+QuestDB
+Dolt
 
 # multimedia tools
 ffmpeg              # load before FileBot, DigitalMediaServer, Soundscape
