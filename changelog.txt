@@ -1,3 +1,6 @@
+* Minor update: (210413)
+- Add 'backup', 'restore' and 'reset' operations for custom lists.
+
 * Minor update: (210328)
 - Open sorting log in a new QTS window instead of a new page.
 

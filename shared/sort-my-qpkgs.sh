@@ -37,16 +37,11 @@ Init()
     # KLUDGE: 'clean' the QTS 4.5.1 App Center notifier status
     [[ -e /sbin/qpkg_cli ]] && /sbin/qpkg_cli --clean "$QPKG_NAME" > /dev/null 2>&1
 
-    if [[ ! -e $SHUTDOWN_PATHFILE ]]; then
-        echo "file not found: $SHUTDOWN_PATHFILE"
-        exit 1
-    fi
-
-    local -r QPKG_PATH=$(/sbin/getcfg $QPKG_NAME Install_Path -f /etc/config/qpkg.conf)
+    readonly QPKG_PATH=$(/sbin/getcfg $QPKG_NAME Install_Path -f /etc/config/qpkg.conf)
     local -r ALPHA_PATHFILE_DEFAULT=$QPKG_PATH/ALPHA.default
     local -r OMEGA_PATHFILE_DEFAULT=$QPKG_PATH/OMEGA.default
-    local -r ALPHA_PATHFILE_CUSTOM=$QPKG_PATH/ALPHA.custom
-    local -r OMEGA_PATHFILE_CUSTOM=$QPKG_PATH/OMEGA.custom
+    readonly ALPHA_PATHFILE_CUSTOM=$QPKG_PATH/ALPHA.custom
+    readonly OMEGA_PATHFILE_CUSTOM=$QPKG_PATH/OMEGA.custom
     local alpha_pathfile_actual=''
     local omega_pathfile_actual=''
     readonly REAL_LOG_PATHFILE=$QPKG_PATH/$QPKG_NAME.log
@@ -96,36 +91,42 @@ Init()
 BackupConfig()
     {
 
-    CommitOperationToLog
-    ExecuteAndLog 'update configuration backup' "/bin/tar --create --gzip --file=$BACKUP_PATHFILE --directory=$QPKG_PATH/config ." log:everything
+    local source=''
+
+    if [[ -e $ALPHA_PATHFILE_CUSTOM ]]; then
+        source=$(/usr/bin/basename "$ALPHA_PATHFILE_CUSTOM")
+    fi
+
+    if [[ -e $OMEGA_PATHFILE_CUSTOM ]]; then
+        [[ -n $source ]] && source+=" "
+        source+=$(/usr/bin/basename "$OMEGA_PATHFILE_CUSTOM")
+    fi
+
+    if [[ -z $source ]]; then
+        echo 'nothing to backup' | /usr/bin/tee -a $TEMP_LOG_PATHFILE
+        return
+    fi
+
+    /bin/tar --create --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" $source | /usr/bin/tee -a $TEMP_LOG_PATHFILE
 
     }
 
 RestoreConfig()
     {
 
-    CommitOperationToLog
-
     if [[ ! -f $BACKUP_PATHFILE ]]; then
-        DisplayErrCommitAllLogs 'unable to restore configuration: no backup file was found!'
-        SetError
+        echo 'unable to restore: no backup file was found!' | /usr/bin/tee -a $TEMP_LOG_PATHFILE
         return 1
     fi
 
-    StopQPKG
-    ExecuteAndLog 'restore configuration backup' "/bin/tar --extract --gzip --file=$BACKUP_PATHFILE --directory=$QPKG_PATH/config" log:everything
-    StartQPKG
+    /bin/tar --extract --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" | /usr/bin/tee -a $TEMP_LOG_PATHFILE
 
     }
 
 ResetConfig()
     {
 
-    CommitOperationToLog
-
-    StopQPKG
-    ExecuteAndLog 'reset configuration' "mv $QPKG_INI_DEFAULT_PATHFILE $QPKG_PATH; rm -rf $QPKG_PATH/config/*; mv $QPKG_PATH/$(/usr/bin/basename "$QPKG_INI_DEFAULT_PATHFILE") $QPKG_INI_DEFAULT_PATHFILE" log:everything
-    StartQPKG
+    rm -rf "$ALPHA_PATHFILE_CUSTOM" "$OMEGA_PATHFILE_CUSTOM"
 
     }
 
@@ -422,7 +423,7 @@ RecordOperationComplete()
 
     # $1 = operation
 
-    local buffer="\n[$(/bin/date)] '$1' completed"
+    local buffer="[$(/bin/date)] '$1' completed"
 
     echo -e "$buffer" >> $TEMP_LOG_PATHFILE
 
@@ -464,22 +465,6 @@ LogWrite()
 Init
 
 case $1 in
-    install|start)
-        if ! /bin/grep -q 'sort-my-qpkgs.sh' $SHUTDOWN_PATHFILE; then
-            findtext='#backup logs'
-            inserttext='/etc/init.d/sort-my-qpkgs.sh autofix'
-            /bin/sed -i "s|$findtext|$inserttext\n$findtext|" $SHUTDOWN_PATHFILE
-        fi
-        if [[ $1 = install ]]; then
-            RecordOperationRequest "$1"
-            RecordOperationComplete "$1"
-            CommitLog
-        fi
-        ;;
-    remove)
-        /bin/grep -q 'sort-my-qpkgs.sh' $SHUTDOWN_PATHFILE && /bin/sed -i '/sort-my-qpkgs.sh/d' $SHUTDOWN_PATHFILE
-        [[ -L $GUI_LOG_PATHFILE ]] && rm -f $GUI_LOG_PATHFILE
-        ;;
     autofix)
         RecordOperationRequest "$1"
         ShowSources >> $TEMP_LOG_PATHFILE
@@ -487,6 +472,12 @@ case $1 in
         ShowPackagesBefore >> $TEMP_LOG_PATHFILE
         SortPackages
         ShowPackagesAfter >> $TEMP_LOG_PATHFILE
+        RecordOperationComplete "$1"
+        CommitLog
+        ;;
+    backup)
+        RecordOperationRequest "$1"
+        BackupConfig
         RecordOperationComplete "$1"
         CommitLog
         ;;
@@ -501,21 +492,48 @@ case $1 in
         CommitLog
         echo -e "\n Packages will be loaded in this order during next boot-up.\n"
         ;;
+    init|stop|restart)
+        # do nothing
+        /bin/sleep 1
+        ;;
+    install|start)
+        if ! /bin/grep -q 'sort-my-qpkgs.sh' $SHUTDOWN_PATHFILE; then
+            findtext='#backup logs'
+            inserttext='/etc/init.d/sort-my-qpkgs.sh autofix'
+            /bin/sed -i "s|$findtext|$inserttext\n$findtext|" $SHUTDOWN_PATHFILE
+        fi
+        if [[ $1 = install ]]; then
+            RecordOperationRequest "$1"
+            RecordOperationComplete "$1"
+            CommitLog
+        fi
+        ;;
     pref)
         ShowSources
         ShowPreferredList
         echo -e "\n To re-order packages: $0 fix\n"
         ;;
-    init|stop|restart)
-        # do nothing
-        /bin/sleep 1
+    remove)
+        /bin/grep -q 'sort-my-qpkgs.sh' $SHUTDOWN_PATHFILE && /bin/sed -i '/sort-my-qpkgs.sh/d' $SHUTDOWN_PATHFILE
+        [[ -L $GUI_LOG_PATHFILE ]] && rm -f $GUI_LOG_PATHFILE
+        ;;
+    reset)
+        RecordOperationRequest "$1"
+        ResetConfig
+        RecordOperationComplete "$1"
+        CommitLog
+        ;;
+    restore)
+        RecordOperationRequest "$1"
+        RestoreConfig
+        RecordOperationComplete "$1"
+        CommitLog
         ;;
     *)
-        echo -e "\n Usage: $0 {fix|pref}\n"
+        echo -e "\n Usage: $0 {backup|fix|pref|reset|restore}\n"
         ShowSources
         ShowPackagesCurrent
         echo -e "\n To re-order packages: $0 fix\n"
-        ;;
 esac
 
 [[ -e $TEMP_LOG_PATHFILE ]] && rm -f $TEMP_LOG_PATHFILE
