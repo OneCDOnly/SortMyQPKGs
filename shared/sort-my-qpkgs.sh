@@ -126,7 +126,7 @@ RestoreConfig()
 ResetConfig()
     {
 
-    rm -rf "$ALPHA_PATHFILE_CUSTOM" "$OMEGA_PATHFILE_CUSTOM"
+    rm -f "$ALPHA_PATHFILE_CUSTOM" "$OMEGA_PATHFILE_CUSTOM"
 
     }
 
