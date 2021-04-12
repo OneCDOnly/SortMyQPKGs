@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ############################################################################
-# sort-my-qpkgs.sh - (C)opyright 2017-2020 OneCD [one.cd.only@gmail.com]
+# sort-my-qpkgs.sh - (C)opyright 2017-2021 OneCD [one.cd.only@gmail.com]
 #
 # This script is part of the 'SortMyQPKGs' package
 #
@@ -26,64 +26,38 @@
 Init()
     {
 
-    readonly THIS_QPKG_NAME=SortMyQPKGs
-    readonly CONFIG_PATHFILE=/etc/config/qpkg.conf
+    readonly QPKG_NAME=SortMyQPKGs
     readonly SHUTDOWN_PATHFILE=/etc/init.d/shutdown_check.sh
     readonly LC_ALL=C
+    local -r BACKUP_PATH=$(/sbin/getcfg SHARE_DEF defVolMP -f /etc/config/def_share.info)/.qpkg_config_backup
+    readonly BACKUP_PATHFILE=$BACKUP_PATH/$QPKG_NAME.config.tar.gz
 
-    # cherry-pick required binaries
-    readonly CAT_CMD=/bin/cat
-    readonly DATE_CMD=/bin/date
-    readonly GREP_CMD=/bin/grep
-    readonly LN_CMD=/bin/ln
-    readonly SED_CMD=/bin/sed
-    readonly SLEEP_CMD=/bin/sleep
-    readonly TOUCH_CMD=/bin/touch
-    readonly TR_CMD=/bin/tr
-
-    readonly APP_CENTER_NOTIFIER=/sbin/qpkg_cli     # only needed for QTS 4.5.1-and-later
-    readonly GETCFG_CMD=/sbin/getcfg
-    readonly RMCFG_CMD=/sbin/rmcfg
-    readonly SETCFG_CMD=/sbin/setcfg
-
-    readonly BASENAME_CMD=/usr/bin/basename
-    readonly CUT_CMD=/usr/bin/cut
-    readonly HEAD_CMD=/usr/bin/head
-    readonly TAIL_CMD=/usr/bin/tail
-    readonly TEE_CMD=/usr/bin/tee
-    readonly WC_CMD=/usr/bin/wc
-
-    $SETCFG_CMD "$THIS_QPKG_NAME" Status complete -f "$CONFIG_PATHFILE"
+    /sbin/setcfg "$QPKG_NAME" Status complete -f /etc/config/qpkg.conf
 
     # KLUDGE: 'clean' the QTS 4.5.1 App Center notifier status
-    [[ -e $APP_CENTER_NOTIFIER ]] && $APP_CENTER_NOTIFIER --clean "$THIS_QPKG_NAME" > /dev/null 2>&1
-
-    if [[ ! -e $CONFIG_PATHFILE ]]; then
-        echo "file not found [$CONFIG_PATHFILE]"
-        exit 1
-    fi
+    [[ -e /sbin/qpkg_cli ]] && /sbin/qpkg_cli --clean "$QPKG_NAME" > /dev/null 2>&1
 
     if [[ ! -e $SHUTDOWN_PATHFILE ]]; then
-        echo "file not found [$SHUTDOWN_PATHFILE]"
+        echo "file not found: $SHUTDOWN_PATHFILE"
         exit 1
     fi
 
-    local -r QPKG_PATH=$($GETCFG_CMD $THIS_QPKG_NAME Install_Path -f $CONFIG_PATHFILE)
+    local -r QPKG_PATH=$(/sbin/getcfg $QPKG_NAME Install_Path -f /etc/config/qpkg.conf)
     local -r ALPHA_PATHFILE_DEFAULT=$QPKG_PATH/ALPHA.default
     local -r OMEGA_PATHFILE_DEFAULT=$QPKG_PATH/OMEGA.default
     local -r ALPHA_PATHFILE_CUSTOM=$QPKG_PATH/ALPHA.custom
     local -r OMEGA_PATHFILE_CUSTOM=$QPKG_PATH/OMEGA.custom
     local alpha_pathfile_actual=''
     local omega_pathfile_actual=''
-    readonly REAL_LOG_PATHFILE=$QPKG_PATH/$THIS_QPKG_NAME.log
+    readonly REAL_LOG_PATHFILE=$QPKG_PATH/$QPKG_NAME.log
     readonly TEMP_LOG_PATHFILE=$REAL_LOG_PATHFILE.tmp
-    readonly GUI_LOG_PATHFILE=/home/httpd/$THIS_QPKG_NAME.log
-    readonly LINK_LOG_PATHFILE=/var/log/$THIS_QPKG_NAME.log
+    readonly GUI_LOG_PATHFILE=/home/httpd/$QPKG_NAME.log
+    readonly LINK_LOG_PATHFILE=/var/log/$QPKG_NAME.log
 
-    [[ ! -e $REAL_LOG_PATHFILE ]] && $TOUCH_CMD "$REAL_LOG_PATHFILE"
+    [[ ! -e $REAL_LOG_PATHFILE ]] && /bin/touch "$REAL_LOG_PATHFILE"
     [[ -e $TEMP_LOG_PATHFILE ]] && rm -f "$TEMP_LOG_PATHFILE"
-    [[ ! -L $GUI_LOG_PATHFILE ]] && $LN_CMD -s "$REAL_LOG_PATHFILE" "$GUI_LOG_PATHFILE"
-    [[ ! -L $LINK_LOG_PATHFILE ]] && $LN_CMD -s "$REAL_LOG_PATHFILE" "$LINK_LOG_PATHFILE"
+    [[ ! -L $GUI_LOG_PATHFILE ]] && /bin/ln -s "$REAL_LOG_PATHFILE" "$GUI_LOG_PATHFILE"
+    [[ ! -L $LINK_LOG_PATHFILE ]] && /bin/ln -s "$REAL_LOG_PATHFILE" "$LINK_LOG_PATHFILE"
 
     if [[ -e $ALPHA_PATHFILE_CUSTOM ]]; then
         alpha_pathfile_actual=$ALPHA_PATHFILE_CUSTOM
@@ -92,7 +66,7 @@ Init()
         alpha_pathfile_actual=$ALPHA_PATHFILE_DEFAULT
         alpha_source=default
     else
-        echo "ALPHA package list file not found"
+        echo 'ALPHA package list file not found'
         exit 1
     fi
 
@@ -103,7 +77,7 @@ Init()
         omega_pathfile_actual=$OMEGA_PATHFILE_DEFAULT
         omega_source=default
     else
-        echo "OMEGA package list file not found"
+        echo 'OMEGA package list file not found'
         exit 1
     fi
 
@@ -115,7 +89,43 @@ Init()
         [[ -n $package_ref && $package_ref != \#* ]] && PKGS_OMEGA_ORDERED+=($package_ref)
     done < $omega_pathfile_actual
 
-    PKGS_OMEGA_ORDERED+=($THIS_QPKG_NAME)
+    PKGS_OMEGA_ORDERED+=($QPKG_NAME)
+
+    }
+
+BackupConfig()
+    {
+
+    CommitOperationToLog
+    ExecuteAndLog 'update configuration backup' "/bin/tar --create --gzip --file=$BACKUP_PATHFILE --directory=$QPKG_PATH/config ." log:everything
+
+    }
+
+RestoreConfig()
+    {
+
+    CommitOperationToLog
+
+    if [[ ! -f $BACKUP_PATHFILE ]]; then
+        DisplayErrCommitAllLogs 'unable to restore configuration: no backup file was found!'
+        SetError
+        return 1
+    fi
+
+    StopQPKG
+    ExecuteAndLog 'restore configuration backup' "/bin/tar --extract --gzip --file=$BACKUP_PATHFILE --directory=$QPKG_PATH/config" log:everything
+    StartQPKG
+
+    }
+
+ResetConfig()
+    {
+
+    CommitOperationToLog
+
+    StopQPKG
+    ExecuteAndLog 'reset configuration' "mv $QPKG_INI_DEFAULT_PATHFILE $QPKG_PATH; rm -rf $QPKG_PATH/config/*; mv $QPKG_PATH/$(/usr/bin/basename "$QPKG_INI_DEFAULT_PATHFILE") $QPKG_INI_DEFAULT_PATHFILE" log:everything
+    StartQPKG
 
     }
 
@@ -155,12 +165,12 @@ ShowPackagesAfter()
 ShowListsMarked()
     {
 
-    local acc=0
+    local -i acc=0
     local fmtacc=''
 
     for pref in ${PKGS_ALPHA_ORDERED[@]}; do
         ((acc++)); fmtacc=$(printf "%02d\n" $acc)
-        if ($GREP_CMD -qF "[$pref]" $CONFIG_PATHFILE); then
+        if (/bin/grep -qF "[$pref]" /etc/config/qpkg.conf); then
             ShowLineMarked "$fmtacc" A "$pref"
         else
             ShowLineUnmarked "$fmtacc" A "$pref"
@@ -173,7 +183,7 @@ ShowListsMarked()
 
     for pref in ${PKGS_OMEGA_ORDERED[@]}; do
         ((acc++)); fmtacc=$(printf "%02d\n" $acc)
-        if ($GREP_CMD -qF "[$pref]" $CONFIG_PATHFILE); then
+        if (/bin/grep -qF "[$pref]" /etc/config/qpkg.conf); then
             ShowLineMarked "$fmtacc" Ω "$pref"
         else
             ShowLineUnmarked "$fmtacc" Ω "$pref"
@@ -185,13 +195,13 @@ ShowListsMarked()
 ShowPackagesUnmarked()
     {
 
-    local acc=0
+    local -i acc=0
     local pref=''
     local fmtacc=''
     local buffer=''
     local label=''
 
-    for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
+    for label in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
         ((acc++)); package=${label//[\[\]]}; fmtacc=$(printf "%02d\n" $acc)
         buffer=$(ShowLineUnmarked "$fmtacc" Φ "$package")
 
@@ -218,19 +228,19 @@ ShowSources()
 SortPackages()
     {
 
-    local index=0
+    local -i index=0
     local label=''
 
     # read 'ALPHA' packages in reverse and prepend each to qpkg.conf
     for ((index=${#PKGS_ALPHA_ORDERED[@]}-1; index>=0; index--)); do
-        for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
+        for label in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
             package=${label//[\[\]]}; [[ $package = ${PKGS_ALPHA_ORDERED[$index]} ]] && { SendToStart "$package"; break ;}
         done
     done
 
     # now read 'OMEGA' packages and append each to qpkg.conf
     for index in ${PKGS_OMEGA_ORDERED[@]}; do
-        for label in $($GREP_CMD '^\[' $CONFIG_PATHFILE); do
+        for label in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
             package=${label//[\[\]]}; [[ $package = $index ]] && { SendToEnd "$package"; break ;}
         done
     done
@@ -242,7 +252,7 @@ SendToStart()
 
     # sends $1 to the start of qpkg.conf
 
-    local temp_pathfile=/tmp/$($BASENAME_CMD $CONFIG_PATHFILE).tmp
+    local temp_pathfile=/tmp/qpkg.conf.tmp
     local buffer=$(ShowDataBlock $1)
 
     if [[ $? -gt 0 ]]; then
@@ -250,10 +260,10 @@ SendToStart()
         return 2
     fi
 
-    $RMCFG_CMD $1 -f $CONFIG_PATHFILE
+    /sbin/rmcfg $1 -f /etc/config/qpkg.conf
     echo -e "$buffer" > $temp_pathfile
-    $CAT_CMD $CONFIG_PATHFILE >> $temp_pathfile
-    mv $temp_pathfile $CONFIG_PATHFILE
+    /bin/cat /etc/config/qpkg.conf >> $temp_pathfile
+    mv $temp_pathfile /etc/config/qpkg.conf
 
     }
 
@@ -269,8 +279,8 @@ SendToEnd()
         return 2
     fi
 
-    $RMCFG_CMD $1 -f $CONFIG_PATHFILE
-    echo -e "$buffer" >> $CONFIG_PATHFILE
+    /sbin/rmcfg $1 -f /etc/config/qpkg.conf
+    echo -e "$buffer" >> /etc/config/qpkg.conf
 
     }
 
@@ -279,26 +289,26 @@ ShowDataBlock()
 
     # returns the data block for the QPKG name specified as $1
 
-    local sl=''
-    local ll=''
-    local bl=''
-    local el=''
+    local -i sl=0
+    local -i ll=0
+    local -i bl=0
+    local -i el=0
 
     if [[ -z $1 ]]; then
-        echo "QPKG not specified"
+        echo 'QPKG not specified'
         return 1
     fi
 
-    if ! $GREP_CMD -q $1 $CONFIG_PATHFILE; then
-        echo "QPKG not found"; return 2
+    if ! /bin/grep -q $1 /etc/config/qpkg.conf; then
+        echo 'QPKG not found'; return 2
     fi
 
-    sl=$($GREP_CMD -n "^\[$1\]" $CONFIG_PATHFILE | $CUT_CMD -f1 -d':')
-    ll=$($WC_CMD -l < $CONFIG_PATHFILE | $TR_CMD -d ' ')
-    bl=$($TAIL_CMD -n$((ll-sl)) < $CONFIG_PATHFILE | $GREP_CMD -n '^\[' | $HEAD_CMD -n1 | $CUT_CMD -f1 -d':')
+    sl=$(/bin/grep -n "^\[$1\]" /etc/config/qpkg.conf | /usr/bin/cut -f1 -d':')
+    ll=$(/usr/bin/wc -l < /etc/config/qpkg.conf | /bin/tr -d ' ')
+    bl=$(/usr/bin/tail -n$((ll-sl)) < /etc/config/qpkg.conf | /bin/grep -n '^\[' | /usr/bin/head -n1 | /usr/bin/cut -f1 -d':')
     [[ ! -z $bl ]] && el=$((sl+bl-1)) || el=$ll
 
-    $SED_CMD -n "$sl,${el}p" $CONFIG_PATHFILE
+    /bin/sed -n "$sl,${el}p" /etc/config/qpkg.conf
 
     }
 
@@ -315,7 +325,7 @@ Upshift()
 
     local ext=''
     local dest=''
-    local rotate_limit=10
+    local -i rotate_limit=10
 
     # keep count of recursive calls
     local rec_limit=$((rotate_limit*2))
@@ -325,7 +335,7 @@ Upshift()
     ((rec_count++))
 
     if [[ $rec_count -gt $rec_limit ]]; then
-        echo "recursive limit reached!"
+        echo 'recursive limit reached!'
         rm $rec_track_file
         exit 1
     fi
@@ -357,13 +367,13 @@ Upshift()
 TrimLog()
     {
 
-    local max_ops=10
-    local op_lines=$($GREP_CMD -n "^──" $REAL_LOG_PATHFILE)
-    local op_count=$(echo "$op_lines" | $WC_CMD -l)
+    local -i max_ops=10
+    local op_lines=$(/bin/grep -n "^──" $REAL_LOG_PATHFILE)
+    local -i op_count=$(echo "$op_lines" | /usr/bin/wc -l)
 
     if [[ $op_count -gt $max_ops ]]; then
-        local last_op_line_num=$(echo "$op_lines" | $HEAD_CMD -n$((max_ops+1)) | $TAIL_CMD -n1 | $CUT_CMD -f1 -d:)
-        $HEAD_CMD -n${last_op_line_num} $REAL_LOG_PATHFILE > $TEMP_LOG_PATHFILE
+        local last_op_line_num=$(echo "$op_lines" | /usr/bin/head -n$((max_ops+1)) | /usr/bin/tail -n1 | /usr/bin/cut -f1 -d:)
+        /usr/bin/head -n${last_op_line_num} $REAL_LOG_PATHFILE > $TEMP_LOG_PATHFILE
         mv $TEMP_LOG_PATHFILE $REAL_LOG_PATHFILE
     fi
 
@@ -396,12 +406,12 @@ RecordOperationRequest()
 
     # $1 = operation
 
-    local buffer="[$($DATE_CMD)] '$1' requested"
-    local length=${#buffer}
+    local buffer="[$(/bin/date)] '$1' requested"
+    local -i length=${#buffer}
     local temp=$(printf "%${length}s")
-    local build=$($GETCFG_CMD $THIS_QPKG_NAME Build -f $CONFIG_PATHFILE)
+    local build=$(/sbin/getcfg $QPKG_NAME Build -f /etc/config/qpkg.conf)
 
-    echo -e "${temp// /─}\n$THIS_QPKG_NAME ($build)\n$buffer" >> $TEMP_LOG_PATHFILE
+    echo -e "${temp// /─}\n$QPKG_NAME ($build)\n$buffer" >> $TEMP_LOG_PATHFILE
 
     LogWrite "'$1' requested" 0
 
@@ -412,7 +422,7 @@ RecordOperationComplete()
 
     # $1 = operation
 
-    local buffer="\n[$($DATE_CMD)] '$1' completed"
+    local buffer="\n[$(/bin/date)] '$1' completed"
 
     echo -e "$buffer" >> $TEMP_LOG_PATHFILE
 
@@ -447,7 +457,7 @@ LogWrite()
     #    1 : Warning
     #    2 : Error
 
-    log_tool --append "[$THIS_QPKG_NAME] $1" --type $2
+    log_tool --append "[$QPKG_NAME] $1" --type $2
 
     }
 
@@ -455,10 +465,10 @@ Init
 
 case $1 in
     install|start)
-        if ! ($GREP_CMD -q 'sort-my-qpkgs.sh' $SHUTDOWN_PATHFILE); then
+        if ! /bin/grep -q 'sort-my-qpkgs.sh' $SHUTDOWN_PATHFILE; then
             findtext='#backup logs'
             inserttext='/etc/init.d/sort-my-qpkgs.sh autofix'
-            $SED_CMD -i "s|$findtext|$inserttext\n$findtext|" $SHUTDOWN_PATHFILE
+            /bin/sed -i "s|$findtext|$inserttext\n$findtext|" $SHUTDOWN_PATHFILE
         fi
         if [[ $1 = install ]]; then
             RecordOperationRequest "$1"
@@ -467,13 +477,13 @@ case $1 in
         fi
         ;;
     remove)
-        ($GREP_CMD -q 'sort-my-qpkgs.sh' $SHUTDOWN_PATHFILE) && $SED_CMD -i '/sort-my-qpkgs.sh/d' $SHUTDOWN_PATHFILE
+        /bin/grep -q 'sort-my-qpkgs.sh' $SHUTDOWN_PATHFILE && /bin/sed -i '/sort-my-qpkgs.sh/d' $SHUTDOWN_PATHFILE
         [[ -L $GUI_LOG_PATHFILE ]] && rm -f $GUI_LOG_PATHFILE
         ;;
     autofix)
         RecordOperationRequest "$1"
         ShowSources >> $TEMP_LOG_PATHFILE
-        Upshift $CONFIG_PATHFILE
+        Upshift /etc/config/qpkg.conf
         ShowPackagesBefore >> $TEMP_LOG_PATHFILE
         SortPackages
         ShowPackagesAfter >> $TEMP_LOG_PATHFILE
@@ -482,11 +492,11 @@ case $1 in
         ;;
     fix)
         RecordOperationRequest "$1"
-        ShowSources | $TEE_CMD -a $TEMP_LOG_PATHFILE
-        Upshift $CONFIG_PATHFILE
-        ShowPackagesBefore | $TEE_CMD -a $TEMP_LOG_PATHFILE
+        ShowSources | /usr/bin/tee -a $TEMP_LOG_PATHFILE
+        Upshift /etc/config/qpkg.conf
+        ShowPackagesBefore | /usr/bin/tee -a $TEMP_LOG_PATHFILE
         SortPackages
-        ShowPackagesAfter | $TEE_CMD -a $TEMP_LOG_PATHFILE
+        ShowPackagesAfter | /usr/bin/tee -a $TEMP_LOG_PATHFILE
         RecordOperationComplete "$1"
         CommitLog
         echo -e "\n Packages will be loaded in this order during next boot-up.\n"
@@ -498,7 +508,7 @@ case $1 in
         ;;
     init|stop|restart)
         # do nothing
-        $SLEEP_CMD 1
+        /bin/sleep 1
         ;;
     *)
         echo -e "\n Usage: $0 {fix|pref}\n"
