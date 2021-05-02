@@ -1,3 +1,6 @@
+* Minor update: (210502)
+- Re-enable sorting operations (broke due to mods in 210413).
+
 * Minor update: (210413)
 - Add 'backup', 'restore' and 'reset' operations for custom lists.
 

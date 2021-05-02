@@ -290,10 +290,10 @@ ShowDataBlock()
 
     # returns the data block for the QPKG name specified as $1
 
-    local -i sl=0
-    local -i ll=0
-    local -i bl=0
-    local -i el=0
+    local -i sl=0       # line number: start of specified config block
+    local -i ll=0       # line number: last line in file
+    local -i bl=0       # total lines in specified config block
+    local -i el=0       # line number: end of specified config block
 
     if [[ -z $1 ]]; then
         echo 'QPKG not specified'
@@ -307,7 +307,7 @@ ShowDataBlock()
     sl=$(/bin/grep -n "^\[$1\]" /etc/config/qpkg.conf | /usr/bin/cut -f1 -d':')
     ll=$(/usr/bin/wc -l < /etc/config/qpkg.conf | /bin/tr -d ' ')
     bl=$(/usr/bin/tail -n$((ll-sl)) < /etc/config/qpkg.conf | /bin/grep -n '^\[' | /usr/bin/head -n1 | /usr/bin/cut -f1 -d':')
-    [[ ! -z 0 ]] && el=$((sl+bl-1)) || el=$ll
+    [[ $bl -ne 0 ]] && el=$((sl+bl-1)) || el=$ll
 
     /bin/sed -n "$sl,${el}p" /etc/config/qpkg.conf
 
