@@ -77,14 +77,14 @@ Init()
     fi
 
     while read -r package_ref comment; do
-        [[ -n $package_ref && $package_ref != \#* ]] && PKGS_ALPHA_ORDERED+=($package_ref)
-    done < $alpha_pathfile_actual
+        [[ -n $package_ref && $package_ref != \#* ]] && PKGS_ALPHA_ORDERED+=("$package_ref")
+    done < "$alpha_pathfile_actual"
 
     while read -r package_ref comment; do
-        [[ -n $package_ref && $package_ref != \#* ]] && PKGS_OMEGA_ORDERED+=($package_ref)
-    done < $omega_pathfile_actual
+        [[ -n $package_ref && $package_ref != \#* ]] && PKGS_OMEGA_ORDERED+=("$package_ref")
+    done < "$omega_pathfile_actual"
 
-    PKGS_OMEGA_ORDERED+=($QPKG_NAME)
+    PKGS_OMEGA_ORDERED+=("$QPKG_NAME")
 
     }
 
@@ -103,11 +103,11 @@ BackupConfig()
     fi
 
     if [[ -z $source ]]; then
-        echo 'nothing to backup' | /usr/bin/tee -a $TEMP_LOG_PATHFILE
+        echo 'nothing to backup' | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
         return
     fi
 
-    /bin/tar --create --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" $source | /usr/bin/tee -a $TEMP_LOG_PATHFILE
+    /bin/tar --create --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" "$source" | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
 
     }
 
@@ -115,18 +115,18 @@ RestoreConfig()
     {
 
     if [[ ! -f $BACKUP_PATHFILE ]]; then
-        echo 'unable to restore: no backup file was found!' | /usr/bin/tee -a $TEMP_LOG_PATHFILE
+        echo 'unable to restore: no backup file was found!' | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
         return 1
     fi
 
-    /bin/tar --extract --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" | /usr/bin/tee -a $TEMP_LOG_PATHFILE
+    /bin/tar --extract --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
 
     }
 
 ResetConfig()
     {
 
-    rm -f "$ALPHA_PATHFILE_CUSTOM" "$OMEGA_PATHFILE_CUSTOM"
+    rm -rf "$ALPHA_PATHFILE_CUSTOM" "$OMEGA_PATHFILE_CUSTOM"
 
     }
 
@@ -169,7 +169,7 @@ ShowListsMarked()
     local -i acc=0
     local fmtacc=''
 
-    for pref in ${PKGS_ALPHA_ORDERED[@]}; do
+    for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
         ((acc++)); fmtacc=$(printf "%02d\n" $acc)
         if (/bin/grep -qF "[$pref]" /etc/config/qpkg.conf); then
             ShowLineMarked "$fmtacc" A "$pref"
@@ -182,7 +182,7 @@ ShowListsMarked()
     ((acc++)); fmtacc=$(printf "%02d\n" $acc); ShowLineUnmarked "$fmtacc" Φ '< existing unspecified packages go here >'
     echo
 
-    for pref in ${PKGS_OMEGA_ORDERED[@]}; do
+    for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
         ((acc++)); fmtacc=$(printf "%02d\n" $acc)
         if (/bin/grep -qF "[$pref]" /etc/config/qpkg.conf); then
             ShowLineMarked "$fmtacc" Ω "$pref"
@@ -206,12 +206,12 @@ ShowPackagesUnmarked()
         ((acc++)); package=${label//[\[\]]}; fmtacc=$(printf "%02d\n" $acc)
         buffer=$(ShowLineUnmarked "$fmtacc" Φ "$package")
 
-        for pref in ${PKGS_ALPHA_ORDERED[@]}; do
-            [[ $package = $pref ]] && { buffer=$(ShowLineUnmarked "$fmtacc" A "$package"); break ;}
+        for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
+            [[ $package = "$pref" ]] && { buffer=$(ShowLineUnmarked "$fmtacc" A "$package"); break ;}
         done
 
-        for pref in ${PKGS_OMEGA_ORDERED[@]}; do
-            [[ $package = $pref ]] && { buffer=$(ShowLineUnmarked "$fmtacc" Ω "$package"); break ;}
+        for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
+            [[ $package = "$pref" ]] && { buffer=$(ShowLineUnmarked "$fmtacc" Ω "$package"); break ;}
         done
 
         echo -e "$buffer"
@@ -235,14 +235,14 @@ SortPackages()
     # read 'ALPHA' packages in reverse and prepend each to qpkg.conf
     for ((index=${#PKGS_ALPHA_ORDERED[@]}-1; index>=0; index--)); do
         for label in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
-            package=${label//[\[\]]}; [[ $package = ${PKGS_ALPHA_ORDERED[$index]} ]] && { SendToStart "$package"; break ;}
+            package=${label//[\[\]]}; [[ $package = "${PKGS_ALPHA_ORDERED[$index]}" ]] && { SendToStart "$package"; break ;}
         done
     done
 
     # now read 'OMEGA' packages and append each to qpkg.conf
-    for index in ${PKGS_OMEGA_ORDERED[@]}; do
+    for index in "${PKGS_OMEGA_ORDERED[@]}"; do
         for label in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
-            package=${label//[\[\]]}; [[ $package = $index ]] && { SendToEnd "$package"; break ;}
+            package=${label//[\[\]]}; [[ $package = "$index" ]] && { SendToEnd "$package"; break ;}
         done
     done
 
@@ -254,17 +254,17 @@ SendToStart()
     # sends $1 to the start of qpkg.conf
 
     local temp_pathfile=/tmp/qpkg.conf.tmp
-    local buffer=$(ShowDataBlock $1)
+    local buffer=$(ShowDataBlock "$1")
 
     if [[ $? -gt 0 ]]; then
         echo "error - ${buffer}!"
         return 2
     fi
 
-    /sbin/rmcfg $1 -f /etc/config/qpkg.conf
-    echo -e "$buffer" > $temp_pathfile
-    /bin/cat /etc/config/qpkg.conf >> $temp_pathfile
-    mv $temp_pathfile /etc/config/qpkg.conf
+    /sbin/rmcfg "$1" -f /etc/config/qpkg.conf
+    echo -e "$buffer" > "$temp_pathfile"
+    /bin/cat /etc/config/qpkg.conf >> "$temp_pathfile"
+    mv "$temp_pathfile" /etc/config/qpkg.conf
 
     }
 
@@ -280,7 +280,7 @@ SendToEnd()
         return 2
     fi
 
-    /sbin/rmcfg $1 -f /etc/config/qpkg.conf
+    /sbin/rmcfg "$1" -f /etc/config/qpkg.conf
     echo -e "$buffer" >> /etc/config/qpkg.conf
 
     }
@@ -300,14 +300,14 @@ ShowDataBlock()
         return 1
     fi
 
-    if ! /bin/grep -q $1 /etc/config/qpkg.conf; then
+    if ! /bin/grep -q "$1" /etc/config/qpkg.conf; then
         echo 'QPKG not found'; return 2
     fi
 
     sl=$(/bin/grep -n "^\[$1\]" /etc/config/qpkg.conf | /usr/bin/cut -f1 -d':')
     ll=$(/usr/bin/wc -l < /etc/config/qpkg.conf | /bin/tr -d ' ')
     bl=$(/usr/bin/tail -n$((ll-sl)) < /etc/config/qpkg.conf | /bin/grep -n '^\[' | /usr/bin/head -n1 | /usr/bin/cut -f1 -d':')
-    [[ ! -z $bl ]] && el=$((sl+bl-1)) || el=$ll
+    [[ ! -z 0 ]] && el=$((sl+bl-1)) || el=$ll
 
     /bin/sed -n "$sl,${el}p" /etc/config/qpkg.conf
 
@@ -331,17 +331,17 @@ Upshift()
     # keep count of recursive calls
     local rec_limit=$((rotate_limit*2))
     local rec_count=0
-    local rec_track_file=/tmp/$FUNCNAME.count
-    [[ -e $rec_track_file ]] && rec_count=$(<$rec_track_file)
+    local rec_track_file=/tmp/${FUNCNAME[0]}.count
+    [[ -e $rec_track_file ]] && rec_count=$(<"$rec_track_file")
     ((rec_count++))
 
     if [[ $rec_count -gt $rec_limit ]]; then
         echo 'recursive limit reached!'
-        rm $rec_track_file
+        rm "$rec_track_file"
         exit 1
     fi
 
-    echo $rec_count > $rec_track_file
+    echo "$rec_count" > "$rec_track_file"
 
     ext=${1##*.}
     case $ext in
@@ -361,7 +361,7 @@ Upshift()
             ;;
     esac
 
-    [[ -e $rec_track_file ]] && { rec_count=$(<$rec_track_file); ((rec_count--)); echo $rec_count > $rec_track_file ;}
+    [[ -e $rec_track_file ]] && { rec_count=$(<"$rec_track_file"); ((rec_count--)); echo "$rec_count" > "$rec_track_file" ;}
 
     }
 
@@ -369,13 +369,13 @@ TrimLog()
     {
 
     local -i max_ops=10
-    local op_lines=$(/bin/grep -n "^──" $REAL_LOG_PATHFILE)
+    local op_lines=$(/bin/grep -n "^──" "$REAL_LOG_PATHFILE")
     local -i op_count=$(echo "$op_lines" | /usr/bin/wc -l)
 
     if [[ $op_count -gt $max_ops ]]; then
         local last_op_line_num=$(echo "$op_lines" | /usr/bin/head -n$((max_ops+1)) | /usr/bin/tail -n1 | /usr/bin/cut -f1 -d:)
-        /usr/bin/head -n${last_op_line_num} $REAL_LOG_PATHFILE > $TEMP_LOG_PATHFILE
-        mv $TEMP_LOG_PATHFILE $REAL_LOG_PATHFILE
+        /usr/bin/head -n"${last_op_line_num}" "$REAL_LOG_PATHFILE" > "$TEMP_LOG_PATHFILE"
+        mv "$TEMP_LOG_PATHFILE" "$REAL_LOG_PATHFILE"
     fi
 
     }
@@ -412,7 +412,7 @@ RecordOperationRequest()
     local temp=$(printf "%${length}s")
     local build=$(/sbin/getcfg $QPKG_NAME Build -f /etc/config/qpkg.conf)
 
-    echo -e "${temp// /─}\n$QPKG_NAME ($build)\n$buffer" >> $TEMP_LOG_PATHFILE
+    echo -e "${temp// /─}\n$QPKG_NAME ($build)\n$buffer" >> "$TEMP_LOG_PATHFILE"
 
     LogWrite "'$1' requested" 0
 
@@ -425,7 +425,7 @@ RecordOperationComplete()
 
     local buffer="[$(/bin/date)] '$1' completed"
 
-    echo -e "$buffer" >> $TEMP_LOG_PATHFILE
+    echo -e "$buffer" >> "$TEMP_LOG_PATHFILE"
 
     LogWrite "'$1' completed" 0
 
@@ -443,7 +443,7 @@ ShowSectionTitle()
 CommitLog()
     {
 
-    echo -e "$(<$TEMP_LOG_PATHFILE)\n$(<$REAL_LOG_PATHFILE)" > $REAL_LOG_PATHFILE
+    echo -e "$(<"$TEMP_LOG_PATHFILE")\n$(<"$REAL_LOG_PATHFILE")" > "$REAL_LOG_PATHFILE"
 
     TrimLog
 
@@ -458,7 +458,7 @@ LogWrite()
     #    1 : Warning
     #    2 : Error
 
-    log_tool --append "[$QPKG_NAME] $1" --type $2
+    log_tool --append "[$QPKG_NAME] $1" --type "$2"
 
     }
 
@@ -467,11 +467,11 @@ Init
 case $1 in
     autofix)
         RecordOperationRequest "$1"
-        ShowSources >> $TEMP_LOG_PATHFILE
+        ShowSources >> "$TEMP_LOG_PATHFILE"
         Upshift /etc/config/qpkg.conf
-        ShowPackagesBefore >> $TEMP_LOG_PATHFILE
+        ShowPackagesBefore >> "$TEMP_LOG_PATHFILE"
         SortPackages
-        ShowPackagesAfter >> $TEMP_LOG_PATHFILE
+        ShowPackagesAfter >> "$TEMP_LOG_PATHFILE"
         RecordOperationComplete "$1"
         CommitLog
         ;;
@@ -483,11 +483,11 @@ case $1 in
         ;;
     fix)
         RecordOperationRequest "$1"
-        ShowSources | /usr/bin/tee -a $TEMP_LOG_PATHFILE
+        ShowSources | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
         Upshift /etc/config/qpkg.conf
-        ShowPackagesBefore | /usr/bin/tee -a $TEMP_LOG_PATHFILE
+        ShowPackagesBefore | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
         SortPackages
-        ShowPackagesAfter | /usr/bin/tee -a $TEMP_LOG_PATHFILE
+        ShowPackagesAfter | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
         RecordOperationComplete "$1"
         CommitLog
         echo -e "\n Packages will be loaded in this order during next boot-up.\n"
@@ -536,4 +536,4 @@ case $1 in
         echo -e "\n To re-order packages: $0 fix\n"
 esac
 
-[[ -e $TEMP_LOG_PATHFILE ]] && rm -f $TEMP_LOG_PATHFILE
+[[ -e $TEMP_LOG_PATHFILE ]] && rm -f "$TEMP_LOG_PATHFILE"
