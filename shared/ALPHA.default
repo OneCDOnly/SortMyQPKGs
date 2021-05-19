@@ -55,6 +55,7 @@ QJDK9
 QJDK10
 QJDK11
 QJDK14
+QJDK16
 QVS                 # old 'Virtualization Station'
 QKVM                # new 'Virtualization Station'
 HD_Station          # note: 'HD Station' or 'Linux Station' - only one can be enabled at any time

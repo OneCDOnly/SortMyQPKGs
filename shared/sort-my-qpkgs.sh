@@ -231,6 +231,7 @@ SortPackages()
 
     local -i index=0
     local label=''
+    local package=''
 
     # read 'ALPHA' packages in reverse and prepend each to qpkg.conf
     for ((index=${#PKGS_ALPHA_ORDERED[@]}-1; index>=0; index--)); do
@@ -240,9 +241,9 @@ SortPackages()
     done
 
     # now read 'OMEGA' packages and append each to qpkg.conf
-    for index in "${PKGS_OMEGA_ORDERED[@]}"; do
+    for package in "${PKGS_OMEGA_ORDERED[@]}"; do
         for label in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
-            package=${label//[\[\]]}; [[ $package = "$index" ]] && { SendToEnd "$package"; break ;}
+            [[ $package = "${label//[\[\]]}" ]] && { SendToEnd "$package"; break ;}
         done
     done
 
