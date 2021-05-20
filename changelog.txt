@@ -1,4 +1,4 @@
-* Minor update: (210502)
+* Minor update: (210520)
 - Re-enable sorting for OMEGA packages (broken due to mods in 210413).
 - Added [QJDK16] to the ALPHA list.
 
