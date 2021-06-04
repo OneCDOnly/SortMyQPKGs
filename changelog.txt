@@ -1,3 +1,7 @@
+* Minor update: (210605)
+- Added [MUSL_CROSS, QPython39] to the ALPHA list.
+- Added [MTransmission3] to the OMEGA list.
+
 * Minor update: (210520)
 - Re-enable sorting for OMEGA packages (broken due to mods in 210413).
 - Added [QJDK16] to the ALPHA list.

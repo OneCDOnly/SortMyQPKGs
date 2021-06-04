@@ -12,6 +12,7 @@ QTransmission
 QTransmission3      # load before TransmissionWC
 TransmissionWC      # load after QTransmission3
 OTransmission
+MTransmission3      # load after MUSL_CROSS
 Deluge
 Deluge-server
 Deluge-web

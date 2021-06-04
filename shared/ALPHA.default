@@ -2,9 +2,10 @@
 HideThatBanner      # load early in-case App Center is opened immediately after bootup
 USBSerialdrivers
 V4LDrivers
-RltkWifi2b
 RltkWifi1c
+RltkWifi2b
 ELFx31
+MUSL_CROSS
 
 # package managers
 Optware
@@ -26,6 +27,7 @@ Python
 QPython2
 Python3
 QPython3
+QPython39
 Perl
 QPerl
 nodejs
