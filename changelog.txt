@@ -1,3 +1,8 @@
+* Minor update: (210708)
+- Added [Tailscale] to the ALPHA list.
+- Added [OpenHab3] to the OMEGA list.
+- Removed max QTS version.
+
 * Minor update: (210605)
 - Added [MUSL_CROSS, QPython39] to the ALPHA list.
 - Added [MTransmission3] to the OMEGA list.

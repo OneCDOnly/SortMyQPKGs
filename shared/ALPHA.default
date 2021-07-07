@@ -129,6 +129,7 @@ TincVPN
 WireGuard
 Brook
 Windscribe
+Tailscale
 
 # assorted QNAP packages
 Qsirch              # load after JRE and before Qfiling
