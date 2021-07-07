@@ -107,7 +107,7 @@ BackupConfig()
         return
     fi
 
-    /bin/tar --create --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" "$source" | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
+    /bin/tar --create --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" $source | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
 
     }
 

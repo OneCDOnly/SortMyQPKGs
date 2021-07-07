@@ -1,3 +1,6 @@
+* Minor update: (210708b)
+- Code: ensure both custom files can be backed-up without error.
+
 * Minor update: (210708)
 - Added [Tailscale] to the ALPHA list.
 - Added [OpenHab3] to the OMEGA list.
