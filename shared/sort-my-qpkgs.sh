@@ -104,10 +104,12 @@ BackupConfig()
 
     if [[ -z $source ]]; then
         echo 'nothing to backup' | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
-        return
+        return 0
     fi
 
     /bin/tar --create --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" $source | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
+
+    return 0
 
     }
 
@@ -120,6 +122,8 @@ RestoreConfig()
     fi
 
     /bin/tar --extract --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
+
+    return 0
 
     }
 
@@ -538,3 +542,5 @@ case $1 in
 esac
 
 [[ -e $TEMP_LOG_PATHFILE ]] && rm -f "$TEMP_LOG_PATHFILE"
+
+exit 0

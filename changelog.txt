@@ -1,3 +1,6 @@
+* Minor update: (210708c)
+- Code: ensure service script always returns 0.
+
 * Minor update: (210708b)
 - Code: ensure both custom files can be backed-up without error.
 
