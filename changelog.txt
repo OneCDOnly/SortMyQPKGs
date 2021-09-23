@@ -1,3 +1,8 @@
+* Minor update: (210924)
+- Added [MustangUserDriver, TomCat10, MariaDB5, MariaDB10] to the ALPHA list.
+- Added new 'device drivers' section.
+- Code: fix a few ShellCheck pickups.
+
 * Minor update: (210708c)
 - Code: ensure service script always returns 0.
 

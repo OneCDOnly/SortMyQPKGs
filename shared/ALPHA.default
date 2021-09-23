@@ -1,11 +1,14 @@
 # assorted packages
 HideThatBanner      # load early in-case App Center is opened immediately after bootup
+MUSL_CROSS
+
+# device drivers
 USBSerialdrivers
 V4LDrivers
 RltkWifi1c
 RltkWifi2b
 ELFx31
-MUSL_CROSS
+MustangUserDriver   # load before container-station
 
 # package managers
 Optware
@@ -73,6 +76,7 @@ Qapache
 Tomcat
 Tomcat8
 TomCat9
+TomCat10            # load after QJDK8
 Nginx
 QNginx
 Caddy
@@ -83,6 +87,8 @@ Apache80
 # databases
 QMongoDB
 QMariaDB
+MariaDB5
+MariaDB10
 CubeSQL
 PimCore
 postgresql
@@ -103,7 +109,7 @@ Qffmpeg             # load before FileBot, QBubbleUPnP
 MediaInfoShared     # load before FileBot
 MediaInfoCLI
 MultimediaConsole
-QuMagieCore         # load after container-station and MultimediaConsole
+QuMagieCore         # 'QNAP AI Core' - load after container-station and MultimediaConsole
 qumagie             # load after QuMagieCore
 QMultimedia
 HandBrake_CLI       # load before Tdarr

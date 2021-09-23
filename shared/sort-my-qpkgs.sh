@@ -107,7 +107,7 @@ BackupConfig()
         return 0
     fi
 
-    /bin/tar --create --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" $source | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
+    /bin/tar --create --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" "$source" | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
 
     return 0
 
@@ -174,7 +174,7 @@ ShowListsMarked()
     local fmtacc=''
 
     for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
-        ((acc++)); fmtacc=$(printf "%02d\n" $acc)
+        ((acc++)); fmtacc=$(printf "%02d\n" "$acc")
         if (/bin/grep -qF "[$pref]" /etc/config/qpkg.conf); then
             ShowLineMarked "$fmtacc" A "$pref"
         else
@@ -183,11 +183,11 @@ ShowListsMarked()
     done
 
     echo
-    ((acc++)); fmtacc=$(printf "%02d\n" $acc); ShowLineUnmarked "$fmtacc" Φ '< existing unspecified packages go here >'
+    ((acc++)); fmtacc=$(printf "%02d\n" "$acc"); ShowLineUnmarked "$fmtacc" Φ '< existing unspecified packages go here >'
     echo
 
     for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
-        ((acc++)); fmtacc=$(printf "%02d\n" $acc)
+        ((acc++)); fmtacc=$(printf "%02d\n" "$acc")
         if (/bin/grep -qF "[$pref]" /etc/config/qpkg.conf); then
             ShowLineMarked "$fmtacc" Ω "$pref"
         else
@@ -207,7 +207,7 @@ ShowPackagesUnmarked()
     local label=''
 
     for label in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
-        ((acc++)); package=${label//[\[\]]}; fmtacc=$(printf "%02d\n" $acc)
+        ((acc++)); package=${label//[\[\]]}; fmtacc=$(printf "%02d\n" "$acc")
         buffer=$(ShowLineUnmarked "$fmtacc" Φ "$package")
 
         for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
