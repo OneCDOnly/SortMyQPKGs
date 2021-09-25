@@ -61,6 +61,7 @@ QJDK10
 QJDK11
 QJDK14
 QJDK16
+java-installer      # available in the FileBot repo
 QVS                 # old 'Virtualization Station'
 QKVM                # new 'Virtualization Station'
 HD_Station          # note: 'HD Station' or 'Linux Station' - only one can be enabled at any time
@@ -113,6 +114,8 @@ QuMagieCore         # 'QNAP AI Core' - load after container-station and Multimed
 qumagie             # load after QuMagieCore
 QMultimedia
 HandBrake_CLI       # load before Tdarr
+FileBot             # load before filebot-node
+filebot-node        # load after NodeJS and FileBot
 
 # media servers
 XTeve

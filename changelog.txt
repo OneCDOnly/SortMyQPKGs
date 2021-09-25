@@ -1,3 +1,6 @@
+* Minor update: (210926)
+- Added [java-installer, FileBot, filebot-node] to the ALPHA list.
+
 * Minor update: (210924)
 - Added [MustangUserDriver, TomCat10, MariaDB5, MariaDB10] to the ALPHA list.
 - Added new 'device drivers' section.
