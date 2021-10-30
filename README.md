@@ -35,7 +35,7 @@ This package was initially suggested by @father_mande & @zyxmon in [this thread]
 - The current internal order preference list can be viewed with:
 
 ```
-    /etc/init.d/sort-my-qpkgs.sh pref
+    /etc/init.d/sortmyqpkgs.sh pref
 ```
 
 - [Changelog](changelog.txt)

@@ -105,7 +105,7 @@
 ######################################################################
 PKG_PRE_REMOVE="{
 
-/etc/init.d/sort-my-qpkgs.sh remove
+/etc/init.d/sortmyqpkgs.sh remove
 
 }"
 ######################################################################
@@ -115,7 +115,7 @@ PKG_PRE_REMOVE="{
 pkg_post_install()
 	{
 
-	/etc/init.d/sort-my-qpkgs.sh install
+	/etc/init.d/sortmyqpkgs.sh install
 	$CMD_SETCFG -f $SYS_QPKG_CONFIG_FILE $QPKG_NAME Web_Port $($CMD_GETCFG System "Web Access Port")
 
 	}

@@ -1,3 +1,7 @@
+* Minor update: (211030)
+- Added [MRadarr, SickChill80, MLidarr] to the OMEGA list.
+- Code: renamed service script file from [sort-my-qpkgs.sh] to [sortmyqpkgs.sh].
+
 * Minor update: (210926)
 - Added [java-installer, FileBot, filebot-node] to the ALPHA list.
 
