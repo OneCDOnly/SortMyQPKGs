@@ -1,3 +1,7 @@
+* Minor update: (211207)
+- Added [QX11, QJDK17, Apache81] to the OMEGA list.
+- Added [Sonarr3] to the OMEGA list.
+
 * Minor update: (211030)
 - Added [MRadarr, SickChill80, MLidarr] to the OMEGA list.
 - Code: renamed service script file from [sort-my-qpkgs.sh] to [sortmyqpkgs.sh].

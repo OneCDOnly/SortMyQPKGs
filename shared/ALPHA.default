@@ -24,6 +24,7 @@ NVIDIA_GPU_DRV      # load before HD_Station & linux-station
 netmgr              # 'Network & Virtual Switch'
 NMAP                # load before WMAP
 AcronisK            # load before AcronisAgent
+QX11                # 'Virtual Remote Desktop Window Manager'
 
 # high-level language interpreters
 Python
@@ -61,6 +62,7 @@ QJDK10
 QJDK11
 QJDK14
 QJDK16
+QJDK17
 java-installer      # available in the FileBot repo
 QVS                 # old 'Virtualization Station'
 QKVM                # new 'Virtualization Station'
@@ -84,6 +86,7 @@ Caddy
 Apache73
 Apache74
 Apache80
+Apache81
 
 # databases
 QMongoDB

@@ -24,6 +24,7 @@ rtorrent
 SonarrTrackTV       # load before QSonarr
 QSonarr
 QSonarr3
+Sonarr3
 Radarr
 RadarrDotNet
 MRadarr             # load after MUSL_CROSS
