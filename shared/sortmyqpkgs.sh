@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ############################################################################
-# sort-my-qpkgs.sh - (C)opyright 2017-2021 OneCD [one.cd.only@gmail.com]
+# sortmyqpkgs.sh - (C)opyright 2017-2022 OneCD [one.cd.only@gmail.com]
 #
 # This script is part of the 'SortMyQPKGs' package
 #
@@ -502,9 +502,9 @@ case $1 in
         /bin/sleep 1
         ;;
     install|start)
-        if ! /bin/grep -q 'sort-my-qpkgs.sh' $SHUTDOWN_PATHFILE; then
+        if ! /bin/grep -q 'sortmyqpkgs.sh' $SHUTDOWN_PATHFILE; then
             findtext='#backup logs'
-            inserttext='/etc/init.d/sort-my-qpkgs.sh autofix'
+            inserttext='/etc/init.d/sortmyqpkgs.sh autofix'
             /bin/sed -i "s|$findtext|$inserttext\n$findtext|" $SHUTDOWN_PATHFILE
         fi
         if [[ $1 = install ]]; then
@@ -519,7 +519,7 @@ case $1 in
         echo -e "\n To re-order packages: $0 fix\n"
         ;;
     remove)
-        /bin/grep -q 'sort-my-qpkgs.sh' $SHUTDOWN_PATHFILE && /bin/sed -i '/sort-my-qpkgs.sh/d' $SHUTDOWN_PATHFILE
+        /bin/grep -q 'sortmyqpkgs.sh' $SHUTDOWN_PATHFILE && /bin/sed -i '/sortmyqpkgs.sh/d' $SHUTDOWN_PATHFILE
         [[ -L $GUI_LOG_PATHFILE ]] && rm -f $GUI_LOG_PATHFILE
         ;;
     reset)
