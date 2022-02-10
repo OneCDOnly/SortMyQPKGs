@@ -1,3 +1,6 @@
+* Minor update: (220210)
+- Code: ensure sorter executes on shutdown.
+
 * Minor update: (211207)
 - Added [QX11, QJDK17, Apache81] to the OMEGA list.
 - Added [Sonarr3] to the OMEGA list.
