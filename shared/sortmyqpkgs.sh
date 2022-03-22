@@ -471,6 +471,10 @@ Init
 
 case $1 in
     autofix)
+        if [[ $(/sbin/getcfg $QPKG_NAME Enable -u -d FALSE -f /etc/config/qpkg.conf) != "TRUE" ]]; then
+            echo "$QPKG_NAME is disabled. You must first enable with: qpkg_service enable $QPKG_NAME"
+            exit 1
+        fi
         RecordOperationRequest "$1"
         ShowSources >> "$TEMP_LOG_PATHFILE"
         Upshift /etc/config/qpkg.conf

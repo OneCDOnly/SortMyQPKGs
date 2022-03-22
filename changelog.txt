@@ -1,3 +1,6 @@
+* Minor update: (220322)
+- Code: ensure 'autofix' doesn't run if QPKG is disabled.
+
 * Minor update: (220219)
 - Added [QPython310] to the ALPHA list.
 
