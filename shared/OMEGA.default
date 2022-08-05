@@ -59,6 +59,7 @@ Lidarr
 LidarrDotNET
 MLidarr             # load after MUSL_CROSS
 LazyLibrarian
+Autobrr             # load after all torrent downloaders
 
 # malware detection and removal (these are not "live" scanners)
 MalwareRemover
@@ -69,6 +70,7 @@ HappyGet2           # load after MusicStation & Python3
 SurveillanceStation # load late due to long startup time
 OpenHab3            # load late due to long startup time
 NotificationCenter  # give netmgr more time to start
+Traefik             # load after all web services
 
 # only run after everything else...
 RunLast

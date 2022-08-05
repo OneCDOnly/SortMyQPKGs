@@ -64,6 +64,7 @@ QJDK11
 QJDK14
 QJDK16
 QJDK17
+QJDK18
 java-installer      # available in the FileBot repo
 QVS                 # old 'Virtualization Station'
 QKVM                # new 'Virtualization Station'
@@ -81,7 +82,8 @@ Tomcat
 Tomcat8
 TomCat9
 TomCat10            # load after QJDK8
-Nginx
+Nginx               # v1.12.2
+NGinX               # v1.21.2.0
 QNginx
 Caddy
 Apache73
@@ -103,6 +105,7 @@ PostgreSQLPremium   # load after Qapache
 PostgreSQLPremium13 # load after Apache80
 MySQL8
 InfluxDB            # load before Chronograf
+InfluxDB2
 firebird
 Neo4J
 QuestDB

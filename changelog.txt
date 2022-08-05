@@ -1,3 +1,7 @@
+* Minor update: (xxxxxx)
+- Added [QJDK18, NGinX, InfluxDB2] to the ALPHA list.
+- Added [Autobrr, Traefik] to the OMEGA list.
+
 * Minor update: (220322)
 - Code: ensure 'autofix' doesn't run if QPKG is disabled.
 
