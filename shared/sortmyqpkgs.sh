@@ -48,6 +48,7 @@ Init()
     readonly TEMP_LOG_PATHFILE=$REAL_LOG_PATHFILE.tmp
     readonly GUI_LOG_PATHFILE=/home/httpd/$QPKG_NAME.log
     readonly LINK_LOG_PATHFILE=/var/log/$QPKG_NAME.log
+    readonly SERVICE_STATUS_PATHFILE=/var/run/$QPKG_NAME.last.operation
 
     [[ ! -e $REAL_LOG_PATHFILE ]] && /bin/touch "$REAL_LOG_PATHFILE"
     [[ -e $TEMP_LOG_PATHFILE ]] && rm -f "$TEMP_LOG_PATHFILE"
@@ -62,6 +63,7 @@ Init()
         alpha_source=default
     else
         echo 'ALPHA package list file not found'
+        SetServiceOperationResultFailed
         exit 1
     fi
 
@@ -73,6 +75,7 @@ Init()
         omega_source=default
     else
         echo 'OMEGA package list file not found'
+        SetServiceOperationResultFailed
         exit 1
     fi
 
@@ -433,9 +436,32 @@ RecordOperationComplete()
     echo -e "$buffer" >> "$TEMP_LOG_PATHFILE"
 
     LogWrite "'$1' completed" 0
+    SetServiceOperationResultOK
 
     }
 
+SetServiceOperationResultOK()
+    {
+
+    SetServiceOperationResult ok
+
+    }
+
+SetServiceOperationResultFailed()
+    {
+
+    SetServiceOperationResult failed
+
+    }
+
+SetServiceOperationResult()
+    {
+
+    # $1 = result of operation to recorded
+
+    [[ -n $1 && -n $SERVICE_STATUS_PATHFILE ]] && echo "$1" > "$SERVICE_STATUS_PATHFILE"
+
+    }
 ShowSectionTitle()
     {
 
@@ -473,6 +499,7 @@ case $1 in
     autofix)
         if [[ $(/sbin/getcfg $QPKG_NAME Enable -u -d FALSE -f /etc/config/qpkg.conf) != "TRUE" ]]; then
             echo "$QPKG_NAME is disabled. You must first enable with: qpkg_service enable $QPKG_NAME"
+            SetServiceOperationResultFailed
             exit 1
         fi
         RecordOperationRequest "$1"

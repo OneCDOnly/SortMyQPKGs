@@ -1,4 +1,7 @@
-* Minor update: (xxxxxx)
+* Minor update: (220809)
+- Code: include service script operation status logging.
+
+* Minor update: (220805)
 - Added [QJDK18, NGinX, InfluxDB2] to the ALPHA list.
 - Added [Autobrr, Traefik] to the OMEGA list.
 
