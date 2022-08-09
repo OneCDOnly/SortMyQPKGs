@@ -1,3 +1,6 @@
+* Minor update: (220810)
+- Code: ensure operation status is created when running service script.
+
 * Minor update: (220809)
 - Code: include service script operation status logging.
 

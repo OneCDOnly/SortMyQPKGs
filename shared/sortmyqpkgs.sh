@@ -436,7 +436,6 @@ RecordOperationComplete()
     echo -e "$buffer" >> "$TEMP_LOG_PATHFILE"
 
     LogWrite "'$1' completed" 0
-    SetServiceOperationResultOK
 
     }
 
@@ -462,6 +461,7 @@ SetServiceOperationResult()
     [[ -n $1 && -n $SERVICE_STATUS_PATHFILE ]] && echo "$1" > "$SERVICE_STATUS_PATHFILE"
 
     }
+
 ShowSectionTitle()
     {
 
@@ -573,5 +573,6 @@ case $1 in
 esac
 
 [[ -e $TEMP_LOG_PATHFILE ]] && rm -f "$TEMP_LOG_PATHFILE"
+SetServiceOperationResultOK
 
 exit 0
