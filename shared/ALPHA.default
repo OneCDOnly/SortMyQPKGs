@@ -40,6 +40,7 @@ nodejsv4
 nodejsv6
 nodejsv8
 NodeJS
+NodeJS18
 ruby
 QRuby
 Go
@@ -90,9 +91,11 @@ Apache73
 Apache74
 Apache80
 Apache81
+Apache82
 
 # databases
 QMongoDB
+MongoDB
 QMariaDB
 MariaDB5
 MariaDB10

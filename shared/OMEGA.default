@@ -41,12 +41,14 @@ QSickChill
 QSickChill3
 SickChill80         # load after Apache80
 Medusa
+Medusa81
 OMedusa
 PyMedusa3
 Headphones
 QHeadPhones
 Mylar
 Mylar3
+Mylar381
 MovieGrabber
 CouchPotato2
 QCouchPotato
