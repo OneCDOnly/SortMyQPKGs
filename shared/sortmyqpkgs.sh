@@ -1,24 +1,24 @@
 #!/usr/bin/env bash
 ############################################################################
-# sortmyqpkgs.sh - (C)opyright 2017-2022 OneCD [one.cd.only@gmail.com]
-#
+# sortmyqpkgs.sh - (C)opyright 2017-2023 OneCD [one.cd.only@gmail.com]
+
 # This script is part of the 'SortMyQPKGs' package
-#
+
 # For more info: [https://forum.qnap.com/viewtopic.php?f=320&t=133132]
-#
-# Available in the Qnapclub Store: [https://qnapclub.eu/en/qpkg/508]
+
+# Available in the myqnap store: [https://myqnap.org]
 # Project source: [https://github.com/OneCDOnly/SortMyQPKGs]
-#
+
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
 # Foundation, either version 3 of the License, or (at your option) any later
 # version.
-#
+
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 # FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
 # details.
-#
+
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see http://www.gnu.org/licenses/.
 ############################################################################
@@ -28,7 +28,6 @@ Init()
 
     readonly QPKG_NAME=SortMyQPKGs
     readonly SHUTDOWN_PATHFILE=/etc/init.d/shutdown_check.sh
-    readonly LC_ALL=C
     local -r BACKUP_PATH=$(/sbin/getcfg SHARE_DEF defVolMP -f /etc/config/def_share.info)/.qpkg_config_backup
     readonly BACKUP_PATHFILE=$BACKUP_PATH/$QPKG_NAME.config.tar.gz
 

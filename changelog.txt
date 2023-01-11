@@ -1,3 +1,7 @@
+* Minor update: (230112)
+- Added [SickGear80, SickGear81, SickGear82, SickChill81, SickChill82] to the OMEGA list.
+- update intenal package ref to myqnap.org
+
 * Minor update: (221213)
 - Added [NodeJS18, Apache82, MongoDB] to the ALPHA list.
 - Added [Medusa81, Mylar381] to the OMEGA list.

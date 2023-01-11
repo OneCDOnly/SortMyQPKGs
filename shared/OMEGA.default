@@ -35,11 +35,16 @@ SickBeard-TVRage
 SickRage
 QSickRage
 SickGear
+SickGear80
+SickGear81
+SickGear82
 OSickGear
 SickChill
+SickChill80         # load after Apache80
+SickChill81
+SickChill82
 QSickChill
 QSickChill3
-SickChill80         # load after Apache80
 Medusa
 Medusa81
 OMedusa
