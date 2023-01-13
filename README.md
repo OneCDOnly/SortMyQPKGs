@@ -18,19 +18,17 @@ The order is hardcoded into this QPKG but can be modified on request by posting 
 
 This package was initially suggested by @father_mande & @zyxmon in [this thread](https://forum.qnap.com/viewtopic.php?f=351&t=130320), and is thanks to the research efforts of @zyxmon, @father_mande, myself and many other QNAP community members. Thank you to all who have contributed with feedback and suggestions.
 
-## How to install
+## Installation
 
-- It's available in the [Qnapclub Store!](https://qnapclub.eu/en/qpkg/508)
+- The **SortMyQPKGs** QPKG is available [here](https://github.com/OneCDOnly/SortMyQPKGs/releases/download/v230112/SortMyQPKGs_230112.qpkg).
 
-- [Click here](https://qnapclub.eu/en/howto/1) to learn how to add the **Qnapclub Store** as an App Center repository in QTS.
-
+- This package is also available via [sherpa](https://github.com/OneCDOnly/sherpa).
 
 ## Notes
 
 - When the sorter is installed, there's not much to see. Find the package icon and click the 'Open' button to display the current log file - any changes made to your package order will be shown here. Sorting is automatically performed during each NAS shutdown. No need to run it manually.
 
 - The log is viewable via your web browser but is not a real web document, so it can change without your browser noticing. Whenever viewing the log, ensure you force a page refresh: CTRL+F5.
-
 
 - The current internal order preference list can be viewed with:
 
