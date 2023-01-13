@@ -11,7 +11,9 @@ This package will automatically ensure the launch-order of your other QPKGs is c
 Every QPKG will fit into one of three possible groups:
 
 1. **ALPHA** - must be launched *before* other packages, and in a specific order (these are high-level apps like command interpreters, virtual environments and the like),
+
 2. **UNSPECIFIED** - the majority of QPKGs out there that are not explicitly named, but should be launched *after* ALPHA and *before* OMEGA packages,
+
 3. **OMEGA** - packages that should be launched *after* everything else, and in a specific order. These are generally dependent on some other package.
 
 The order is hardcoded into this QPKG but can be modified on request by posting in the [forum topic](https://forum.qnap.com/viewtopic.php?f=320&t=133132). Please advise of new QPKGs to add and where on the current lists the new package should be placed. Only packages that *must* be placed correctly should be requested.
