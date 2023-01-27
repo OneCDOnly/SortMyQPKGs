@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 ############################################################################
-# sortmyqpkgs.sh - (C)opyright 2017-2023 OneCD [one.cd.only@gmail.com]
+# sortmyqpkgs.sh - (C)opyright 2017-2023 OneCD one.cd.only@gmail.com
 
 # This script is part of the 'SortMyQPKGs' package
 
-# For more info: [https://forum.qnap.com/viewtopic.php?f=320&t=133132]
+# For more info: https://forum.qnap.com/viewtopic.php?f=320&t=133132
 
-# Available in the myqnap store: [https://myqnap.org]
-# Project source: [https://github.com/OneCDOnly/SortMyQPKGs]
+# Available in the MyQNAP store: https://www.myqnap.org/product/sortmyqpkgs
+# Project source: https://github.com/OneCDOnly/SortMyQPKGs
 
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
