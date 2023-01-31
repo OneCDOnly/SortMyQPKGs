@@ -1,3 +1,6 @@
+* Minor update: (230131)
+- Code: always touch backupfile when running a backup: even when nothing is backed-up.
+
 * Minor update: (230112)
 - Added [SickGear80, SickGear81, SickGear82, SickChill81, SickChill82] to the OMEGA list.
 - update internal package ref to myqnap.org

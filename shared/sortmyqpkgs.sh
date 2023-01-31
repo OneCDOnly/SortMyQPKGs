@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ############################################################################
-# sortmyqpkgs.sh - (C)opyright 2017-2023 OneCD one.cd.only@gmail.com
+# sortmyqpkgs.sh - (C)opyright 2017-2023 OneCD - one.cd.only@gmail.com
 
 # This script is part of the 'SortMyQPKGs' package
 
@@ -105,6 +105,7 @@ BackupConfig()
     fi
 
     if [[ -z $source ]]; then
+        touch "$BACKUP_PATHFILE"
         echo 'nothing to backup' | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
         return 0
     fi
@@ -118,8 +119,8 @@ BackupConfig()
 RestoreConfig()
     {
 
-    if [[ ! -f $BACKUP_PATHFILE ]]; then
-        echo 'unable to restore: no backup file was found!' | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
+    if [[ ! -s $BACKUP_PATHFILE ]]; then
+        echo 'unable to restore: backup file is unusable!' | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
         return 1
     fi
 
