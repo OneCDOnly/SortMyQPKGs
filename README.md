@@ -1,4 +1,4 @@
-![icon](images/sort-my-qpkgs-cs.png)
+![icon](images/sort-my-qpkgs.original.png)
 
 ## Description
 

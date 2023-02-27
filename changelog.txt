@@ -1,3 +1,6 @@
+* Minor update: (230227)
+- Code: update package icon.
+
 * Minor update: (230131)
 - Code: always touch backupfile when running a backup: even when nothing is backed-up.
 
