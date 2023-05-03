@@ -565,8 +565,17 @@ case $1 in
         RecordOperationComplete "$1"
         CommitLog
         ;;
+	status)
+        if /bin/grep -q 'sortmyqpkgs.sh' $SHUTDOWN_PATHFILE; then
+			echo 'active'
+			exit 0
+		else
+			echo 'inactive'
+			exit 1
+		fi
+		;;
     *)
-        echo -e "\n Usage: $0 {backup|fix|pref|reset|restore}\n"
+        echo -e "\n Usage: $0 {backup|fix|pref|reset|restore|status}\n"
         ShowSources
         ShowPackagesCurrent
         echo -e "\n To re-order packages: $0 fix\n"

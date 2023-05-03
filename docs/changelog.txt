@@ -1,3 +1,6 @@
+* Minor update: (230503)
+- Code: add 'status' action.
+
 * Minor update: (230227)
 - Code: update package icon.
 
