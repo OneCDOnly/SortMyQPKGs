@@ -1,4 +1,5 @@
 # assorted packages
+IncreaseTimeouts	# load very-early so it can MITM the 'qpkg_service' utility
 HideThatBanner      # load early in-case App Center is opened immediately after bootup
 MUSL_CROSS
 
@@ -106,6 +107,7 @@ PostgreSQL
 QPostgreSQL         # load before QOdOO, QOdoo11
 PostgreSQLPremium   # load after Qapache
 PostgreSQLPremium13 # load after Apache80
+PG4admin82
 MySQL8
 InfluxDB            # load before Chronograf
 InfluxDB2

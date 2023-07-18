@@ -19,6 +19,7 @@ Deluge-web
 QBittorrent
 QBittorrent4
 rtorrent
+OqBittorrent
 
 # searchers
 SonarrTrackTV       # load before QSonarr

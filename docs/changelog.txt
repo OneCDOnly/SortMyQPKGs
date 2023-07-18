@@ -1,3 +1,7 @@
+* Minor update: (230718)
+- Added [IncreaseTimeouts, PG4admin82] to the ALPHA list.
+- Added [OqBittorrent] to the OMEGA list.
+
 * Minor update: (230503)
 - Code: add 'status' action.
 
