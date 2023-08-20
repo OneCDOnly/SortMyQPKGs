@@ -1,5 +1,5 @@
 # assorted packages
-IncreaseTimeouts	# load very-early so it can MITM the 'qpkg_service' utility
+IncreaseTimeouts    # load very-early so it can MITM the 'qpkg_service' utility
 HideThatBanner      # load early in-case App Center is opened immediately after bootup
 MUSL_CROSS
 
@@ -26,6 +26,7 @@ netmgr              # 'Network & Virtual Switch'
 NMAP                # load before WMAP
 AcronisK            # load before AcronisAgent
 QX11                # 'Virtual Remote Desktop Window Manager'
+V2Ray               # 'Project V - V2ray Core' - load before V2rayA
 
 # high-level language interpreters
 Python
@@ -34,6 +35,7 @@ Python3
 QPython3
 QPython39
 QPython310
+QPython311
 Perl
 QPerl
 nodejs

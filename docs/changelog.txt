@@ -1,313 +1,316 @@
+* Minor update: (230820)
+- add [V2Ray, QPython311] to the ALPHA list.
+
 * Minor update: (230718)
-- Added [IncreaseTimeouts, PG4admin82] to the ALPHA list.
-- Added [OqBittorrent] to the OMEGA list.
+- add [IncreaseTimeouts, PG4admin82] to the ALPHA list.
+- add [OqBittorrent] to the OMEGA list.
 
 * Minor update: (230503)
-- Code: add 'status' action.
+- code: add 'status' action.
 
 * Minor update: (230227)
-- Code: update package icon.
+- code: update package icon.
 
 * Minor update: (230131)
-- Code: always touch backupfile when running a backup: even when nothing is backed-up.
+- code: always touch backupfile when running a backup: even when nothing is backed-up.
 
 * Minor update: (230112)
-- Added [SickGear80, SickGear81, SickGear82, SickChill81, SickChill82] to the OMEGA list.
+- add [SickGear80, SickGear81, SickGear82, SickChill81, SickChill82] to the OMEGA list.
 - update internal package ref to myqnap.org
 
 * Minor update: (221213)
-- Added [NodeJS18, Apache82, MongoDB] to the ALPHA list.
-- Added [Medusa81, Mylar381] to the OMEGA list.
+- add [NodeJS18, Apache82, MongoDB] to the ALPHA list.
+- add [Medusa81, Mylar381] to the OMEGA list.
 
 * Minor update: (220810)
-- Code: ensure operation status is created when running service script.
+- code: ensure operation status is created when running service script.
 
 * Minor update: (220809)
-- Code: include service script operation status logging.
+- code: include service script operation status logging.
 
 * Minor update: (220805)
-- Added [QJDK18, NGinX, InfluxDB2] to the ALPHA list.
-- Added [Autobrr, Traefik] to the OMEGA list.
+- add [QJDK18, NGinX, InfluxDB2] to the ALPHA list.
+- add [Autobrr, Traefik] to the OMEGA list.
 
 * Minor update: (220322)
-- Code: ensure 'autofix' doesn't run if QPKG is disabled.
+- code: ensure 'autofix' doesn't run if QPKG is disabled.
 
 * Minor update: (220219)
-- Added [QPython310] to the ALPHA list.
+- add [QPython310] to the ALPHA list.
 
 * Minor update: (220210)
-- Code: ensure sorter executes on shutdown.
+- code: ensure sorter executes on shutdown.
 
 * Minor update: (211207)
-- Added [QX11, QJDK17, Apache81] to the OMEGA list.
-- Added [Sonarr3] to the OMEGA list.
+- add [QX11, QJDK17, Apache81] to the OMEGA list.
+- add [Sonarr3] to the OMEGA list.
 
 * Minor update: (211030)
-- Added [MRadarr, SickChill80, MLidarr] to the OMEGA list.
-- Code: renamed service script file from [sort-my-qpkgs.sh] to [sortmyqpkgs.sh].
+- add [MRadarr, SickChill80, MLidarr] to the OMEGA list.
+- code: renamed service script file from [sort-my-qpkgs.sh] to [sortmyqpkgs.sh].
 
 * Minor update: (210926)
-- Added [java-installer, FileBot, filebot-node] to the ALPHA list.
+- add [java-installer, FileBot, filebot-node] to the ALPHA list.
 
 * Minor update: (210924)
-- Added [MustangUserDriver, TomCat10, MariaDB5, MariaDB10] to the ALPHA list.
-- Added new 'device drivers' section.
-- Code: fix a few ShellCheck pickups.
+- add [MustangUserDriver, TomCat10, MariaDB5, MariaDB10] to the ALPHA list.
+- add new 'device drivers' section.
+- code: fix a few ShellCheck pickups.
 
 * Minor update: (210708c)
-- Code: ensure service script always returns 0.
+- code: ensure service script always returns 0.
 
 * Minor update: (210708b)
-- Code: ensure both custom files can be backed-up without error.
+- code: ensure both custom files can be backed-up without error.
 
 * Minor update: (210708)
-- Added [Tailscale] to the ALPHA list.
-- Added [OpenHab3] to the OMEGA list.
-- Removed max QTS version.
+- add [Tailscale] to the ALPHA list.
+- add [OpenHab3] to the OMEGA list.
+- remove max QTS version.
 
 * Minor update: (210605)
-- Added [MUSL_CROSS, QPython39] to the ALPHA list.
-- Added [MTransmission3] to the OMEGA list.
+- add [MUSL_CROSS, QPython39] to the ALPHA list.
+- add [MTransmission3] to the OMEGA list.
 
 * Minor update: (210520)
-- Re-enable sorting for OMEGA packages (broken due to mods in 210413).
-- Added [QJDK16] to the ALPHA list.
+- re-enable sorting for OMEGA packages (broken due to mods in 210413).
+- add [QJDK16] to the ALPHA list.
 
 * Minor update: (210502)
-- Re-enable sorting operations (broken due to mods in 210413).
+- re-enable sorting operations (broken due to mods in 210413).
 
 * Minor update: (210413)
-- Add 'backup', 'restore' and 'reset' operations for custom lists.
+- add 'backup', 'restore' and 'reset' operations for custom lists.
 
 * Minor update: (210328)
-- Open sorting log in a new QTS window instead of a new page.
+- open sorting log in a new QTS window instead of a new page.
 
 * Minor update: (210323)
-- Added [V4LDrivers, RltkWifi2b, RltkWifi1c, Erlang, QuestDB, Dolt] to the ALPHA list.
+- add [V4LDrivers, RltkWifi2b, RltkWifi1c, Erlang, QuestDB, Dolt] to the ALPHA list.
 
 * Minor update: (201228)
-- Added [PostgreSQLPremium13] to the ALPHA list.
+- add [PostgreSQLPremium13] to the ALPHA list.
 - include fix to enable App Center icon in QTS 4.5.1.
 
 * Minor update: (201206)
-- Added [Apache80] to the ALPHA list.
+- add [Apache80] to the ALPHA list.
 
 * Minor update: (201116)
-- Added [QKVM] to the ALPHA list.
+- add [QKVM] to the ALPHA list.
 
 * Minor update: (201106)
-- Added [QSickChill3, PyMedusa3] to the OMEGA list.
-- Create a symlink to main log in /var/log/
-- Code: minor fixes for better readability.
+- add [QSickChill3, PyMedusa3] to the OMEGA list.
+- create a symlink to main log in /var/log/
+- code: minor fixes for better readability.
 
 * Minor update: (200903)
-- Added [Deluge-server, Deluge-web, RadarrDotNet, Mylar3, LidarrDotNET] to the OMEGA list.
+- add [Deluge-server, Deluge-web, RadarrDotNet, Mylar3, LidarrDotNET] to the OMEGA list.
 
 * Minor update: (200812)
-- Added [HandBrake_CLI, Komga] to the ALPHA list.
-- Added [QSabNZBd3] to the OMEGA list.
+- add [HandBrake_CLI, Komga] to the ALPHA list.
+- add [QSabNZBd3] to the OMEGA list.
 
 * Minor update: (200811)
-- Added [OTransmission, OSickGear, LazyLibrarian] to the OMEGA list.
-- Moved the malware detection packages from loading first to (almost) last. These are not "live" scanners, so makes more sense to load them after everything else.
+- add [OTransmission, OSickGear, LazyLibrarian] to the OMEGA list.
+- move the malware detection packages from loading first to (almost) last. These are not "live" scanners, so makes more sense to load them after everything else.
 
 * Minor update: (200724)
-- Added [AcronisK, JRE_ARM, QJDK14, CACert, Teamspeak3] to the ALPHA list.
-- Added [TransmissionWC, Ombi4] to the OMEGA list.
+- add [AcronisK, JRE_ARM, QJDK14, CACert, Teamspeak3] to the ALPHA list.
+- add [TransmissionWC, Ombi4] to the OMEGA list.
 
 * Minor update: (200610)
-- Added [NMAP, Qemu] to the ALPHA list.
-- Added [SABnzbd, QTransmission3] to the OMEGA list.
-- Code: make constants readonly, remove a few extra characters.
+- add [NMAP, Qemu] to the ALPHA list.
+- add [SABnzbd, QTransmission3] to the OMEGA list.
+- code: make constants readonly, remove a few extra characters.
 
 * Minor update: (200418)
-- Added [QMultimedia] to the ALPHA list.
-- Code: use only QTS binaries.
+- add [QMultimedia] to the ALPHA list.
+- code: use only QTS binaries.
 
 * Minor update: (191222)
-- Added [ELFx31, Apache74] to the ALPHA list.
+- add [ELFx31, Apache74] to the ALPHA list.
 
 * Minor update: (190929)
-- Added [USBSerialdrivers, TomCat9, postgresql, OpenPlexTheatre] to the ALPHA list.
-- Disabled [AirSonic, QMadSonic, QSubSonic] in the ALPHA list.
-- Added [NZBGet] to the OMEGA list.
+- add [USBSerialdrivers, TomCat9, postgresql, OpenPlexTheatre] to the ALPHA list.
+- disabled [AirSonic, QMadSonic, QSubSonic] in the ALPHA list.
+- add [NZBGet] to the OMEGA list.
 
 * Minor update: (190919)
-- Added new 'malware detection and removal' section with [MalwareRemover, MCAFEE_QNAP] to the ALPHA list.
-- Added [NvKernelDriver, MultimediaConsole, QuMagieCore, qumagie] to the ALPHA list.
+- add new 'malware detection and removal' section with [MalwareRemover, MCAFEE_QNAP] to the ALPHA list.
+- add [NvKernelDriver, MultimediaConsole, QuMagieCore, qumagie] to the ALPHA list.
 
 * Minor update: (190417)
-- Added [Apache73, XTeve] to the ALPHA list.
+- add [Apache73, XTeve] to the ALPHA list.
 
 * Minor update: (190303)
-- Added [MediaInfoCLI, MediaInfoShared, pmp] to the ALPHA list.
+- add [MediaInfoCLI, MediaInfoShared, pmp] to the ALPHA list.
 
 * Minor update: (190211)
-- Added [PostgreSQLPremium] to the ALPHA list.
+- add [PostgreSQLPremium] to the ALPHA list.
 - minor code cleanup - no changes to functionality.
 
 * Minor update: (190205)
-- Added [HideThatBanner] to the ALPHA list.
-- Added [QBazarr, OWatcher3] to the OMEGA list.
+- add [HideThatBanner] to the ALPHA list.
+- add [QBazarr, OWatcher3] to the OMEGA list.
 
 * Minor update: (181217)
-- Added [QJDK11, PlexPlayer, Windscribe] to the ALPHA list.
-- Added [RunLast] to the OMEGA list.
-- Move source list display location.
+- add [QJDK11, PlexPlayer, Windscribe] to the ALPHA list.
+- add [RunLast] to the OMEGA list.
+- move source list display location.
 
 * Minor update: (181113)
-- Added [netmgr] to the ALPHA list.
-- Small processing speed improvements.
-- Shorter log messages.
+- add [netmgr] to the ALPHA list.
+- small processing speed improvements.
+- use shorter log messages.
 
 * Minor update: (181111)
-- Added [MySQL8, Brook] to the ALPHA list.
+- add [MySQL8, Brook] to the ALPHA list.
 
 * Minor update: (181109)
-- Prefer custom package lists if found. [ALPHA.custom] will be used in place of [ALPHA.default], same for OMEGA.
-- Include 'completed' after each logged operation.
+- prefer custom package lists if found. [ALPHA.custom] will be used in place of [ALPHA.default], same for OMEGA.
+- include 'completed' after each logged operation.
 
 * Minor update: (181022)
-- Added [Neo4J, WireGuard] to the ALPHA list.
-- Added [SonarrTrackTV, QSonarr3, SickChill, QSickChill] to the OMEGA list.
+- add [Neo4J, WireGuard] to the ALPHA list.
+- add [SonarrTrackTV, QSonarr3, SickChill, QSickChill] to the OMEGA list.
 
 * Minor update: (180909)
-- Added [DotNETSDK, firebird] to the ALPHA list.
+- add [DotNETSDK, firebird] to the ALPHA list.
 
 * Minor update: (180808)
-- Moved 'package managers' section ahead of [NVIDIA_GPU_DRV] in the ALPHA list.
+- move 'package managers' section ahead of [NVIDIA_GPU_DRV] in the ALPHA list.
 
 * Minor update: (180706)
-- Added [QJDK10] to the ALPHA list.
+- add [QJDK10] to the ALPHA list.
 
 * Minor update: (180630)
-- Added new 'multimedia tools' section with [ffmpeg, Qffmpeg] to the ALPHA list.
-- Added [Deluge, QBittorrent, QBittorrent4, rtorrent] to the OMEGA list.
+- add new 'multimedia tools' section with [ffmpeg, Qffmpeg] to the ALPHA list.
+- add [Deluge, QBittorrent, QBittorrent4, rtorrent] to the OMEGA list.
 
 * Minor update: (180620)
-- Added [InfluxDB, QOpenVPN, TincVPN] to the ALPHA list.
-- Moved [QHeadPhones] to load after [Headphones] in the OMEGA list.
+- add [InfluxDB, QOpenVPN, TincVPN] to the ALPHA list.
+- move [QHeadPhones] to load after [Headphones] in the OMEGA list.
 
 * Minor update: (180617)
-- Added [HybridBackup] to the ALPHA list.
-- Added [HappyGet2] to the OMEGA list.
-- Moved [linux-station] to load after [container-station] in the ALPHA list.
+- add [HybridBackup] to the ALPHA list.
+- add [HappyGet2] to the OMEGA list.
+- move [linux-station] to load after [container-station] in the ALPHA list.
 
 * Minor update: (180615)
-- Moved [Qsirch] to load after [JRE] in the ALPHA list.
+- move [Qsirch] to load after [JRE] in the ALPHA list.
 
 * Minor update: (180612)
-- Added [PostgreSQL, QPostgreSQL] to the ALPHA list.
+- add [PostgreSQL, QPostgreSQL] to the ALPHA list.
 
 * Minor update: (180606)
-- Added new 'databases' section with [QMongoDB QMariaDB CubeSQL PimCore] to the ALPHA list.
-- Added [Caddy] to the ALPHA list.
-- Added [Lidarr] to the OMEGA list.
+- add new 'databases' section with [QMongoDB QMariaDB CubeSQL PimCore] to the ALPHA list.
+- add [Caddy] to the ALPHA list.
+- add [Lidarr] to the OMEGA list.
 
 * Minor update: (180422)
-- Added [Qsirch, NVIDIA_GPU_DRV, nodejsv6, nodejsv8, QVS, linux-station] to the ALPHA list.
+- add [Qsirch, NVIDIA_GPU_DRV, nodejsv6, nodejsv8, QVS, linux-station] to the ALPHA list.
 
 * Minor update: (180320)
-- Added [Entware] to the ALPHA list.
+- add [Entware] to the ALPHA list.
 
 ** Major update: (180224)
-- Will not perform a sort when installing or updating this package. If another package is updated or installed at the same time, this could create a corrupt [qpkg.conf] file. To mitigate this risk, SortMyQPKGs will now only sort on shutdown, or when manually requested at the CLI.
-- Added [AirSonic, QMadSonic] to the ALPHA list.
+- will not perform a sort when installing or updating this package. If another package is updated or installed at the same time, this could create a corrupt [qpkg.conf] file. To mitigate this risk, SortMyQPKGs will now only sort on shutdown, or when manually requested at the CLI.
+- add [AirSonic, QMadSonic] to the ALPHA list.
 
 * Minor update: (180221)
-- Removed [DownloadStation] from the ALPHA list.
-- Added [QSubSonic] to the ALPHA list.
+- remove [DownloadStation] from the ALPHA list.
+- add [QSubSonic] to the ALPHA list.
 
 * Minor update: (180128)
-- Added [container-station] to the ALPHA list.
-- Added [OMedusa] to the OMEGA list.
+- add [container-station] to the ALPHA list.
+- add [OMedusa] to the OMEGA list.
 
 * Minor update: (180122)
-- Added [QJDK9] to the ALPHA list.
+- add [QJDK9] to the ALPHA list.
 
 * Minor update: (180116)
-- Added [Medusa, Mylar] to the OMEGA list.
-- Moved torrent downloaders ahead of search apps.
+- add [Medusa, Mylar] to the OMEGA list.
+- move torrent downloaders ahead of search apps.
 
 * Minor update: (180110)
-- Includes input file list processing which allows for new features like line comments, comment lines and empty lines.
-- Included list group headers for ALPHA & OMEGA.
-- Slight reshuffle to group [HD_Station] with other virtual environments. Moved [nodejs, nodejsv4, NodeJS, ruby, QRuby, Go] to load before package installers.
-- Record sort operations into NAS system log.
+- include input file list processing which allows for new features like line comments, comment lines and empty lines.
+- include list group headers for ALPHA & OMEGA.
+- slight reshuffle to group [HD_Station] with other virtual environments. Moved [nodejs, nodejsv4, NodeJS, ruby, QRuby, Go] to load before package installers.
+- record sort operations into NAS system log.
 
 * Minor update: (180107)
-- Added [QVPN, VyprVPN] to the ALPHA list.
-- Added [QHeadPhones, Transmission, QTransmission] to the OMEGA list.
+- add [QVPN, VyprVPN] to the ALPHA list.
+- add [QHeadPhones, Transmission, QTransmission] to the OMEGA list.
 
 * Minor update: (180105)
-- Added [git, Nginx, PlexMediaServer] to the ALPHA list.
-- Log is now trimmed so only the last 10 operations are kept. This will only work with recent SortMyQPKGs builds, but once a recent build has executed 10 times, log should look fine.
+- add [git, Nginx, PlexMediaServer] to the ALPHA list.
+- log is now trimmed so only the last 10 operations are kept. This will only work with recent SortMyQPKGs builds, but once a recent build has executed 10 times, log should look fine.
 - Record package script version in log operations.
-- Added a nice separator line to the beginning of each operation.
-- Removed '#' char mark from display. We can already see which list a package belongs to.
+- add a nice separator line to the beginning of each operation.
+- remove '#' char mark from display. We can already see which list a package belongs to.
 
 * Minor update: (180104.1)
-- Moved [SABnzbd, QSabNZBdPlus] ahead of [Sonarr], so Sonarr can find an operational downloader as it starts.
+- move [SABnzbd, QSabNZBdPlus] ahead of [Sonarr], so Sonarr can find an operational downloader as it starts.
 
 * Minor update: (180104)
-- Sort operations will now be prepended to the log (instead of appended), so the most recent will be shown first in the web GUI. This means the log will look a little bit odd for a while.
-- Added [SickGear] to the OMEGA list.
+- sort operations will now be prepended to the log (instead of appended), so the most recent will be shown first in the web GUI. This means the log will look a little bit odd for a while.
+- add [SickGear] to the OMEGA list.
 
 * Minor update: (180102)
-- Manual 'fix' operations are now logged.
-- Removed the coloured display text during manual execution. Packages are now marked with a hash character "#" instead.
+- manual 'fix' operations are now logged.
+- remove the coloured display text during manual execution. Packages are now marked with a hash character "#" instead.
 
 * Minor update: (180101)
-- Shifted the ALPHA and OMEGA lists into external files.
+- shift the ALPHA and OMEGA lists into external files.
 
 * Minor update: (171224)
-- Added [NodeJS, QRuby, Go, Phlex, HD_Station] to the ALPHA list.
-- Moved [QNginx, ruby] within the ALPHA list.
-- Removed [Par2, Par2cmdline-MT] from the ALPHA list.
-- Added [QSabNZBdPlus, QSickBeard, QSickRage, MovieGrabber, CouchPotato2, QCouchPotato, Watcher3, Ombi, Ombi3] to the OMEGA list.
+- add [NodeJS, QRuby, Go, Phlex, HD_Station] to the ALPHA list.
+- move [QNginx, ruby] within the ALPHA list.
+- remove [Par2, Par2cmdline-MT] from the ALPHA list.
+- add [QSabNZBdPlus, QSickBeard, QSickRage, MovieGrabber, CouchPotato2, QCouchPotato, Watcher3, Ombi, Ombi3] to the OMEGA list.
 
 ** Major update: (171220)
-- New package name! I've changed the package name from 'sort-my-qpkgs' to 'SortMyQPKGs'. Because the name has changed, your NAS should see this as a completely different package. This means all existing installations with the old name should be manually uninstalled, then the new package installed in it's place. Apologies - I chose to use the script name as the package name when creating the QPKG some time back, and I've regretted it ever since. This change finally corrects this error.
-- Reverted (--fix|--pref) back to (fix|pref). It didn't make sense for these two ops to be the only ones requiring a prefix.
+- new package name! I've changed the package name from 'sort-my-qpkgs' to 'SortMyQPKGs'. Because the name has changed, your NAS should see this as a completely different package. This means all existing installations with the old name should be manually uninstalled, then the new package installed in it's place. Apologies - I chose to use the script name as the package name when creating the QPKG some time back, and I've regretted it ever since. This change finally corrects this error.
+- reverted (--fix|--pref) back to (fix|pref). It didn't make sense for these two ops to be the only ones requiring a prefix.
 
 * Minor update: (171209)
-- Changed the method used to backup qpkg.conf. The sorter now performs a 'logrotate'-like backup and only keeps the last 10 copies. All (qpkg.conf.prev) files will be removed.
+- change the method used to backup qpkg.conf. The sorter now performs a 'logrotate'-like backup and only keeps the last 10 copies. All (qpkg.conf.prev) files will be removed.
 
 * Minor update: (171207)
-- Added [QNginx] to the ALPHA list.
-- Fixed package finder so it only sees lines starting with '[' as a package name.
+- add [QNginx] to the ALPHA list.
+- fix package finder so it only sees lines starting with '[' as a package name.
 
 * Minor update: (171115)
-- Added [Emby, EmbyServer] to the ALPHA list.
+- add [Emby, EmbyServer] to the ALPHA list.
 
 * Minor update: (171022)
-- Created this project on GitHub.
+- created this project on GitHub.
 
 * Minor update: (171011)
 - QPKG is now available in the QNAP Club store! Thanks to Stephane for the idea, and to Christophe from the QNAP Club for setting up the account.
 
 * Minor update: (171010)
-- Added [DotNET] to the ALPHA list.
+- add [DotNET] to the ALPHA list.
 
 * Minor update: (170624)
-- Click the 'Open' button in the App Center to display the log file in a new web-page.
-- Will now run an 'autofix' when first installed.
+- click the 'Open' button in the App Center to display the log file in a new web-page.
+- eill now run an 'autofix' when first installed.
 
 * Minor update: (170618)
-- Small display fixes.
-- Added [sort-my-qpkgs] to the end of the OMEGA list.
-- Reintroduced parameter naming as (--fix|--pref) instead of (fix|pref).
+- small display fixes.
+- add [sort-my-qpkgs] to the end of the OMEGA list.
+- reintroduced parameter naming as (--fix|--pref) instead of (fix|pref).
 
 ** Major update: (170617)
-- Changed from a script-only to a QPKG.
+- changed from a script-only to a QPKG.
 
 * Minor update: (170603)
-- Display now uses Greek symbols to identify the installed packages. This should help if anyone has to post their display output on the forum (the displayed colours cannot be seen without screen-shots).
-- Changed default action from fix to display-only. Use '--fix' to peform re-sorting.
+- display now uses Greek symbols to identify the installed packages. This should help if anyone has to post their display output on the forum (the displayed colours cannot be seen without screen-shots).
+- changed default action from fix to display-only. Use '--fix' to peform re-sorting.
 
 * Minor update: (170602)
-- Changed things a bit so that higher-level packages (with many dependent packages) like Entware, Mono and JDK are moved to the start of qpkg.conf. This should hopefully negate the need to specify all dependent packages individually.
-- Various programming interpreters (Python, Perl, Ruby, etc...) will now launch early too.
+- changed things a bit so that higher-level packages (with many dependent packages) like Entware, Mono and JDK are moved to the start of qpkg.conf. This should hopefully negate the need to specify all dependent packages individually.
+- various programming interpreters (Python, Perl, Ruby, etc...) will now launch early too.
 
 * Initial release: (170601)
-- First public script release.
+- first public script release.
