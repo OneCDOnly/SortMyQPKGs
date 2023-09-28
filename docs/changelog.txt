@@ -1,3 +1,7 @@
+* Minor update: (230928)
+- add [sHTTPs] to the ALPHA list.
+- add [SABnzbd81, SABnzbd82] to the OMEGA list.
+
 * Minor update: (230820)
 - add [V2Ray, QPython311] to the ALPHA list.
 
