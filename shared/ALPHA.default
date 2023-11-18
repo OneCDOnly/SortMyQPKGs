@@ -42,8 +42,9 @@ nodejs
 nodejsv4
 nodejsv6
 nodejsv8
-NodeJS
+NodeJS				# 'NodeJS v14'
 NodeJS18
+NodeJS20
 ruby
 QRuby
 Go
@@ -58,6 +59,7 @@ Mono
 Qmono
 DotNET
 DotNETSDK
+DotNETSDK8
 JRE
 JRE_ARM
 QJDK7
@@ -95,6 +97,7 @@ Apache74
 Apache80
 Apache81
 Apache82
+Apache83
 sHHTPs
 
 # databases
@@ -110,6 +113,8 @@ PostgreSQL
 QPostgreSQL         # load before QOdOO, QOdoo11
 PostgreSQLPremium   # load after Qapache
 PostgreSQLPremium13 # load after Apache80
+PostgreSQL15
+PostgreSQL16
 PG4admin82
 MySQL8
 InfluxDB            # load before Chronograf

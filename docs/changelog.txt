@@ -1,3 +1,7 @@
+* Minor update: (231118)
+- add [NodeJS20, DotNETSDK8, Apache83, PostgreSQL15, PostgreSQL16] to the ALPHA list.
+- add [RadarrDotNet83, LidarrDotNET83] to the OMEGA list.
+
 * Minor update: (230928)
 - add [sHTTPs] to the ALPHA list.
 - add [SABnzbd81, SABnzbd82] to the OMEGA list.

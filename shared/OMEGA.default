@@ -30,6 +30,7 @@ QSonarr3
 Sonarr3
 Radarr
 RadarrDotNet
+RadarrDotNet83
 MRadarr             # load after MUSL_CROSS
 QBazarr             # load after Sonarr & Radarr
 SickBeard
@@ -67,6 +68,7 @@ Ombi3
 Ombi4
 Lidarr
 LidarrDotNET
+LidarrDotNET83
 MLidarr             # load after MUSL_CROSS
 LazyLibrarian
 Autobrr             # load after all torrent downloaders
