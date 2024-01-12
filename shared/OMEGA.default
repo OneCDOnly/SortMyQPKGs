@@ -7,6 +7,7 @@ SABnzbd
 QSabNZBd3
 SABnzbd81
 SABnzbd82
+SABnzbd83
 
 # torrent downloaders
 Transmission
@@ -18,6 +19,7 @@ MTransmission3      # load after MUSL_CROSS
 Deluge
 Deluge-server
 Deluge-web
+qBittorrent
 QBittorrent
 QBittorrent4
 rtorrent
@@ -28,11 +30,19 @@ SonarrTrackTV       # load before QSonarr
 QSonarr
 QSonarr3
 Sonarr3
+SonarrV481
+SonarrV482
+SonarrV483
 Radarr
 RadarrDotNet
+RadarrDotNet81
+RadarrDotNet82
 RadarrDotNet83
 MRadarr             # load after MUSL_CROSS
 QBazarr             # load after Sonarr & Radarr
+Bazarr81
+Bazarr82
+Bazarr83
 SickBeard
 QSickBeard
 SickBeard-TVRage
@@ -47,10 +57,13 @@ SickChill
 SickChill80         # load after Apache80
 SickChill81
 SickChill82
+SickChill83
 QSickChill
 QSickChill3
 Medusa
 Medusa81
+Medusa82
+Medusa83
 OMedusa
 PyMedusa3
 Headphones
@@ -58,6 +71,7 @@ QHeadPhones
 Mylar
 Mylar3
 Mylar381
+Mylar382
 MovieGrabber
 CouchPotato2
 QCouchPotato
@@ -68,6 +82,8 @@ Ombi3
 Ombi4
 Lidarr
 LidarrDotNET
+LidarrDotNET81
+LidarrDotNET82
 LidarrDotNET83
 MLidarr             # load after MUSL_CROSS
 LazyLibrarian

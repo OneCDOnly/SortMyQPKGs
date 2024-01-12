@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ############################################################################
-# sortmyqpkgs.sh - (C)opyright 2017-2023 OneCD - one.cd.only@gmail.com
+# sortmyqpkgs.sh - (C)opyright 2017-2024 OneCD - one.cd.only@gmail.com
 
 # This script is part of the 'SortMyQPKGs' package
 

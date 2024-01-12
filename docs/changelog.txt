@@ -1,3 +1,22 @@
+* Minor update: (240112)
+- add various QPKGs to the OMEGA list:
+- SABnzbd83
+- qBittorrent
+- SonarrV481
+- SonarrV482
+- SonarrV483
+- RadarrDotNet81
+- RadarrDotNet82
+- Bazarr81
+- Bazarr82
+- Bazarr83
+- SickChill83
+- Medusa82
+- Medusa83
+- Mylar382
+- LidarrDotNET81
+- LidarrDotNET82
+
 * Minor update: (231118)
 - add [NodeJS20, DotNETSDK8, Apache83, PostgreSQL15, PostgreSQL16] to the ALPHA list.
 - add [RadarrDotNet83, LidarrDotNET83] to the OMEGA list.
