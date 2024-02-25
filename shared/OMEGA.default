@@ -33,6 +33,7 @@ Sonarr3
 SonarrV481
 SonarrV482
 SonarrV483
+OSonarr
 Radarr
 RadarrDotNet
 RadarrDotNet81
@@ -86,8 +87,19 @@ LidarrDotNET81
 LidarrDotNET82
 LidarrDotNET83
 MLidarr             # load after MUSL_CROSS
+OLidarr
 LazyLibrarian
+Readarr81
+Readarr82
+Readarr83
+OReadarr
+Prowlarr81
+Prowlarr82
+Prowlarr83
 Autobrr             # load after all torrent downloaders
+
+# management
+OTautulli
 
 # malware detection and removal (these are not "live" scanners)
 MalwareRemover

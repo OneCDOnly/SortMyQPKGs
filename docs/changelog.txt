@@ -1,3 +1,18 @@
+* Minor update: (240225)
+- add [QPython312] to the ALPHA list.
+- add various QPKGs to the OMEGA list:
+- OSonarr
+- OLidarr
+- Readarr81
+- Readarr82
+- Readarr83
+- OReadarr
+- Prowlarr81
+- Prowlarr82
+- Prowlarr83
+- OTautulli
+- code: minor comment updates.
+
 * Minor update: (240112)
 - add various QPKGs to the OMEGA list:
 - SABnzbd83

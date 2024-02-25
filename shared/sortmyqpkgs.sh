@@ -240,14 +240,14 @@ SortPackages()
     local label=''
     local package=''
 
-    # read 'ALPHA' packages in reverse and prepend each to qpkg.conf
+    # read 'ALPHA' packages in reverse and prepend each to /etc/config/qpkg.conf
     for ((index=${#PKGS_ALPHA_ORDERED[@]}-1; index>=0; index--)); do
         for label in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
             package=${label//[\[\]]}; [[ $package = "${PKGS_ALPHA_ORDERED[$index]}" ]] && { SendToStart "$package"; break ;}
         done
     done
 
-    # now read 'OMEGA' packages and append each to qpkg.conf
+    # now read 'OMEGA' packages and append each to /etc/config/qpkg.conf
     for package in "${PKGS_OMEGA_ORDERED[@]}"; do
         for label in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
             [[ $package = "${label//[\[\]]}" ]] && { SendToEnd "$package"; break ;}
@@ -259,7 +259,7 @@ SortPackages()
 SendToStart()
     {
 
-    # sends $1 to the start of qpkg.conf
+    # sends $1 to the start of /etc/config/qpkg.conf
 
     local temp_pathfile=/tmp/qpkg.conf.tmp
     local buffer=$(ShowDataBlock "$1")
@@ -279,7 +279,7 @@ SendToStart()
 SendToEnd()
     {
 
-    # sends $1 to the end of qpkg.conf
+    # sends $1 to the end of /etc/config/qpkg.conf
 
     local buffer=$(ShowDataBlock "$1")
 
@@ -287,6 +287,8 @@ SendToEnd()
         echo "error - ${buffer}!"
         return 2
     fi
+
+# check last 2 characters of /etc/config/qpkg.conf (one-by-one). If they're not LFs, then add 2 LFs to file first.
 
     /sbin/rmcfg "$1" -f /etc/config/qpkg.conf
     echo -e "$buffer" >> /etc/config/qpkg.conf
