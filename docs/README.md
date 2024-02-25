@@ -22,7 +22,7 @@ This package was initially suggested by @father_mande & @zyxmon in [this thread]
 
 ## Installation
 
-- The **SortMyQPKGs** QPKG is available [here](https://github.com/OneCDOnly/SortMyQPKGs/releases/download/v231118/SortMyQPKGs_231118.qpkg).
+- The **SortMyQPKGs** QPKG is available [here](https://github.com/OneCDOnly/SortMyQPKGs/releases/download/v240225/SortMyQPKGs_240225.qpkg).
 
 - This package is also available via [sherpa](https://github.com/OneCDOnly/sherpa).
 
