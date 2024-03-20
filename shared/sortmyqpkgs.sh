@@ -528,7 +528,7 @@ case $1 in
         ShowPackagesAfter | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
         RecordOperationComplete "$1"
         CommitLog
-        echo -e "\n Packages will be loaded in this order during next boot-up.\n"
+        echo -e "\nPackages will be loaded in this order during next boot-up.\n"
         ;;
     init|stop|restart)
         # do nothing
@@ -549,7 +549,7 @@ case $1 in
     pref)
         ShowSources
         ShowPreferredList
-        echo -e "\n To re-order packages: $0 fix\n"
+        echo -e "\nTo re-order packages: $0 fix\n"
         ;;
     remove)
         /bin/grep -q 'sortmyqpkgs.sh' $SHUTDOWN_PATHFILE && /bin/sed -i '/sortmyqpkgs.sh/d' $SHUTDOWN_PATHFILE
@@ -577,10 +577,10 @@ case $1 in
 		fi
 		;;
     *)
-        echo -e "\n Usage: $0 {backup|fix|pref|reset|restore|status}\n"
+        echo -e "\nUsage: $0 {backup|fix|pref|reset|restore|status}\n"
         ShowSources
         ShowPackagesCurrent
-        echo -e "\n To re-order packages: $0 fix\n"
+        echo -e "\nTo re-order packages: $0 fix\n"
 esac
 
 [[ -e $TEMP_LOG_PATHFILE ]] && rm -f "$TEMP_LOG_PATHFILE"
