@@ -1,3 +1,6 @@
+* Minor update: (240427)
+- add [NodeJS16, NodeJS22] to the ALPHA list.
+
 * Minor update: (240225)
 - add [QPython312] to the ALPHA list.
 - add various QPKGs to the OMEGA list:
