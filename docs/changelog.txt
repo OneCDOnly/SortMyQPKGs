@@ -1,3 +1,7 @@
+* Minor update: (unreleased)
+- add [QJDK21] to the ALPHA list.
+- and a few code upgrades.
+
 * Minor update: (240427)
 - add [NodeJS16, NodeJS22] to the ALPHA list.
 

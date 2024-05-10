@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ############################################################################
-# sortmyqpkgs.sh - (C)opyright 2017-2024 OneCD - one.cd.only@gmail.com
+# sortmyqpkgs.sh - Copyright 2017-2024 OneCD - one.cd.only@gmail.com
 
 # This script is part of the 'SortMyQPKGs' package
 
@@ -8,6 +8,7 @@
 
 # Available in the MyQNAP store: https://www.myqnap.org/product/sortmyqpkgs
 # Project source: https://github.com/OneCDOnly/SortMyQPKGs
+# Community forum: https://forum.qnap.com/viewtopic.php?f=320&t=133132
 
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -27,51 +28,53 @@ Init()
     {
 
     readonly QPKG_NAME=SortMyQPKGs
-    readonly SHUTDOWN_PATHFILE=/etc/init.d/shutdown_check.sh
+
     local -r BACKUP_PATH=$(/sbin/getcfg SHARE_DEF defVolMP -f /etc/config/def_share.info)/.qpkg_config_backup
-    readonly BACKUP_PATHFILE=$BACKUP_PATH/$QPKG_NAME.config.tar.gz
+		readonly BACKUP_PATHFILE=$BACKUP_PATH/$QPKG_NAME.config.tar.gz
 
     /sbin/setcfg "$QPKG_NAME" Status complete -f /etc/config/qpkg.conf
 
-    # KLUDGE: 'clean' the QTS 4.5.1 App Center notifier status
+    # KLUDGE: 'clean' the QTS 4.5.1+ App Center notifier status
     [[ -e /sbin/qpkg_cli ]] && /sbin/qpkg_cli --clean "$QPKG_NAME" > /dev/null 2>&1
 
     readonly QPKG_PATH=$(/sbin/getcfg $QPKG_NAME Install_Path -f /etc/config/qpkg.conf)
-    local -r ALPHA_PATHFILE_DEFAULT=$QPKG_PATH/ALPHA.default
-    local -r OMEGA_PATHFILE_DEFAULT=$QPKG_PATH/OMEGA.default
-    readonly ALPHA_PATHFILE_CUSTOM=$QPKG_PATH/ALPHA.custom
-    readonly OMEGA_PATHFILE_CUSTOM=$QPKG_PATH/OMEGA.custom
-    local alpha_pathfile_actual=''
-    local omega_pathfile_actual=''
-    readonly REAL_LOG_PATHFILE=$QPKG_PATH/$QPKG_NAME.log
-    readonly TEMP_LOG_PATHFILE=$REAL_LOG_PATHFILE.tmp
-    readonly GUI_LOG_PATHFILE=/home/httpd/$QPKG_NAME.log
-    readonly LINK_LOG_PATHFILE=/var/log/$QPKG_NAME.log
-    readonly SERVICE_STATUS_PATHFILE=/var/run/$QPKG_NAME.last.operation
+		readonly CUSTOM_ALPHA_PATHFILE=$QPKG_PATH/ALPHA.custom
+		readonly CUSTOM_OMEGA_PATHFILE=$QPKG_PATH/OMEGA.custom
+		readonly LOG_GUI_PATHFILE=/home/httpd/$QPKG_NAME.log
+		readonly LOG_LINK_PATHFILE=/var/log/$QPKG_NAME.log
+		readonly LOG_REAL_PATHFILE=$QPKG_PATH/$QPKG_NAME.log
+		readonly LOG_TEMP_PATHFILE=$LOG_REAL_PATHFILE.tmp
+		readonly SERVICE_STATUS_PATHFILE=/var/run/$QPKG_NAME.last.operation
+		local -r DEFAULT_ALPHA_PATHFILE=$QPKG_PATH/ALPHA.default
+		local -r DEFAULT_OMEGA_PATHFILE=$QPKG_PATH/OMEGA.default
+    readonly SHUTDOWN_PATHFILE=/etc/init.d/shutdown_check.sh
 
-    [[ ! -e $REAL_LOG_PATHFILE ]] && /bin/touch "$REAL_LOG_PATHFILE"
-    [[ -e $TEMP_LOG_PATHFILE ]] && rm -f "$TEMP_LOG_PATHFILE"
-    [[ ! -L $GUI_LOG_PATHFILE ]] && /bin/ln -s "$REAL_LOG_PATHFILE" "$GUI_LOG_PATHFILE"
-    [[ ! -L $LINK_LOG_PATHFILE ]] && /bin/ln -s "$REAL_LOG_PATHFILE" "$LINK_LOG_PATHFILE"
+    local actual_alpha_pathfile=''
+    local actual_omega_pathfile=''
 
-    if [[ -e $ALPHA_PATHFILE_CUSTOM ]]; then
-        alpha_pathfile_actual=$ALPHA_PATHFILE_CUSTOM
-        alpha_source=custom
-    elif [[ -e $ALPHA_PATHFILE_DEFAULT ]]; then
-        alpha_pathfile_actual=$ALPHA_PATHFILE_DEFAULT
-        alpha_source=default
+    [[ ! -e $LOG_REAL_PATHFILE ]] && /bin/touch "$LOG_REAL_PATHFILE"
+    [[ -e $LOG_TEMP_PATHFILE ]] && rm -f "$LOG_TEMP_PATHFILE"
+    [[ ! -L $LOG_GUI_PATHFILE ]] && /bin/ln -s "$LOG_REAL_PATHFILE" "$LOG_GUI_PATHFILE"
+    [[ ! -L $LOG_LINK_PATHFILE ]] && /bin/ln -s "$LOG_REAL_PATHFILE" "$LOG_LINK_PATHFILE"
+
+    if [[ -e $CUSTOM_ALPHA_PATHFILE ]]; then
+        actual_alpha_pathfile=$CUSTOM_ALPHA_PATHFILE
+        source_alpha=custom
+    elif [[ -e $DEFAULT_ALPHA_PATHFILE ]]; then
+        actual_alpha_pathfile=$DEFAULT_ALPHA_PATHFILE
+        source_alpha=default
     else
         echo 'ALPHA package list file not found'
         SetServiceOperationResultFailed
         exit 1
     fi
 
-    if [[ -e $OMEGA_PATHFILE_CUSTOM ]]; then
-        omega_pathfile_actual=$OMEGA_PATHFILE_CUSTOM
-        omega_source=custom
-    elif [[ -e $OMEGA_PATHFILE_DEFAULT ]]; then
-        omega_pathfile_actual=$OMEGA_PATHFILE_DEFAULT
-        omega_source=default
+    if [[ -e $CUSTOM_OMEGA_PATHFILE ]]; then
+        actual_omega_pathfile=$CUSTOM_OMEGA_PATHFILE
+        source_omega=custom
+    elif [[ -e $DEFAULT_OMEGA_PATHFILE ]]; then
+        actual_omega_pathfile=$DEFAULT_OMEGA_PATHFILE
+        source_omega=default
     else
         echo 'OMEGA package list file not found'
         SetServiceOperationResultFailed
@@ -80,11 +83,11 @@ Init()
 
     while read -r package_ref comment; do
         [[ -n $package_ref && $package_ref != \#* ]] && PKGS_ALPHA_ORDERED+=("$package_ref")
-    done < "$alpha_pathfile_actual"
+    done < "$actual_alpha_pathfile"
 
     while read -r package_ref comment; do
         [[ -n $package_ref && $package_ref != \#* ]] && PKGS_OMEGA_ORDERED+=("$package_ref")
-    done < "$omega_pathfile_actual"
+    done < "$actual_omega_pathfile"
 
     PKGS_OMEGA_ORDERED+=("$QPKG_NAME")
 
@@ -93,24 +96,24 @@ Init()
 BackupConfig()
     {
 
-    local source=''
+    local a=''
 
-    if [[ -e $ALPHA_PATHFILE_CUSTOM ]]; then
-        source=$(/usr/bin/basename "$ALPHA_PATHFILE_CUSTOM")
+    if [[ -e $CUSTOM_ALPHA_PATHFILE ]]; then
+        a=$(/usr/bin/basename "$CUSTOM_ALPHA_PATHFILE")
     fi
 
-    if [[ -e $OMEGA_PATHFILE_CUSTOM ]]; then
-        [[ -n $source ]] && source+=" "
-        source+=$(/usr/bin/basename "$OMEGA_PATHFILE_CUSTOM")
+    if [[ -e $CUSTOM_OMEGA_PATHFILE ]]; then
+        [[ -n $a ]] && a+=' '
+        a+=$(/usr/bin/basename "$CUSTOM_OMEGA_PATHFILE")
     fi
 
-    if [[ -z $source ]]; then
+    if [[ -z $a ]]; then
         touch "$BACKUP_PATHFILE"
-        echo 'nothing to backup' | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
+        echo 'nothing to backup' | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
         return 0
     fi
 
-    /bin/tar --create --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" "$source" | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
+    /bin/tar --create --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" "$a" | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
 
     return 0
 
@@ -120,11 +123,11 @@ RestoreConfig()
     {
 
     if [[ ! -s $BACKUP_PATHFILE ]]; then
-        echo 'unable to restore: backup file is unusable!' | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
+        echo 'unable to restore: backup file is unusable!' | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
         return 1
     fi
 
-    /bin/tar --extract --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
+    /bin/tar --extract --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
 
     return 0
 
@@ -133,7 +136,7 @@ RestoreConfig()
 ResetConfig()
     {
 
-    rm -rf "$ALPHA_PATHFILE_CUSTOM" "$OMEGA_PATHFILE_CUSTOM"
+    rm -f "$CUSTOM_ALPHA_PATHFILE" "$CUSTOM_OMEGA_PATHFILE"
 
     }
 
@@ -173,28 +176,30 @@ ShowPackagesAfter()
 ShowListsMarked()
     {
 
-    local -i acc=0
-    local fmtacc=''
+    local a=''
+    local -i n=0
 
     for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
-        ((acc++)); fmtacc=$(printf "%02d\n" "$acc")
+        ((n++)); printf -v a '%02d' "$n"
+
         if (/bin/grep -qF "[$pref]" /etc/config/qpkg.conf); then
-            ShowLineMarked "$fmtacc" A "$pref"
+            ShowLineMarked "$a" A "$pref"
         else
-            ShowLineUnmarked "$fmtacc" A "$pref"
+            ShowLineUnmarked "$a" A "$pref"
         fi
     done
 
     echo
-    ((acc++)); fmtacc=$(printf "%02d\n" "$acc"); ShowLineUnmarked "$fmtacc" Φ '< existing unspecified packages go here >'
+    ((n++)); printf -v a '%02d' "$n"; ShowLineUnmarked "$a" Φ '< existing unspecified packages go here >'
     echo
 
     for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
-        ((acc++)); fmtacc=$(printf "%02d\n" "$acc")
+        ((n++)); printf -v a '%02d' "$n"
+
         if (/bin/grep -qF "[$pref]" /etc/config/qpkg.conf); then
-            ShowLineMarked "$fmtacc" Ω "$pref"
+            ShowLineMarked "$a" Ω "$pref"
         else
-            ShowLineUnmarked "$fmtacc" Ω "$pref"
+            ShowLineUnmarked "$a" Ω "$pref"
         fi
     done
 
@@ -203,25 +208,26 @@ ShowListsMarked()
 ShowPackagesUnmarked()
     {
 
-    local -i acc=0
-    local pref=''
-    local fmtacc=''
-    local buffer=''
-    local label=''
+    local a=''
+    local b=''
+    local c=''
+    local d=''
+    local e=''
+    local -i n=0
 
-    for label in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
-        ((acc++)); package=${label//[\[\]]}; fmtacc=$(printf "%02d\n" "$acc")
-        buffer=$(ShowLineUnmarked "$fmtacc" Φ "$package")
+    for a in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
+        ((n++)); b=${a//[\[\]]}; printf -v c '%02d' "$n"
+        d=$(ShowLineUnmarked "$c" Φ "$b")
 
-        for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
-            [[ $package = "$pref" ]] && { buffer=$(ShowLineUnmarked "$fmtacc" A "$package"); break ;}
+        for e in "${PKGS_ALPHA_ORDERED[@]}"; do
+            [[ $b = "$e" ]] && { d=$(ShowLineUnmarked "$c" A "$b"); break ;}
         done
 
-        for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
-            [[ $package = "$pref" ]] && { buffer=$(ShowLineUnmarked "$fmtacc" Ω "$package"); break ;}
+        for e in "${PKGS_OMEGA_ORDERED[@]}"; do
+            [[ $b = "$e" ]] && { d=$(ShowLineUnmarked "$c" Ω "$b"); break ;}
         done
 
-        echo -e "$buffer"
+        echo -e "$d"
     done
 
     }
@@ -229,28 +235,28 @@ ShowPackagesUnmarked()
 ShowSources()
     {
 
-    echo "ALPHA=$alpha_source, OMEGA=$omega_source"
+    echo "ALPHA=$source_alpha, OMEGA=$source_omega"
 
     }
 
 SortPackages()
     {
 
-    local -i index=0
-    local label=''
-    local package=''
+    local a=''
+    local b=''
+    local -i i=0
 
     # read 'ALPHA' packages in reverse and prepend each to /etc/config/qpkg.conf
-    for ((index=${#PKGS_ALPHA_ORDERED[@]}-1; index>=0; index--)); do
-        for label in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
-            package=${label//[\[\]]}; [[ $package = "${PKGS_ALPHA_ORDERED[$index]}" ]] && { SendToStart "$package"; break ;}
+    for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
+        for a in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
+            b=${a//[\[\]]}; [[ $b = "${PKGS_ALPHA_ORDERED[$i]}" ]] && { SendToStart "$b"; break ;}
         done
     done
 
     # now read 'OMEGA' packages and append each to /etc/config/qpkg.conf
-    for package in "${PKGS_OMEGA_ORDERED[@]}"; do
-        for label in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
-            [[ $package = "${label//[\[\]]}" ]] && { SendToEnd "$package"; break ;}
+    for b in "${PKGS_OMEGA_ORDERED[@]}"; do
+        for a in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
+            [[ $b = "${a//[\[\]]}" ]] && { SendToEnd "$b"; break ;}
         done
     done
 
@@ -261,18 +267,17 @@ SendToStart()
 
     # sends $1 to the start of /etc/config/qpkg.conf
 
-    local temp_pathfile=/tmp/qpkg.conf.tmp
-    local buffer=$(ShowDataBlock "$1")
+    local a=$(ShowDataBlock "$1")
 
     if [[ $? -gt 0 ]]; then
-        echo "error - ${buffer}!"
+        echo "error - ${a}!"
         return 2
     fi
 
     /sbin/rmcfg "$1" -f /etc/config/qpkg.conf
-    echo -e "$buffer" > "$temp_pathfile"
-    /bin/cat /etc/config/qpkg.conf >> "$temp_pathfile"
-    mv "$temp_pathfile" /etc/config/qpkg.conf
+    echo -e "$a" > /tmp/qpkg.conf.tmp
+    /bin/cat /etc/config/qpkg.conf >> /tmp/qpkg.conf.tmp
+    mv /tmp/qpkg.conf.tmp /etc/config/qpkg.conf
 
     }
 
@@ -281,17 +286,15 @@ SendToEnd()
 
     # sends $1 to the end of /etc/config/qpkg.conf
 
-    local buffer=$(ShowDataBlock "$1")
+    local a=$(ShowDataBlock "$1")
 
     if [[ $? -gt 0 ]]; then
-        echo "error - ${buffer}!"
+        echo "error - ${a}!"
         return 2
     fi
 
-# check last 2 characters of /etc/config/qpkg.conf (one-by-one). If they're not LFs, then add 2 LFs to file first.
-
     /sbin/rmcfg "$1" -f /etc/config/qpkg.conf
-    echo -e "$buffer" >> /etc/config/qpkg.conf
+    echo -e "${a}\n" >> /etc/config/qpkg.conf
 
     }
 
@@ -331,8 +334,8 @@ Upshift()
 
     # $1 = pathfilename to upshift
 
-    [[ -z $1 ]] && return 1
-    [[ ! -e $1 ]] && return 1
+    [[ -n $1 ]] || return
+    [[ -e $1 ]] || return
 
     local ext=''
     local dest=''
@@ -368,7 +371,6 @@ Upshift()
             else
                 rm "$1"
             fi
-            ;;
     esac
 
     [[ -e $rec_track_file ]] && { rec_count=$(<"$rec_track_file"); ((rec_count--)); echo "$rec_count" > "$rec_track_file" ;}
@@ -379,13 +381,17 @@ TrimLog()
     {
 
     local -i max_ops=10
-    local op_lines=$(/bin/grep -n "^──" "$REAL_LOG_PATHFILE")
-    local -i op_count=$(echo "$op_lines" | /usr/bin/wc -l)
+    local op_lines=''
+    local -i op_count=0
+	local -i last_op_line_num=0
+
+	op_lines=$(/bin/grep -n '^──' "$LOG_REAL_PATHFILE")
+    op_count=$(/usr/bin/wc -l <<< "$op_lines")
 
     if [[ $op_count -gt $max_ops ]]; then
-        local last_op_line_num=$(echo "$op_lines" | /usr/bin/head -n$((max_ops+1)) | /usr/bin/tail -n1 | /usr/bin/cut -f1 -d:)
-        /usr/bin/head -n"${last_op_line_num}" "$REAL_LOG_PATHFILE" > "$TEMP_LOG_PATHFILE"
-        mv "$TEMP_LOG_PATHFILE" "$REAL_LOG_PATHFILE"
+        last_op_line_num=$(echo "$op_lines" | /usr/bin/head -n$((max_ops+1)) | /usr/bin/tail -n1 | /usr/bin/cut -f1 -d:)
+        /usr/bin/head -n"${last_op_line_num}" "$LOG_REAL_PATHFILE" > "$LOG_TEMP_PATHFILE"
+        mv "$LOG_TEMP_PATHFILE" "$LOG_REAL_PATHFILE"
     fi
 
     }
@@ -417,12 +423,15 @@ RecordOperationRequest()
 
     # $1 = operation
 
-    local buffer="[$(/bin/date)] '$1' requested"
-    local -i length=${#buffer}
-    local temp=$(printf "%${length}s")
-    local build=$(/sbin/getcfg $QPKG_NAME Build -f /etc/config/qpkg.conf)
+    local a=''
+    local -i b=0
+    local c=''
 
-    echo -e "${temp// /─}\n$QPKG_NAME ($build)\n$buffer" >> "$TEMP_LOG_PATHFILE"
+    a="[$(/bin/date)] '$1' requested"
+    b=${#a}
+    printf -v c "%${b}s"
+
+    echo -e "${c// /─}\n$QPKG_NAME ($(/sbin/getcfg $QPKG_NAME Build -f /etc/config/qpkg.conf))\n$a" >> "$LOG_TEMP_PATHFILE"
 
     LogWrite "'$1' requested" 0
 
@@ -433,9 +442,9 @@ RecordOperationComplete()
 
     # $1 = operation
 
-    local buffer="[$(/bin/date)] '$1' completed"
+    local a="[$(/bin/date)] '$1' completed"
 
-    echo -e "$buffer" >> "$TEMP_LOG_PATHFILE"
+    echo -e "$a" >> "$LOG_TEMP_PATHFILE"
 
     LogWrite "'$1' completed" 0
 
@@ -469,14 +478,14 @@ ShowSectionTitle()
 
     # $1 = description
 
-    echo -e "\n * $1 *"
+    printf '\n * %s *\n' "$1"
 
     }
 
 CommitLog()
     {
 
-    echo -e "$(<"$TEMP_LOG_PATHFILE")\n$(<"$REAL_LOG_PATHFILE")" > "$REAL_LOG_PATHFILE"
+    echo -e "$(<"$LOG_TEMP_PATHFILE")\n$(<"$LOG_REAL_PATHFILE")" > "$LOG_REAL_PATHFILE"
 
     TrimLog
 
@@ -499,17 +508,18 @@ Init
 
 case $1 in
     autofix)
-        if [[ $(/sbin/getcfg $QPKG_NAME Enable -u -d FALSE -f /etc/config/qpkg.conf) != "TRUE" ]]; then
+        if [[ $(/sbin/getcfg $QPKG_NAME Enable -u -d FALSE -f /etc/config/qpkg.conf) != TRUE ]]; then
             echo "$QPKG_NAME is disabled. You must first enable with: qpkg_service enable $QPKG_NAME"
             SetServiceOperationResultFailed
             exit 1
         fi
+
         RecordOperationRequest "$1"
-        ShowSources >> "$TEMP_LOG_PATHFILE"
+        ShowSources >> "$LOG_TEMP_PATHFILE"
         Upshift /etc/config/qpkg.conf
-        ShowPackagesBefore >> "$TEMP_LOG_PATHFILE"
+        ShowPackagesBefore >> "$LOG_TEMP_PATHFILE"
         SortPackages
-        ShowPackagesAfter >> "$TEMP_LOG_PATHFILE"
+        ShowPackagesAfter >> "$LOG_TEMP_PATHFILE"
         RecordOperationComplete "$1"
         CommitLog
         ;;
@@ -521,14 +531,14 @@ case $1 in
         ;;
     fix)
         RecordOperationRequest "$1"
-        ShowSources | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
+        ShowSources | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
         Upshift /etc/config/qpkg.conf
-        ShowPackagesBefore | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
+        ShowPackagesBefore | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
         SortPackages
-        ShowPackagesAfter | /usr/bin/tee -a "$TEMP_LOG_PATHFILE"
+        ShowPackagesAfter | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
         RecordOperationComplete "$1"
         CommitLog
-        echo -e "\nPackages will be loaded in this order during next boot-up.\n"
+        echo -e '\nPackages will be loaded in this order during next boot-up.\n'
         ;;
     init|stop|restart)
         # do nothing
@@ -540,6 +550,7 @@ case $1 in
             inserttext='/etc/init.d/sortmyqpkgs.sh autofix'
             /bin/sed -i "s|$findtext|$inserttext\n$findtext|" $SHUTDOWN_PATHFILE
         fi
+
         if [[ $1 = install ]]; then
             RecordOperationRequest "$1"
             RecordOperationComplete "$1"
@@ -553,7 +564,7 @@ case $1 in
         ;;
     remove)
         /bin/grep -q 'sortmyqpkgs.sh' $SHUTDOWN_PATHFILE && /bin/sed -i '/sortmyqpkgs.sh/d' $SHUTDOWN_PATHFILE
-        [[ -L $GUI_LOG_PATHFILE ]] && rm -f $GUI_LOG_PATHFILE
+        [[ -L $LOG_GUI_PATHFILE ]] && rm -f $LOG_GUI_PATHFILE
         ;;
     reset)
         RecordOperationRequest "$1"
@@ -569,10 +580,10 @@ case $1 in
         ;;
 	status)
         if /bin/grep -q 'sortmyqpkgs.sh' $SHUTDOWN_PATHFILE; then
-			echo 'active'
+			echo active
 			exit 0
 		else
-			echo 'inactive'
+			echo inactive
 			exit 1
 		fi
 		;;
@@ -583,7 +594,7 @@ case $1 in
         echo -e "\nTo re-order packages: $0 fix\n"
 esac
 
-[[ -e $TEMP_LOG_PATHFILE ]] && rm -f "$TEMP_LOG_PATHFILE"
+rm -f "$LOG_TEMP_PATHFILE"
 SetServiceOperationResultOK
 
 exit 0

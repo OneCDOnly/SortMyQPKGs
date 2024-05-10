@@ -74,6 +74,7 @@ QJDK14
 QJDK16
 QJDK17
 QJDK18
+QJDK21
 java-installer      # available in the FileBot repo
 QVS                 # old 'Virtualization Station'
 QKVM                # new 'Virtualization Station'
