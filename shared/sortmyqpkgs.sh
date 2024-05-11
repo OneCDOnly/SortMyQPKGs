@@ -220,11 +220,15 @@ ShowPackagesUnmarked()
         d=$(ShowLineUnmarked "$c" Φ "$b")
 
         for e in "${PKGS_ALPHA_ORDERED[@]}"; do
-            [[ $b = "$e" ]] && { d=$(ShowLineUnmarked "$c" A "$b"); break ;}
+            [[ $b = "$e" ]] || continue
+            d=$(ShowLineUnmarked "$c" A "$b")
+            break
         done
 
         for e in "${PKGS_OMEGA_ORDERED[@]}"; do
-            [[ $b = "$e" ]] && { d=$(ShowLineUnmarked "$c" Ω "$b"); break ;}
+            [[ $b = "$e" ]] || continue
+            d=$(ShowLineUnmarked "$c" Ω "$b")
+            break
         done
 
         echo -e "$d"
@@ -249,14 +253,19 @@ SortPackages()
     # read 'ALPHA' packages in reverse and prepend each to /etc/config/qpkg.conf
     for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
         for a in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
-            b=${a//[\[\]]}; [[ $b = "${PKGS_ALPHA_ORDERED[$i]}" ]] && { SendToStart "$b"; break ;}
+            b=${a//[\[\]]}
+            [[ $b = "${PKGS_ALPHA_ORDERED[$i]}" ]] || continue
+            SendToStart "$b"
+            break
         done
     done
 
     # now read 'OMEGA' packages and append each to /etc/config/qpkg.conf
     for b in "${PKGS_OMEGA_ORDERED[@]}"; do
         for a in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
-            [[ $b = "${a//[\[\]]}" ]] && { SendToEnd "$b"; break ;}
+            [[ $b = "${a//[\[\]]}" ]] || continue
+            SendToEnd "$b"
+            break
         done
     done
 
@@ -442,9 +451,7 @@ RecordOperationComplete()
 
     # $1 = operation
 
-    local a="[$(/bin/date)] '$1' completed"
-
-    echo -e "$a" >> "$LOG_TEMP_PATHFILE"
+    echo -e "[$(/bin/date)] '$1' completed" >> "$LOG_TEMP_PATHFILE"
 
     LogWrite "'$1' completed" 0
 
