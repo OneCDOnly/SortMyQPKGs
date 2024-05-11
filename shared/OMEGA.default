@@ -111,6 +111,7 @@ SurveillanceStation # load late due to long startup time
 OpenHab3            # load late due to long startup time
 NotificationCenter  # give netmgr more time to start
 Traefik             # load after all web services
+SortMyQPKGs
 
 # only run after everything else...
 RunLast

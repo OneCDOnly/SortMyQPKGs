@@ -91,8 +91,6 @@ Init()
         PKGS_OMEGA_ORDERED+=("$package_ref")
     done < "$actual_omega_pathfile"
 
-    PKGS_OMEGA_ORDERED+=("$QPKG_NAME")
-
     }
 
 BackupConfig()
@@ -252,6 +250,10 @@ SortPackages()
     local b=''
     local -i i=0
 
+    echo -e "\nsorting packages ..."
+
+#     time {
+
     # read 'ALPHA' packages in reverse and prepend each to /etc/config/qpkg.conf
     for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
         for a in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
@@ -270,6 +272,7 @@ SortPackages()
             break
         done
     done
+#     }
 
     }
 
@@ -278,7 +281,7 @@ SendToStart()
 
     # sends $1 to the start of /etc/config/qpkg.conf
 
-    local a=$(ShowDataBlock "$1")
+    local a=$(GetDataBlock "$1")
 
     if [[ $? -gt 0 ]]; then
         echo "error - ${a}!"
@@ -297,7 +300,7 @@ SendToEnd()
 
     # sends $1 to the end of /etc/config/qpkg.conf
 
-    local a=$(ShowDataBlock "$1")
+    local a=$(GetDataBlock "$1")
 
     if [[ $? -gt 0 ]]; then
         echo "error - ${a}!"
@@ -305,11 +308,11 @@ SendToEnd()
     fi
 
     /sbin/rmcfg "$1" -f /etc/config/qpkg.conf
-    echo -e "${a}\n" >> /etc/config/qpkg.conf
+    echo -e "\n${a}" >> /etc/config/qpkg.conf
 
     }
 
-ShowDataBlock()
+GetDataBlock()
     {
 
     # returns the data block for the QPKG name specified as $1
@@ -333,7 +336,7 @@ ShowDataBlock()
     bl=$(/usr/bin/tail -n$((ll-sl)) < /etc/config/qpkg.conf | /bin/grep -n '^\[' | /usr/bin/head -n1 | /usr/bin/cut -f1 -d':')
     [[ $bl -ne 0 ]] && el=$((sl+bl-1)) || el=$ll
 
-    /bin/sed -n "$sl,${el}p" /etc/config/qpkg.conf
+    echo -e "$(/bin/sed -n "$sl,${el}p" /etc/config/qpkg.conf)"     # Output this with 'echo' to strip trailing LFs from config block.
 
     }
 
@@ -532,7 +535,7 @@ case $1 in
         RecordOperationComplete "$1"
         CommitLog
         ;;
-    backup)
+    b|backup)
         RecordOperationRequest "$1"
         BackupConfig
         RecordOperationComplete "$1"
@@ -587,7 +590,7 @@ case $1 in
         RecordOperationComplete "$1"
         CommitLog
         ;;
-	status)
+	s|status)
         if /bin/grep -q 'sortmyqpkgs.sh' $SHUTDOWN_PATHFILE; then
 			echo active
 			exit 0

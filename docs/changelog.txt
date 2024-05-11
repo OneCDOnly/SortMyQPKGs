@@ -1,5 +1,7 @@
-* Minor update: (unreleased)
+* Minor update: (240511)
 - add [QJDK21] to the ALPHA list.
+- add [SortMyQPKGs] to the OMEGA list.
+- ensure line spacing between config blocks.
 - and a few code upgrades.
 
 * Minor update: (240427)
