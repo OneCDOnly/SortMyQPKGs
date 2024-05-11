@@ -22,9 +22,11 @@ This package was initially suggested by @father_mande & @zyxmon in [this thread]
 
 ## Installation
 
-- The **SortMyQPKGs** QPKG is available [here](https://github.com/OneCDOnly/SortMyQPKGs/releases/download/v240225/SortMyQPKGs_240225.qpkg).
+- Download the latest QPKG [here](https://github.com/OneCDOnly/SortMyQPKGs/releases/latest).
 
-- This package is also available via [sherpa](https://github.com/OneCDOnly/sherpa).
+- Also available via [sherpa](https://github.com/OneCDOnly/sherpa).
+
+- And it's in the [myQNAP repository](https://www.myqnap.org/product/sortmyqpkgs).
 
 ## Notes
 
