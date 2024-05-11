@@ -29,33 +29,33 @@ Init()
 
     readonly QPKG_NAME=SortMyQPKGs
 
-    local -r BACKUP_PATH=$(/sbin/getcfg SHARE_DEF defVolMP -f /etc/config/def_share.info)/.qpkg_config_backup
-		readonly BACKUP_PATHFILE=$BACKUP_PATH/$QPKG_NAME.config.tar.gz
-
+    # KLUDGE: mark QPKG installation as complete.
     /sbin/setcfg "$QPKG_NAME" Status complete -f /etc/config/qpkg.conf
 
-    # KLUDGE: 'clean' the QTS 4.5.1+ App Center notifier status
+    # KLUDGE: 'clean' the QTS 4.5.1+ App Center notifier status.
     [[ -e /sbin/qpkg_cli ]] && /sbin/qpkg_cli --clean "$QPKG_NAME" > /dev/null 2>&1
-
-    readonly QPKG_PATH=$(/sbin/getcfg $QPKG_NAME Install_Path -f /etc/config/qpkg.conf)
-		readonly CUSTOM_ALPHA_PATHFILE=$QPKG_PATH/ALPHA.custom
-		readonly CUSTOM_OMEGA_PATHFILE=$QPKG_PATH/OMEGA.custom
-		readonly LOG_GUI_PATHFILE=/home/httpd/$QPKG_NAME.log
-		readonly LOG_LINK_PATHFILE=/var/log/$QPKG_NAME.log
-		readonly LOG_REAL_PATHFILE=$QPKG_PATH/$QPKG_NAME.log
-		readonly LOG_TEMP_PATHFILE=$LOG_REAL_PATHFILE.tmp
-		readonly SERVICE_STATUS_PATHFILE=/var/run/$QPKG_NAME.last.operation
-		local -r DEFAULT_ALPHA_PATHFILE=$QPKG_PATH/ALPHA.default
-		local -r DEFAULT_OMEGA_PATHFILE=$QPKG_PATH/OMEGA.default
-    readonly SHUTDOWN_PATHFILE=/etc/init.d/shutdown_check.sh
 
     local actual_alpha_pathfile=''
     local actual_omega_pathfile=''
 
-    [[ ! -e $LOG_REAL_PATHFILE ]] && /bin/touch "$LOG_REAL_PATHFILE"
-    [[ -e $LOG_TEMP_PATHFILE ]] && rm -f "$LOG_TEMP_PATHFILE"
-    [[ ! -L $LOG_GUI_PATHFILE ]] && /bin/ln -s "$LOG_REAL_PATHFILE" "$LOG_GUI_PATHFILE"
-    [[ ! -L $LOG_LINK_PATHFILE ]] && /bin/ln -s "$LOG_REAL_PATHFILE" "$LOG_LINK_PATHFILE"
+    local -r BACKUP_PATH=$(/sbin/getcfg SHARE_DEF defVolMP -f /etc/config/def_share.info)/.qpkg_config_backup
+		readonly BACKUP_PATHFILE=$BACKUP_PATH/$QPKG_NAME.config.tar.gz
+	readonly LOG_GUI_PATHFILE=/home/httpd/$QPKG_NAME.log
+	readonly LOG_LINK_PATHFILE=/var/log/$QPKG_NAME.log
+    readonly QPKG_PATH=$(/sbin/getcfg "$QPKG_NAME" Install_Path -f /etc/config/qpkg.conf)
+		readonly CUSTOM_ALPHA_PATHFILE=$QPKG_PATH/ALPHA.custom
+		readonly CUSTOM_OMEGA_PATHFILE=$QPKG_PATH/OMEGA.custom
+		local -r DEFAULT_ALPHA_PATHFILE=$QPKG_PATH/ALPHA.default
+		local -r DEFAULT_OMEGA_PATHFILE=$QPKG_PATH/OMEGA.default
+		readonly LOG_REAL_PATHFILE=$QPKG_PATH/$QPKG_NAME.log
+			readonly LOG_TEMP_PATHFILE=$LOG_REAL_PATHFILE.tmp
+	readonly SERVICE_STATUS_PATHFILE=/var/run/$QPKG_NAME.last.operation
+    readonly SHUTDOWN_PATHFILE=/etc/init.d/shutdown_check.sh
+
+    [[ -e $LOG_REAL_PATHFILE ]] || /bin/touch "$LOG_REAL_PATHFILE"
+    [[ ! -e $LOG_TEMP_PATHFILE ]] || rm -f "$LOG_TEMP_PATHFILE"
+    [[ -L $LOG_GUI_PATHFILE ]] || /bin/ln -s "$LOG_REAL_PATHFILE" "$LOG_GUI_PATHFILE"
+    [[ -L $LOG_LINK_PATHFILE ]] || /bin/ln -s "$LOG_REAL_PATHFILE" "$LOG_LINK_PATHFILE"
 
     if [[ -e $CUSTOM_ALPHA_PATHFILE ]]; then
         actual_alpha_pathfile=$CUSTOM_ALPHA_PATHFILE
@@ -82,11 +82,13 @@ Init()
     fi
 
     while read -r package_ref comment; do
-        [[ -n $package_ref && $package_ref != \#* ]] && PKGS_ALPHA_ORDERED+=("$package_ref")
+        [[ -n $package_ref && $package_ref != \#* ]] || continue
+        PKGS_ALPHA_ORDERED+=("$package_ref")
     done < "$actual_alpha_pathfile"
 
     while read -r package_ref comment; do
-        [[ -n $package_ref && $package_ref != \#* ]] && PKGS_OMEGA_ORDERED+=("$package_ref")
+        [[ -n $package_ref && $package_ref != \#* ]] || continue
+        PKGS_OMEGA_ORDERED+=("$package_ref")
     done < "$actual_omega_pathfile"
 
     PKGS_OMEGA_ORDERED+=("$QPKG_NAME")
@@ -108,7 +110,7 @@ BackupConfig()
     fi
 
     if [[ -z $a ]]; then
-        touch "$BACKUP_PATHFILE"
+        /bin/touch "$BACKUP_PATHFILE"
         echo 'nothing to backup' | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
         return 0
     fi
@@ -440,7 +442,7 @@ RecordOperationRequest()
     b=${#a}
     printf -v c "%${b}s"
 
-    echo -e "${c// /─}\n$QPKG_NAME ($(/sbin/getcfg $QPKG_NAME Build -f /etc/config/qpkg.conf))\n$a" >> "$LOG_TEMP_PATHFILE"
+    echo -e "${c// /─}\n$QPKG_NAME ($(/sbin/getcfg "$QPKG_NAME" Build -f /etc/config/qpkg.conf))\n$a" >> "$LOG_TEMP_PATHFILE"
 
     LogWrite "'$1' requested" 0
 
@@ -515,7 +517,7 @@ Init
 
 case $1 in
     autofix)
-        if [[ $(/sbin/getcfg $QPKG_NAME Enable -u -d FALSE -f /etc/config/qpkg.conf) != TRUE ]]; then
+        if [[ $(/sbin/getcfg "$QPKG_NAME" Enable -u -d FALSE -f /etc/config/qpkg.conf) != TRUE ]]; then
             echo "$QPKG_NAME is disabled. You must first enable with: qpkg_service enable $QPKG_NAME"
             SetServiceOperationResultFailed
             exit 1
