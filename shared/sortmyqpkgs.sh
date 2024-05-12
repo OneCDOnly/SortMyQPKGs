@@ -147,7 +147,7 @@ ShowPreferredList()
     {
 
     ShowSectionTitle 'Preferred order'
-    echo -e "< matching installed packages are indicated with '#' >\n"
+    echo -e "< installed packages are indicated with '#' >\n"
     ShowListsMarked
 
     }
@@ -545,7 +545,7 @@ case $1 in
         ShowPackagesAfter | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
         RecordOperationComplete "$1"
         CommitLog
-        echo -e '\nPackages will be loaded in this order during next boot-up.\n'
+        echo -e '\nPackages will be started in this order during next boot-up.\n'
         ;;
     init|stop|restart)
         # do nothing
