@@ -35,6 +35,9 @@ Init()
     # KLUDGE: 'clean' the QTS 4.5.1+ App Center notifier status.
     [[ -e /sbin/qpkg_cli ]] && /sbin/qpkg_cli --clean "$QPKG_NAME" > /dev/null 2>&1
 
+	# KLUDGE: `/dev/fd` isn't always created by QTS.
+	ln -fns /proc/self/fd /dev/fd
+
     local actual_alpha_pathfile=''
     local actual_omega_pathfile=''
 
@@ -256,19 +259,20 @@ SortPackages()
 
     # read 'ALPHA' packages in reverse and prepend each to /etc/config/qpkg.conf
     for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
-        for a in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
-            b=${a//[\[\]]}
-            [[ $b = "${PKGS_ALPHA_ORDERED[$i]}" ]] || continue
-            SendToStart "$b"
+		a=${PKGS_ALPHA_ORDERED[$i]}
+
+        for b in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
+            [[ $a = ${b//[\[\]]} ]] || continue
+            SendToStart "$a"
             break
         done
     done
 
     # now read 'OMEGA' packages and append each to /etc/config/qpkg.conf
-    for b in "${PKGS_OMEGA_ORDERED[@]}"; do
-        for a in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
-            [[ $b = "${a//[\[\]]}" ]] || continue
-            SendToEnd "$b"
+    for a in "${PKGS_OMEGA_ORDERED[@]}"; do
+        for b in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
+            [[ $a = "${b//[\[\]]}" ]] || continue
+            SendToEnd "$a"
             break
         done
     done
@@ -281,7 +285,9 @@ SendToStart()
 
     # sends $1 to the start of /etc/config/qpkg.conf
 
-    local a=$(GetDataBlock "$1")
+    local a=''
+
+    a=$(GetDataBlock "$1")
 
     if [[ $? -gt 0 ]]; then
         echo "error - ${a}!"
@@ -300,7 +306,9 @@ SendToEnd()
 
     # sends $1 to the end of /etc/config/qpkg.conf
 
-    local a=$(GetDataBlock "$1")
+    local a=''
+
+    a=$(GetDataBlock "$1")
 
     if [[ $? -gt 0 ]]; then
         echo "error - ${a}!"
