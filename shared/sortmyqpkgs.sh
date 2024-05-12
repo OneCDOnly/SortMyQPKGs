@@ -219,7 +219,8 @@ ShowPackagesUnmarked()
     local -i n=0
 
     for a in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
-        ((n++)); b=${a//[\[\]]}; printf -v c '%02d' "$n"
+        b=${a//[\[\]]}
+        ((n++)); printf -v c '%02d' "$n"
         d=$(ShowLineUnmarked "$c" Φ "$b")
 
         for e in "${PKGS_ALPHA_ORDERED[@]}"; do
@@ -252,34 +253,34 @@ SortPackages()
     local a=''
     local -i i=0
 
-    echo -e "\nsorting packages ..."
+    echo -ne '\nsorting packages ... '
 
-    # read 'ALPHA' packages in reverse and prepend each to /etc/config/qpkg.conf
+    # Read 'ALPHA' packages in-reverse and prepend each to /etc/config/qpkg.conf
     for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
 		a=${PKGS_ALPHA_ORDERED[$i]}
 		/bin/grep -q "^\[$a\]" /etc/config/qpkg.conf && SendToStart "$a"
     done
 
-    # now read 'OMEGA' packages and append each to /etc/config/qpkg.conf
+    # Now, read 'OMEGA' packages and append each to /etc/config/qpkg.conf
     for a in "${PKGS_OMEGA_ORDERED[@]}"; do
 		/bin/grep -q "^\[$a\]" /etc/config/qpkg.conf && SendToEnd "$a"
     done
+
+    echo 'done'
 
     }
 
 SendToStart()
     {
 
-    # sends $1 to the start of /etc/config/qpkg.conf
+    # Send $1 to the start of /etc/config/qpkg.conf
+
+    [[ -n ${1:-} ]] || return
 
     local a=''
 
-    a=$(GetDataBlock "$1")
-
-    if [[ $? -gt 0 ]]; then
-        echo "error - ${a}!"
-        return 2
-    fi
+    a=$(GetConfigBlock "$1")
+    [[ -n $a ]] || return
 
     /sbin/rmcfg "$1" -f /etc/config/qpkg.conf
     echo -e "$a" > /tmp/qpkg.conf.tmp
@@ -291,45 +292,40 @@ SendToStart()
 SendToEnd()
     {
 
-    # sends $1 to the end of /etc/config/qpkg.conf
+    # Send $1 to the end of /etc/config/qpkg.conf
+
+    [[ -n ${1:-} ]] || return
 
     local a=''
 
-    a=$(GetDataBlock "$1")
-
-    if [[ $? -gt 0 ]]; then
-        echo "error - ${a}!"
-        return 2
-    fi
+    a=$(GetConfigBlock "$1")
+    [[ -n $a ]] || return
 
     /sbin/rmcfg "$1" -f /etc/config/qpkg.conf
     echo -e "\n${a}" >> /etc/config/qpkg.conf
 
     }
 
-GetDataBlock()
+GetConfigBlock()
     {
 
-    # returns the data block for the QPKG name specified as $1
+    # Return the config block for the QPKG name specified as $1
+
+    [[ -n ${1:-} ]] || return
 
     local -i sl=0       # line number: start of specified config block
     local -i ll=0       # line number: last line in file
     local -i bl=0       # total lines in specified config block
     local -i el=0       # line number: end of specified config block
 
-    if [[ -z $1 ]]; then
-        echo 'QPKG not specified'
-        return 1
-    fi
-
-    if ! /bin/grep -q "$1" /etc/config/qpkg.conf; then
-        echo 'QPKG not found'; return 2
-    fi
-
     sl=$(/bin/grep -n "^\[$1\]" /etc/config/qpkg.conf | /usr/bin/cut -f1 -d':')
+    [[ -n $sl ]] || return
+
     ll=$(/usr/bin/wc -l < /etc/config/qpkg.conf | /bin/tr -d ' ')
     bl=$(/usr/bin/tail -n$((ll-sl)) < /etc/config/qpkg.conf | /bin/grep -n '^\[' | /usr/bin/head -n1 | /usr/bin/cut -f1 -d':')
+
     [[ $bl -ne 0 ]] && el=$((sl+bl-1)) || el=$ll
+    [[ -n $el ]] || return
 
     echo -e "$(/bin/sed -n "$sl,${el}p" /etc/config/qpkg.conf)"     # Output this with 'echo' to strip trailing LFs from config block.
 
@@ -338,8 +334,8 @@ GetDataBlock()
 Upshift()
     {
 
-    # move specified existing filename by incrementing extension value (upshift extension)
-    # if extension is not a number, then create new extension of '1' and copy file
+    # Move specified existing filename by incrementing extension value (upshift extension).
+    # If extension is not a number, then create new extension of '1' and copy file.
 
     # $1 = pathfilename to upshift
 
@@ -350,7 +346,7 @@ Upshift()
     local dest=''
     local -i rotate_limit=10
 
-    # keep count of recursive calls
+    # Keep count of recursive calls.
     local rec_limit=$((rotate_limit*2))
     local rec_count=0
     local rec_track_file=/tmp/${FUNCNAME[0]}.count
@@ -367,12 +363,12 @@ Upshift()
 
     ext=${1##*.}
     case $ext in
-        *[!0-9]*)   # specified file extension is not a number so add number and copy it
+        *[!0-9]*)   # Specified file extension is not a number so add number and copy it.
             dest="$1.1"
             [[ -e $dest ]] && Upshift "$dest"
             cp "$1" "$dest"
             ;;
-        *)          # extension IS a number, so move it if possible
+        *)          # Extension IS a number, so move it if possible.
             if [[ $ext -lt $((rotate_limit-1)) ]]; then
                 ((ext++)); dest="${1%.*}.$ext"
                 [[ -e $dest ]] && Upshift "$dest"
@@ -430,7 +426,7 @@ ShowLineMarked()
 RecordOperationRequest()
     {
 
-    # $1 = operation
+    # $1 = Operation.
 
     local a=''
     local -i b=0
@@ -449,7 +445,7 @@ RecordOperationRequest()
 RecordOperationComplete()
     {
 
-    # $1 = operation
+    # $1 = Operation.
 
     echo -e "[$(/bin/date)] '$1' completed" >> "$LOG_TEMP_PATHFILE"
 
@@ -474,7 +470,7 @@ SetServiceOperationResultFailed()
 SetServiceOperationResult()
     {
 
-    # $1 = result of operation to recorded
+    # $1 = Result of operation to recorded.
 
     [[ -n $1 && -n $SERVICE_STATUS_PATHFILE ]] && echo "$1" > "$SERVICE_STATUS_PATHFILE"
 
@@ -483,7 +479,7 @@ SetServiceOperationResult()
 ShowSectionTitle()
     {
 
-    # $1 = description
+    # $1 = Description.
 
     printf '\n * %s *\n' "$1"
 
@@ -501,8 +497,8 @@ CommitLog()
 LogWrite()
     {
 
-    # $1 = message to write into NAS system log
-    # $2 = event type:
+    # $1 = Message to write into NAS system log.
+    # $2 = Event type:
     #    0 : Information
     #    1 : Warning
     #    2 : Error
@@ -555,7 +551,7 @@ case $1 in
         if ! /bin/grep -q 'sortmyqpkgs.sh' $SHUTDOWN_PATHFILE; then
             findtext='#backup logs'
             inserttext='/etc/init.d/sortmyqpkgs.sh autofix'
-            /bin/sed -i "s|$findtext|$inserttext\n$findtext|" $SHUTDOWN_PATHFILE
+            /bin/sed -i "s|$findtext|$inserttext\n$findtext|" "$SHUTDOWN_PATHFILE"
         fi
 
         if [[ $1 = install ]]; then
@@ -570,7 +566,7 @@ case $1 in
         echo -e "\nTo re-order packages: $0 fix\n"
         ;;
     remove)
-        /bin/grep -q 'sortmyqpkgs.sh' $SHUTDOWN_PATHFILE && /bin/sed -i '/sortmyqpkgs.sh/d' $SHUTDOWN_PATHFILE
+        /bin/grep -q 'sortmyqpkgs.sh' "$SHUTDOWN_PATHFILE" && /bin/sed -i '/sortmyqpkgs.sh/d' "$SHUTDOWN_PATHFILE"
         [[ -L $LOG_GUI_PATHFILE ]] && rm -f $LOG_GUI_PATHFILE
         ;;
     reset)
@@ -586,7 +582,7 @@ case $1 in
         CommitLog
         ;;
 	s|status)
-        if /bin/grep -q 'sortmyqpkgs.sh' $SHUTDOWN_PATHFILE; then
+        if /bin/grep -q 'sortmyqpkgs.sh' "$SHUTDOWN_PATHFILE"; then
 			echo active
 			exit 0
 		else
