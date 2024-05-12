@@ -1,3 +1,6 @@
+* Minor update: (240512)
+- code: sort faster.
+
 * Minor update: (240511)
 - add [QJDK21] to the ALPHA list.
 - add [SortMyQPKGs] to the OMEGA list.

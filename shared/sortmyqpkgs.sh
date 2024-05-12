@@ -250,33 +250,20 @@ SortPackages()
     {
 
     local a=''
-    local b=''
     local -i i=0
 
     echo -e "\nsorting packages ..."
 
-#     time {
-
     # read 'ALPHA' packages in reverse and prepend each to /etc/config/qpkg.conf
     for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
 		a=${PKGS_ALPHA_ORDERED[$i]}
-
-        for b in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
-            [[ $a = ${b//[\[\]]} ]] || continue
-            SendToStart "$a"
-            break
-        done
+		/bin/grep -q "^\[$a\]" /etc/config/qpkg.conf && SendToStart "$a"
     done
 
     # now read 'OMEGA' packages and append each to /etc/config/qpkg.conf
     for a in "${PKGS_OMEGA_ORDERED[@]}"; do
-        for b in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
-            [[ $a = "${b//[\[\]]}" ]] || continue
-            SendToEnd "$a"
-            break
-        done
+		/bin/grep -q "^\[$a\]" /etc/config/qpkg.conf && SendToEnd "$a"
     done
-#     }
 
     }
 
