@@ -258,22 +258,22 @@ SortPackages()
     # Read 'ALPHA' packages in-reverse and prepend each to /etc/config/qpkg.conf
     for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
 		a=${PKGS_ALPHA_ORDERED[$i]}
-		/bin/grep -q "^\[$a\]" /etc/config/qpkg.conf && SendToStart "$a"
+		/bin/grep -q "^\[$a\]" /etc/config/qpkg.conf && MoveConfigToTop "$a"
     done
 
     # Now, read 'OMEGA' packages and append each to /etc/config/qpkg.conf
     for a in "${PKGS_OMEGA_ORDERED[@]}"; do
-		/bin/grep -q "^\[$a\]" /etc/config/qpkg.conf && SendToEnd "$a"
+		/bin/grep -q "^\[$a\]" /etc/config/qpkg.conf && MoveConfigToBottom "$a"
     done
 
     echo 'done'
 
     }
 
-SendToStart()
+MoveConfigToTop()
     {
 
-    # Send $1 to the start of /etc/config/qpkg.conf
+    # Move $1 to the top of /etc/config/qpkg.conf
 
     [[ -n ${1:-} ]] || return
 
@@ -289,10 +289,10 @@ SendToStart()
 
     }
 
-SendToEnd()
+MoveConfigToBottom()
     {
 
-    # Send $1 to the end of /etc/config/qpkg.conf
+    # Move $1 to the bottom of /etc/config/qpkg.conf
 
     [[ -n ${1:-} ]] || return
 
