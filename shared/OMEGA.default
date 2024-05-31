@@ -24,6 +24,7 @@ QBittorrent
 QBittorrent4
 rtorrent
 OqBittorrent
+qBittorrent2
 
 # searchers
 SonarrTrackTV       # load before QSonarr
@@ -96,6 +97,9 @@ OReadarr
 Prowlarr81
 Prowlarr82
 Prowlarr83
+Kapowarr82
+Kapowarr83
+Codex83
 Autobrr             # load after all torrent downloaders
 
 # management

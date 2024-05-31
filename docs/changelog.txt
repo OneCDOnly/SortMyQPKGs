@@ -1,3 +1,7 @@
+* Minor update: (xxxxxx)
+- add [qBitorrent2, Kapowarr82, Kapowarr83, Codex83] to the OMEGA list.
+- improve message format.
+
 * Minor update: (240512)
 - code: sort faster.
 

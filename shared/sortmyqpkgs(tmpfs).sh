@@ -40,6 +40,8 @@ Init()
 
     local actual_alpha_pathfile=''
     local actual_omega_pathfile=''
+    original_pathfile=/etc/config/qpkg.conf
+    working_pathfile=/sortmyqpkgs.tmp/qpkg.conf
 
     local -r BACKUP_PATH=$(/sbin/getcfg SHARE_DEF defVolMP -f /etc/config/def_share.info)/.qpkg_config_backup
 		readonly BACKUP_PATHFILE=$BACKUP_PATH/$QPKG_NAME.config.tar.gz
@@ -183,7 +185,7 @@ ShowListsMarked()
     local -i n=0
 
     for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
-        ((n++)); printf -v a '%03d' "$n"
+        ((n++)); printf -v a '%02d' "$n"
 
         if (/bin/grep -qF "[$pref]" /etc/config/qpkg.conf); then
             ShowLineMarked "$a" A "$pref"
@@ -193,11 +195,11 @@ ShowListsMarked()
     done
 
     echo
-    ((n++)); printf -v a '%03d' "$n"; ShowLineUnmarked "$a" Φ '< existing unspecified packages go here >'
+    ((n++)); printf -v a '%02d' "$n"; ShowLineUnmarked "$a" Φ '< existing unspecified packages go here >'
     echo
 
     for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
-        ((n++)); printf -v a '%03d' "$n"
+        ((n++)); printf -v a '%02d' "$n"
 
         if (/bin/grep -qF "[$pref]" /etc/config/qpkg.conf); then
             ShowLineMarked "$a" Ω "$pref"
@@ -252,19 +254,33 @@ SortPackages()
 
     local a=''
     local -i i=0
+    local b=$(dirname "$working_pathfile")
 
     echo -ne '\nsorting packages ... '
+
+    if [[ -d $b ]]; then
+        rm -rf "$working_pathfile"
+    else
+        mkdir "$b"
+    fi
+
+    mount -t tmpfs -o size=1M tmpfs "$b"
+    cp "$original_pathfile" "$working_pathfile"
 
     # Read 'ALPHA' packages in-reverse and prepend each to /etc/config/qpkg.conf
     for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
 		a=${PKGS_ALPHA_ORDERED[$i]}
-		/bin/grep -q "^\[$a\]" /etc/config/qpkg.conf && MoveConfigToTop "$a"
+		/bin/grep -q "^\[$a\]" "$working_pathfile" && MoveConfigToTop "$a"
     done
 
     # Now, read 'OMEGA' packages and append each to /etc/config/qpkg.conf
     for a in "${PKGS_OMEGA_ORDERED[@]}"; do
-		/bin/grep -q "^\[$a\]" /etc/config/qpkg.conf && MoveConfigToBottom "$a"
+		/bin/grep -q "^\[$a\]" "$working_pathfile" && MoveConfigToBottom "$a"
     done
+
+    cp "$working_pathfile" "$original_pathfile"
+    umount "$b"
+    rmdir "$b"
 
     echo 'done'
 
@@ -273,7 +289,7 @@ SortPackages()
 MoveConfigToTop()
     {
 
-    # Move $1 to the top of /etc/config/qpkg.conf
+    # Move $1 to the top of qpkg.conf
 
     [[ -n ${1:-} ]] || return
 
@@ -282,17 +298,17 @@ MoveConfigToTop()
     a=$(GetConfigBlock "$1")
     [[ -n $a ]] || return
 
-    /sbin/rmcfg "$1" -f /etc/config/qpkg.conf
-    echo -e "$a" > /tmp/qpkg.conf.tmp
-    /bin/cat /etc/config/qpkg.conf >> /tmp/qpkg.conf.tmp
-    mv /tmp/qpkg.conf.tmp /etc/config/qpkg.conf
+    /sbin/rmcfg "$1" -f "$working_pathfile"
+    echo -e "$a" > "$working_pathfile".tmp
+    /bin/cat "$working_pathfile" >> "$working_pathfile".tmp
+    mv "$working_pathfile".tmp "$working_pathfile"
 
     }
 
 MoveConfigToBottom()
     {
 
-    # Move $1 to the bottom of /etc/config/qpkg.conf
+    # Move $1 to the bottom of qpkg.conf
 
     [[ -n ${1:-} ]] || return
 
@@ -301,8 +317,8 @@ MoveConfigToBottom()
     a=$(GetConfigBlock "$1")
     [[ -n $a ]] || return
 
-    /sbin/rmcfg "$1" -f /etc/config/qpkg.conf
-    echo -e "\n${a}" >> /etc/config/qpkg.conf
+    /sbin/rmcfg "$1" -f "$working_pathfile"
+    echo -e "\n${a}" >> "$working_pathfile"
 
     }
 
@@ -318,16 +334,16 @@ GetConfigBlock()
     local -i bl=0       # total lines in specified config block
     local -i el=0       # line number: end of specified config block
 
-    sl=$(/bin/grep -n "^\[$1\]" /etc/config/qpkg.conf | /usr/bin/cut -f1 -d':')
+    sl=$(/bin/grep -n "^\[$1\]" "$working_pathfile" | /usr/bin/cut -f1 -d':')
     [[ -n $sl ]] || return
 
-    ll=$(/usr/bin/wc -l < /etc/config/qpkg.conf | /bin/tr -d ' ')
-    bl=$(/usr/bin/tail -n$((ll-sl)) < /etc/config/qpkg.conf | /bin/grep -n '^\[' | /usr/bin/head -n1 | /usr/bin/cut -f1 -d':')
+    ll=$(/usr/bin/wc -l < "$working_pathfile" | /bin/tr -d ' ')
+    bl=$(/usr/bin/tail -n$((ll-sl)) < "$working_pathfile" | /bin/grep -n '^\[' | /usr/bin/head -n1 | /usr/bin/cut -f1 -d':')
 
     [[ $bl -ne 0 ]] && el=$((sl+bl-1)) || el=$ll
     [[ -n $el ]] || return
 
-    echo -e "$(/bin/sed -n "$sl,${el}p" /etc/config/qpkg.conf)"     # Output this with 'echo' to strip trailing LFs from config block.
+    echo -e "$(/bin/sed -n "$sl,${el}p" "$working_pathfile")"     # Output this with 'echo' to strip trailing LFs from config block.
 
     }
 
@@ -408,7 +424,7 @@ ShowLineUnmarked()
     # $2 = symbol
     # $3 = name
 
-    printf '(%s) (%s) %s\n' "$1" "$2" "$3"
+    echo "($1) ($2) $3"
 
     }
 
@@ -419,7 +435,7 @@ ShowLineMarked()
     # $2 = symbol
     # $3 = name
 
-    printf '(%s)#(%s) %s\n' "$1" "$2" "$3"
+    echo "($1)#($2) $3"
 
     }
 
