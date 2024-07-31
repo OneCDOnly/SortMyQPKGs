@@ -1,28 +1,38 @@
 #!/usr/bin/env bash
 ############################################################################
-# sortmyqpkgs.sh - Copyright 2017-2024 OneCD - one.cd.only@gmail.com
-
+# sortmyqpkgs.sh
+# 	copyright 2017-2024 OneCD
+#
+# Contact:
+#	one.cd.only@gmail.com
+#
 # This script is part of the 'SortMyQPKGs' package
-
+#
 # For more info: https://forum.qnap.com/viewtopic.php?f=320&t=133132
-
+#
 # Available in the MyQNAP store: https://www.myqnap.org/product/sortmyqpkgs
 # Project source: https://github.com/OneCDOnly/SortMyQPKGs
 # Community forum: https://forum.qnap.com/viewtopic.php?f=320&t=133132
-
+#
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
 # Foundation, either version 3 of the License, or (at your option) any later
 # version.
-
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 # FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
 # details.
-
+#
 # You should have received a copy of the GNU General Public License along with
-# this program. If not, see http://www.gnu.org/licenses/.
+# this program. If not, see http://www.gnu.org/licenses/
 ############################################################################
+
+set -o nounset -o pipefail
+shopt -s extglob
+ln -fns /proc/self/fd /dev/fd		# KLUDGE: `/dev/fd` isn't always created by QTS.
+
+readonly USER_ARGS_RAW=$*
 
 Init()
     {
@@ -34,9 +44,6 @@ Init()
 
     # KLUDGE: 'clean' the QTS 4.5.1+ App Center notifier status.
     [[ -e /sbin/qpkg_cli ]] && /sbin/qpkg_cli --clean "$QPKG_NAME" > /dev/null 2>&1
-
-	# KLUDGE: `/dev/fd` isn't always created by QTS.
-	ln -fns /proc/self/fd /dev/fd
 
     local actual_alpha_pathfile=''
     local actual_omega_pathfile=''
@@ -52,7 +59,9 @@ Init()
 		local -r DEFAULT_OMEGA_PATHFILE=$QPKG_PATH/OMEGA.default
 		readonly LOG_REAL_PATHFILE=$QPKG_PATH/$QPKG_NAME.log
 			readonly LOG_TEMP_PATHFILE=$LOG_REAL_PATHFILE.tmp
-	readonly SERVICE_STATUS_PATHFILE=/var/run/$QPKG_NAME.last.operation
+    readonly QPKG_VERSION=$(/sbin/getcfg $QPKG_NAME Version -f /etc/config/qpkg.conf)
+	readonly SERVICE_ACTION_PATHFILE=/var/log/$QPKG_NAME.action
+	readonly SERVICE_RESULT_PATHFILE=/var/log/$QPKG_NAME.result
     readonly SHUTDOWN_PATHFILE=/etc/init.d/shutdown_check.sh
 
     [[ -e $LOG_REAL_PATHFILE ]] || /bin/touch "$LOG_REAL_PATHFILE"
@@ -68,7 +77,6 @@ Init()
         source_alpha=default
     else
         echo 'ALPHA package list file not found'
-        SetServiceOperationResultFailed
         exit 1
     fi
 
@@ -80,7 +88,6 @@ Init()
         source_omega=default
     else
         echo 'OMEGA package list file not found'
-        SetServiceOperationResultFailed
         exit 1
     fi
 
@@ -96,10 +103,67 @@ Init()
 
     }
 
+StartQPKG()
+	{
+
+	if IsNotQPKGEnabled; then
+		echo -e "This QPKG is disabled. Please enable it first with:\n\tqpkg_service enable $QPKG_NAME"
+		return 1
+	else
+        AddHook
+	fi
+
+	}
+
+Fix()
+    {
+
+    RecordOperationRequest fix
+    ShowSources | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
+    Upshift /etc/config/qpkg.conf
+    ShowPackagesBefore | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
+    SortPackages
+    ShowPackagesAfter | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
+    RecordOperationComplete fix
+    CommitLog
+    echo -e '\nPackages will be started in this order during next boot-up.\n'
+
+    }
+
+AutoFix()
+	{
+
+	RecordOperationRequest autofix
+	ShowSources >> "$LOG_TEMP_PATHFILE"
+	Upshift /etc/config/qpkg.conf
+	ShowPackagesBefore >> "$LOG_TEMP_PATHFILE"
+	SortPackages
+	ShowPackagesAfter >> "$LOG_TEMP_PATHFILE"
+	RecordOperationComplete autofix
+	CommitLog
+
+	}
+
+StatusQPKG()
+	{
+
+	if /bin/grep -q 'sortmyqpkgs.sh' "$SHUTDOWN_PATHFILE"; then
+		echo active
+		exit 0
+	else
+		echo inactive
+		exit 1
+	fi
+
+	}
+
 BackupConfig()
     {
 
     local a=''
+    local z=0
+
+    RecordOperationRequest backup
 
     if [[ -e $CUSTOM_ALPHA_PATHFILE ]]; then
         a=$(/usr/bin/basename "$CUSTOM_ALPHA_PATHFILE")
@@ -113,35 +177,103 @@ BackupConfig()
     if [[ -z $a ]]; then
         /bin/touch "$BACKUP_PATHFILE"
         echo 'nothing to backup' | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
-        return 0
+        z=1
+    else
+        /bin/tar --create --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" "$a" | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
     fi
 
-    /bin/tar --create --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" "$a" | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
+    RecordOperationComplete backup
+    CommitLog
 
-    return 0
+    return $z
 
     }
 
 RestoreConfig()
     {
 
+    local z=0
+
+    RecordOperationRequest restore
+
     if [[ ! -s $BACKUP_PATHFILE ]]; then
         echo 'unable to restore: backup file is unusable!' | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
-        return 1
+
+        RecordOperationComplete restore
+        CommitLog
+        z=1
+    else
+        /bin/tar --extract --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
+        RecordOperationComplete restore
+        CommitLog
     fi
 
-    /bin/tar --extract --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
-
-    return 0
+    return $z
 
     }
 
 ResetConfig()
     {
 
+    RecordOperationRequest reset
     rm -f "$CUSTOM_ALPHA_PATHFILE" "$CUSTOM_OMEGA_PATHFILE"
+    RecordOperationComplete reset
+    CommitLog
 
     }
+
+AddHook()
+    {
+
+	if ! /bin/grep -q 'sortmyqpkgs.sh' $SHUTDOWN_PATHFILE; then
+		findtext='#backup logs'
+		inserttext='/etc/init.d/sortmyqpkgs.sh autofix'
+		/bin/sed -i "s|$findtext|$inserttext\n$findtext|" "$SHUTDOWN_PATHFILE"
+        echo 'shutdown hook has been added'
+    fi
+
+    }
+
+RemoveHook()
+    {
+
+    if /bin/grep -q 'sortmyqpkgs.sh' "$SHUTDOWN_PATHFILE"; then
+        /bin/sed -i '/sortmyqpkgs.sh/d' "$SHUTDOWN_PATHFILE"
+        echo 'shutdown hook has been removed'
+    fi
+
+    }
+
+ShowTitle()
+    {
+
+    echo "$(ShowAsTitleName) $(ShowAsVersion)"
+
+    }
+
+ShowAsTitleName()
+	{
+
+	TextBrightWhite $QPKG_NAME
+
+	}
+
+ShowAsVersion()
+	{
+
+	printf '%s' "v$QPKG_VERSION"
+
+	}
+
+ShowAsUsage()
+    {
+
+	echo -e "\nUsage: $0 {backup|fix|pref|reset|restart|restore|status}\n"
+	ShowSources
+	ShowPackagesCurrent
+	echo -e "\nTo re-order packages:\n\t$0 fix"
+
+	}
 
 ShowPreferredList()
     {
@@ -453,29 +585,6 @@ RecordOperationComplete()
 
     }
 
-SetServiceOperationResultOK()
-    {
-
-    SetServiceOperationResult ok
-
-    }
-
-SetServiceOperationResultFailed()
-    {
-
-    SetServiceOperationResult failed
-
-    }
-
-SetServiceOperationResult()
-    {
-
-    # $1 = Result of operation to recorded.
-
-    [[ -n $1 && -n $SERVICE_STATUS_PATHFILE ]] && echo "$1" > "$SERVICE_STATUS_PATHFILE"
-
-    }
-
 ShowSectionTitle()
     {
 
@@ -507,97 +616,181 @@ LogWrite()
 
     }
 
+IsQPKGEnabled()
+	{
+
+	# input:
+	#   $1 = (optional) package name to check. If unspecified, default is $QPKG_NAME
+
+	# output:
+	#   $? = 0 : true
+	#   $? = 1 : false
+
+	[[ $(Lowercase "$(/sbin/getcfg "${1:-$QPKG_NAME}" Enable -d false -f /etc/config/qpkg.conf)") = true ]]
+
+	}
+
+IsNotQPKGEnabled()
+	{
+
+	# input:
+	#   $1 = (optional) package name to check. If unspecified, default is $QPKG_NAME
+
+	# output:
+	#   $? = 0 : true
+	#   $? = 1 : false
+
+	! IsQPKGEnabled "${1:-$QPKG_NAME}"
+
+	}
+
+SetServiceAction()
+	{
+
+	service_action=${1:-none}
+	CommitServiceAction
+	SetServiceResultAsInProgress
+
+	}
+
+SetServiceResultAsOK()
+	{
+
+	service_result=ok
+	CommitServiceResult
+
+	}
+
+SetServiceResultAsFailed()
+	{
+
+	service_result=failed
+	CommitServiceResult
+
+	}
+
+SetServiceResultAsInProgress()
+	{
+
+	# Selected action is in-progress and hasn't generated a result yet.
+
+	service_result=in-progress
+	CommitServiceResult
+
+	}
+
+CommitServiceAction()
+	{
+
+    echo "$service_action" > "$SERVICE_ACTION_PATHFILE"
+
+	}
+
+CommitServiceResult()
+	{
+
+    echo "$service_result" > "$SERVICE_RESULT_PATHFILE"
+
+	}
+
+TextBrightWhite()
+	{
+
+	[[ -n ${1:-} ]] || return
+
+    printf '\033[1;97m%s\033[0m' "$1"
+
+	}
+
+Lowercase()
+	{
+
+	/bin/tr 'A-Z' 'a-z' <<< "$1"
+
+	}
+
 Init
 
-case $1 in
-    autofix)
-        if [[ $(/sbin/getcfg "$QPKG_NAME" Enable -u -d FALSE -f /etc/config/qpkg.conf) != TRUE ]]; then
-            echo "$QPKG_NAME is disabled. You must first enable with: qpkg_service enable $QPKG_NAME"
-            SetServiceOperationResultFailed
-            exit 1
-        fi
+user_arg=${USER_ARGS_RAW%% *}		# Only process first argument.
 
-        RecordOperationRequest "$1"
-        ShowSources >> "$LOG_TEMP_PATHFILE"
-        Upshift /etc/config/qpkg.conf
-        ShowPackagesBefore >> "$LOG_TEMP_PATHFILE"
-        SortPackages
-        ShowPackagesAfter >> "$LOG_TEMP_PATHFILE"
-        RecordOperationComplete "$1"
-        CommitLog
+case $user_arg in
+    autofix)
+        AutoFix
         ;;
-    b|backup)
-        RecordOperationRequest "$1"
-        BackupConfig
-        RecordOperationComplete "$1"
-        CommitLog
+    ?(-)b|?(--)backup)
+        SetServiceAction backup
+
+        if BackupConfig; then
+            SetServiceResultAsOK
+        else
+            SetServiceResultAsFailed
+        fi
         ;;
-    fix)
-        RecordOperationRequest "$1"
-        ShowSources | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
-        Upshift /etc/config/qpkg.conf
-        ShowPackagesBefore | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
-        SortPackages
-        ShowPackagesAfter | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
-        RecordOperationComplete "$1"
-        CommitLog
-        echo -e '\nPackages will be started in this order during next boot-up.\n'
+    ?(--)fix)
+        Fix
         ;;
-    init|stop|restart)
-        # do nothing
+    init|?(--)stop)         # Ignore these.
         /bin/sleep 1
         ;;
-    install|start)
-        if ! /bin/grep -q 'sortmyqpkgs.sh' $SHUTDOWN_PATHFILE; then
-            findtext='#backup logs'
-            inserttext='/etc/init.d/sortmyqpkgs.sh autofix'
-            /bin/sed -i "s|$findtext|$inserttext\n$findtext|" "$SHUTDOWN_PATHFILE"
-        fi
+    ?(--)restart)
+        SetServiceAction restart
 
-        if [[ $1 = install ]]; then
-            RecordOperationRequest "$1"
-            RecordOperationComplete "$1"
-            CommitLog
+        if RemoveHook && StartQPKG; then
+            SetServiceResultAsOK
+        else
+            SetServiceResultAsFailed
         fi
         ;;
-    pref)
+    ?(--)pref)
         ShowSources
         ShowPreferredList
         echo -e "\nTo re-order packages: $0 fix\n"
         ;;
     remove)
-        /bin/grep -q 'sortmyqpkgs.sh' "$SHUTDOWN_PATHFILE" && /bin/sed -i '/sortmyqpkgs.sh/d' "$SHUTDOWN_PATHFILE"
-        [[ -L $LOG_GUI_PATHFILE ]] && rm -f $LOG_GUI_PATHFILE
+        RemoveHook
         ;;
-    reset)
-        RecordOperationRequest "$1"
+    ?(--)reset)
         ResetConfig
-        RecordOperationComplete "$1"
-        CommitLog
         ;;
-    restore)
-        RecordOperationRequest "$1"
-        RestoreConfig
-        RecordOperationComplete "$1"
-        CommitLog
+    ?(--)restore)
+        SetServiceAction restore
+
+        if RestoreConfig; then
+            SetServiceResultAsOK
+        else
+            SetServiceResultAsFailed
+        fi
         ;;
-	s|status)
-        if /bin/grep -q 'sortmyqpkgs.sh' "$SHUTDOWN_PATHFILE"; then
-			echo active
-			exit 0
-		else
-			echo inactive
-			exit 1
-		fi
-		;;
+    install)
+        SetServiceAction install
+        RecordOperationRequest install
+
+        if StartQPKG; then
+            SetServiceResultAsOK
+            CommitLog
+        else
+            SetServiceResultAsFailed
+        fi
+
+        RecordOperationComplete install
+        ;;
+    ?(--)start)
+        SetServiceAction start
+
+        if StartQPKG; then
+            SetServiceResultAsOK
+        else
+            SetServiceResultAsFailed
+        fi
+        ;;
+    ?(-)s|?(--)status)
+        StatusQPKG
+        ;;
     *)
-        echo -e "\nUsage: $0 {backup|fix|pref|reset|restore|status}\n"
-        ShowSources
-        ShowPackagesCurrent
-        echo -e "\nTo re-order packages: $0 fix\n"
+        ShowTitle
+        ShowAsUsage
 esac
 
 rm -f "$LOG_TEMP_PATHFILE"
-SetServiceOperationResultOK
 
 exit 0
