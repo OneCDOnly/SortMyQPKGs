@@ -1,6 +1,8 @@
 * Minor update: (240801)
-- add [qBitorrent2, Kapowarr82, Kapowarr83, Codex83] to the OMEGA list.
 - code: improve message format, update actions for compatibility with sherpa, general code refresh.
+
+* Minor update: (240601)
+- add [qBitorrent2, Kapowarr82, Kapowarr83, Codex83] to the OMEGA list.
 
 * Minor update: (240512)
 - code: sort faster.
