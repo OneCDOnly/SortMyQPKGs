@@ -8,11 +8,9 @@
 #
 # This script is part of the 'SortMyQPKGs' package
 #
-# For more info: https://forum.qnap.com/viewtopic.php?f=320&t=133132
-#
 # Available in the MyQNAP store: https://www.myqnap.org/product/sortmyqpkgs
 # Project source: https://github.com/OneCDOnly/SortMyQPKGs
-# Community forum: https://forum.qnap.com/viewtopic.php?f=320&t=133132
+# Community forum: https://forum.qnap.com/viewtopic.php?t=133132
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
