@@ -348,7 +348,7 @@ ShowPackagesUnmarked()
     local e=''
     local -i n=0
 
-    for a in $(/bin/grep '^\[' /etc/config/qpkg.conf); do
+    for a in $(/bin/grep '^\[.*\]$' /etc/config/qpkg.conf); do
         b=${a//[\[\]]}
         ((n++)); printf -v c '%02d' "$n"
         d=$(ShowLineUnmarked "$c" Φ "$b")
