@@ -63,6 +63,7 @@ Qmono
 DotNET
 DotNETSDK
 DotNETSDK8
+DotNETSDK9
 JRE
 JRE_ARM
 QJDK7
@@ -102,6 +103,7 @@ Apache80
 Apache81
 Apache82
 Apache83
+Apache84
 sHHTPs
 
 # databases
@@ -121,6 +123,7 @@ PostgreSQL15
 PostgreSQL16
 PG4admin82
 MySQL8
+MySQL9				# Unsure of internal name, could also be MySQL91 - trying to confirm this.
 InfluxDB            # load before Chronograf
 InfluxDB2
 firebird

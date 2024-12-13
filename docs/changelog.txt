@@ -1,3 +1,7 @@
+* Minor update: (241214)
+- add [MySQL9, DotNETSDK9, Apache84] to the ALPHA list.
+- package: set QTS 5.1.9 as max version.
+
 * Minor update: (240922)
 - package: set QTS 5.1.8 as max version.
 
