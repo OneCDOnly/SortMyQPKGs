@@ -8,12 +8,12 @@ There are a few known packages need to launch sequentially (example: Qmono befor
 
 This package will automatically ensure the launch-order of your other QPKGs is correct.
 
-**NOTE**: SortMyQPKGs is no-longer effective on QTS 5.2.0 or-later, as these QTS versions have been modified to start QPKGs asynchronously. I can't force QTS to load QPKGs in a specific order anymore.
+> [!NOTE]
+> SortMyQPKGs is no-longer effective on QTS 5.2.0 or-later, as these QTS versions have been modified to start QPKGs asynchronously. I can't force QTS to load QPKGs in a specific order anymore.
 
-QPKGs must now make use of the 'Dependency' key. This requires QPKG developers to name any other QPKGs their QPKG depends-on and to set this key post-install with the other QPKG names as the key value.
+> QPKGs must now make use of the 'Dependency' key. This requires QPKG developers to name any other QPKGs their QPKG depends-on and to set this key post-install with the other QPKG names as the key value.
 
-If you're running QTS 5.2.0 or-later, you can uninstall SortMyQPKGs.
-
+> If you're running QTS 5.2.0 or-later, you can uninstall SortMyQPKGs.
 
 Every QPKG will fit into one of three possible groups:
 
