@@ -5,6 +5,7 @@ MUSL_CROSS
 
 # device drivers
 USBSerialdrivers
+USBSerialdrivers5
 V4LDrivers
 RltkWifi1c
 RltkWifi2b
