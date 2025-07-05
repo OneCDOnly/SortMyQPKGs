@@ -397,7 +397,7 @@ SortPackages()
 
     # Remove whitespace lines
 
-    sed -i '/^$/d' /etc/config/qpkg.conf
+    /bin/sed -i '/^$/d' /etc/config/qpkg.conf
 
     # Read 'ALPHA' packages in-reverse and prepend each to /etc/config/qpkg.conf
 
@@ -414,7 +414,7 @@ SortPackages()
 
     # Re-add whitespace lines (between config blocks) only.
 
- 	sed -i -e ':a' -e 'N' -e '$!ba' -e 's/\n\[/\n\n\[/g' /etc/config/qpkg.conf
+	/bin/sed -i -e ':a' -e 'N' -e '$!ba' -e 's/\n\[/\n\n\[/g' /etc/config/qpkg.conf
 
     echo 'done'
 
@@ -637,7 +637,7 @@ LogWrite()
     #		1 : Warning
     #		2 : Error
 
-    log_tool --append "[$r_qpkg_name] ${1:-}" --type "${2:-}"
+    /sbin/log_tool --append "[$r_qpkg_name] ${1:-}" --type "${2:-}"
 
     }
 
@@ -755,6 +755,8 @@ case $user_arg in
         /bin/sleep 1
         ;;
     ?(--)now)
+        ShowTitle
+        echo
         Fix
         ;;
     ?(--)restart)
