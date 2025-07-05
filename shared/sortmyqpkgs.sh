@@ -1,16 +1,25 @@
 #!/usr/bin/env bash
 ############################################################################
 # sortmyqpkgs.sh
-# 	copyright 2017-2024 OneCD
+# 	Copyright 2017-2025 OneCD
 #
 # Contact:
 #	one.cd.only@gmail.com
 #
-# This script is part of the 'SortMyQPKGs' package
+# Description:
+#	This script is part of the 'SortMyQPKGs' package
 #
-# Available in the MyQNAP store: https://www.myqnap.org/product/sortmyqpkgs
-# Project source: https://github.com/OneCDOnly/SortMyQPKGs
-# Community forum: https://forum.qnap.com/viewtopic.php?t=133132
+# Available in the MyQNAP store:
+#	https://www.myqnap.org/product/sortmyqpkgs
+#
+# And via the sherpa package manager:
+#	https://git.io/sherpa
+#
+# Project source:
+#	https://github.com/OneCDOnly/SortMyQPKGs
+#
+# Community forum:
+#	https://community.qnap.com/t/qpkg-sortmyqpkgs/1095
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -28,61 +37,62 @@
 
 set -o nounset -o pipefail
 shopt -s extglob
-ln -fns /proc/self/fd /dev/fd		# KLUDGE: `/dev/fd` isn't always created by QTS.
-
-readonly USER_ARGS_RAW=$*
+[[ -L /dev/fd ]] || ln -fns /proc/self/fd /dev/fd		# KLUDGE: `/dev/fd` isn't always created by QTS.
+readonly r_user_args_raw=$*
 
 Init()
     {
 
-    readonly QPKG_NAME=SortMyQPKGs
+    readonly r_qpkg_name=SortMyQPKGs
 
     # KLUDGE: mark QPKG installation as complete.
-    /sbin/setcfg "$QPKG_NAME" Status complete -f /etc/config/qpkg.conf
+
+    /sbin/setcfg $r_qpkg_name Status complete -f /etc/config/qpkg.conf
 
     # KLUDGE: 'clean' the QTS 4.5.1+ App Center notifier status.
-    [[ -e /sbin/qpkg_cli ]] && /sbin/qpkg_cli --clean "$QPKG_NAME" > /dev/null 2>&1
+
+    [[ -e /sbin/qpkg_cli ]] && /sbin/qpkg_cli --clean $r_qpkg_name &> /dev/null
 
     local actual_alpha_pathfile=''
     local actual_omega_pathfile=''
 
-    local -r BACKUP_PATH=$(/sbin/getcfg SHARE_DEF defVolMP -f /etc/config/def_share.info)/.qpkg_config_backup
-		readonly BACKUP_PATHFILE=$BACKUP_PATH/$QPKG_NAME.config.tar.gz
-	readonly LOG_GUI_PATHFILE=/home/httpd/$QPKG_NAME.log
-	readonly LOG_LINK_PATHFILE=/var/log/$QPKG_NAME.log
-    readonly QPKG_PATH=$(/sbin/getcfg "$QPKG_NAME" Install_Path -f /etc/config/qpkg.conf)
-		readonly CUSTOM_ALPHA_PATHFILE=$QPKG_PATH/ALPHA.custom
-		readonly CUSTOM_OMEGA_PATHFILE=$QPKG_PATH/OMEGA.custom
-		local -r DEFAULT_ALPHA_PATHFILE=$QPKG_PATH/ALPHA.default
-		local -r DEFAULT_OMEGA_PATHFILE=$QPKG_PATH/OMEGA.default
-		readonly LOG_REAL_PATHFILE=$QPKG_PATH/$QPKG_NAME.log
-			readonly LOG_TEMP_PATHFILE=$LOG_REAL_PATHFILE.tmp
-    readonly QPKG_VERSION=$(/sbin/getcfg $QPKG_NAME Version -f /etc/config/qpkg.conf)
-	readonly SERVICE_ACTION_PATHFILE=/var/log/$QPKG_NAME.action
-	readonly SERVICE_RESULT_PATHFILE=/var/log/$QPKG_NAME.result
-    readonly SHUTDOWN_PATHFILE=/etc/init.d/shutdown_check.sh
+    local -r r_backup_path=$(/sbin/getcfg SHARE_DEF defVolMP -f /etc/config/def_share.info)/.qpkg_config_backup
+		readonly r_backup_pathfile=$r_backup_path/$r_qpkg_name.config.tar.gz
+	readonly r_log_gui_pathfile=/home/httpd/$r_qpkg_name.log
+	readonly r_log_link_pathfile=/var/log/$r_qpkg_name.log
+    readonly r_qpkg_path=$(/sbin/getcfg $r_qpkg_name Install_Path -f /etc/config/qpkg.conf)
+		readonly r_custom_alpha_pathfile=$r_qpkg_path/ALPHA.custom
+		readonly r_custom_omega_pathfile=$r_qpkg_path/OMEGA.custom
+		local -r r_default_alpha_pathfile=$r_qpkg_path/ALPHA.default
+		local -r r_default_omega_pathfile=$r_qpkg_path/OMEGA.default
+		readonly r_log_real_pathfile=$r_qpkg_path/$r_qpkg_name.log
+			readonly r_log_temp_pathfile=$r_log_real_pathfile.tmp
+    readonly r_qpkg_version=$(/sbin/getcfg $r_qpkg_name Version -f /etc/config/qpkg.conf)
+	readonly r_service_action_pathfile=/var/log/$r_qpkg_name.action
+	readonly r_service_result_pathfile=/var/log/$r_qpkg_name.result
+    readonly r_shutdown_pathfile=/etc/init.d/shutdown_check.sh
 
-    [[ -e $LOG_REAL_PATHFILE ]] || /bin/touch "$LOG_REAL_PATHFILE"
-    [[ ! -e $LOG_TEMP_PATHFILE ]] || rm -f "$LOG_TEMP_PATHFILE"
-    [[ -L $LOG_GUI_PATHFILE ]] || /bin/ln -s "$LOG_REAL_PATHFILE" "$LOG_GUI_PATHFILE"
-    [[ -L $LOG_LINK_PATHFILE ]] || /bin/ln -s "$LOG_REAL_PATHFILE" "$LOG_LINK_PATHFILE"
+    [[ -e $r_log_real_pathfile ]] || /bin/touch "$r_log_real_pathfile"
+    [[ ! -e $r_log_temp_pathfile ]] || rm -f "$r_log_temp_pathfile"
+    [[ -L $r_log_gui_pathfile ]] || /bin/ln -s "$r_log_real_pathfile" "$r_log_gui_pathfile"
+    [[ -L $r_log_link_pathfile ]] || /bin/ln -s "$r_log_real_pathfile" "$r_log_link_pathfile"
 
-    if [[ -e $CUSTOM_ALPHA_PATHFILE ]]; then
-        actual_alpha_pathfile=$CUSTOM_ALPHA_PATHFILE
+    if [[ -e $r_custom_alpha_pathfile ]]; then
+        actual_alpha_pathfile=$r_custom_alpha_pathfile
         source_alpha=custom
-    elif [[ -e $DEFAULT_ALPHA_PATHFILE ]]; then
-        actual_alpha_pathfile=$DEFAULT_ALPHA_PATHFILE
+    elif [[ -e $r_default_alpha_pathfile ]]; then
+        actual_alpha_pathfile=$r_default_alpha_pathfile
         source_alpha=default
     else
         echo 'ALPHA package list file not found'
         exit 1
     fi
 
-    if [[ -e $CUSTOM_OMEGA_PATHFILE ]]; then
-        actual_omega_pathfile=$CUSTOM_OMEGA_PATHFILE
+    if [[ -e $r_custom_omega_pathfile ]]; then
+        actual_omega_pathfile=$r_custom_omega_pathfile
         source_omega=custom
-    elif [[ -e $DEFAULT_OMEGA_PATHFILE ]]; then
-        actual_omega_pathfile=$DEFAULT_OMEGA_PATHFILE
+    elif [[ -e $r_default_omega_pathfile ]]; then
+        actual_omega_pathfile=$r_default_omega_pathfile
         source_omega=default
     else
         echo 'OMEGA package list file not found'
@@ -91,12 +101,12 @@ Init()
 
     while read -r package_ref comment; do
         [[ -n $package_ref && $package_ref != \#* ]] || continue
-        PKGS_ALPHA_ORDERED+=("$package_ref")
+        pkgs_alpha_ordered+=("$package_ref")
     done < "$actual_alpha_pathfile"
 
     while read -r package_ref comment; do
         [[ -n $package_ref && $package_ref != \#* ]] || continue
-        PKGS_OMEGA_ORDERED+=("$package_ref")
+        pkgs_omega_ordered+=("$package_ref")
     done < "$actual_omega_pathfile"
 
     }
@@ -105,7 +115,7 @@ StartQPKG()
 	{
 
 	if IsNotQPKGEnabled; then
-		echo -e "This QPKG is disabled. Please enable it first with:\n\tqpkg_service enable $QPKG_NAME"
+		echo -e "This QPKG is disabled. Please enable it first with:\n\tqpkg_service enable $r_qpkg_name"
 		return 1
 	else
         AddHook
@@ -117,11 +127,11 @@ Fix()
     {
 
     RecordOperationRequest fix
-    ShowSources | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
+    ShowSources | /usr/bin/tee -a "$r_log_temp_pathfile"
     Upshift /etc/config/qpkg.conf
-    ShowPackagesBefore | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
+    ShowPackagesBefore | /usr/bin/tee -a "$r_log_temp_pathfile"
     SortPackages
-    ShowPackagesAfter | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
+    ShowPackagesAfter | /usr/bin/tee -a "$r_log_temp_pathfile"
     RecordOperationComplete fix
     CommitLog
     echo -e '\nPackages will be started in this order during next boot-up.\n'
@@ -132,11 +142,11 @@ AutoFix()
 	{
 
 	RecordOperationRequest autofix
-	ShowSources >> "$LOG_TEMP_PATHFILE"
+	ShowSources >> "$r_log_temp_pathfile"
 	Upshift /etc/config/qpkg.conf
-	ShowPackagesBefore >> "$LOG_TEMP_PATHFILE"
+	ShowPackagesBefore >> "$r_log_temp_pathfile"
 	SortPackages
-	ShowPackagesAfter >> "$LOG_TEMP_PATHFILE"
+	ShowPackagesAfter >> "$r_log_temp_pathfile"
 	RecordOperationComplete autofix
 	CommitLog
 
@@ -145,7 +155,7 @@ AutoFix()
 StatusQPKG()
 	{
 
-	if /bin/grep -q 'sortmyqpkgs.sh' "$SHUTDOWN_PATHFILE"; then
+	if /bin/grep 'sortmyqpkgs.sh' "$r_shutdown_pathfile" &> /dev/null; then
 		echo active
 		exit 0
 	else
@@ -163,21 +173,21 @@ BackupConfig()
 
     RecordOperationRequest backup
 
-    if [[ -e $CUSTOM_ALPHA_PATHFILE ]]; then
-        a=$(/usr/bin/basename "$CUSTOM_ALPHA_PATHFILE")
+    if [[ -e $r_custom_alpha_pathfile ]]; then
+        a=$(/usr/bin/basename "$r_custom_alpha_pathfile")
     fi
 
-    if [[ -e $CUSTOM_OMEGA_PATHFILE ]]; then
+    if [[ -e $r_custom_omega_pathfile ]]; then
         [[ -n $a ]] && a+=' '
-        a+=$(/usr/bin/basename "$CUSTOM_OMEGA_PATHFILE")
+        a+=$(/usr/bin/basename "$r_custom_omega_pathfile")
     fi
 
     if [[ -z $a ]]; then
-        /bin/touch "$BACKUP_PATHFILE"
-        echo 'nothing to backup' | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
+        /bin/touch "$r_backup_pathfile"
+        echo 'nothing to backup' | /usr/bin/tee -a "$r_log_temp_pathfile"
         z=1
     else
-        /bin/tar --create --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" "$a" | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
+        /bin/tar --create --gzip --file="$r_backup_pathfile" --directory="$r_qpkg_path" "$a" | /usr/bin/tee -a "$r_log_temp_pathfile"
     fi
 
     RecordOperationComplete backup
@@ -194,14 +204,14 @@ RestoreConfig()
 
     RecordOperationRequest restore
 
-    if [[ ! -s $BACKUP_PATHFILE ]]; then
-        echo 'unable to restore: backup file is unusable!' | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
+    if [[ ! -s $r_backup_pathfile ]]; then
+        echo 'unable to restore: backup file is unusable!' | /usr/bin/tee -a "$r_log_temp_pathfile"
 
         RecordOperationComplete restore
         CommitLog
         z=1
     else
-        /bin/tar --extract --gzip --file="$BACKUP_PATHFILE" --directory="$QPKG_PATH" | /usr/bin/tee -a "$LOG_TEMP_PATHFILE"
+        /bin/tar --extract --gzip --file="$r_backup_pathfile" --directory="$r_qpkg_path" | /usr/bin/tee -a "$r_log_temp_pathfile"
         RecordOperationComplete restore
         CommitLog
     fi
@@ -214,7 +224,7 @@ ResetConfig()
     {
 
     RecordOperationRequest reset
-    rm -f "$CUSTOM_ALPHA_PATHFILE" "$CUSTOM_OMEGA_PATHFILE"
+    rm -f "$r_custom_alpha_pathfile" "$r_custom_omega_pathfile"
     RecordOperationComplete reset
     CommitLog
 
@@ -223,10 +233,10 @@ ResetConfig()
 AddHook()
     {
 
-	if ! /bin/grep -q 'sortmyqpkgs.sh' $SHUTDOWN_PATHFILE; then
+	if ! /bin/grep 'sortmyqpkgs.sh' $r_shutdown_pathfile &> /dev/null; then
 		findtext='#backup logs'
 		inserttext='/etc/init.d/sortmyqpkgs.sh autofix'
-		/bin/sed -i "s|$findtext|$inserttext\n$findtext|" "$SHUTDOWN_PATHFILE"
+		/bin/sed -i "s|$findtext|$inserttext\n$findtext|" "$r_shutdown_pathfile"
         echo 'shutdown hook has been added'
     fi
 
@@ -235,8 +245,8 @@ AddHook()
 RemoveHook()
     {
 
-    if /bin/grep -q 'sortmyqpkgs.sh' "$SHUTDOWN_PATHFILE"; then
-        /bin/sed -i '/sortmyqpkgs.sh/d' "$SHUTDOWN_PATHFILE"
+    if /bin/grep 'sortmyqpkgs.sh' "$r_shutdown_pathfile" &> /dev/null; then
+        /bin/sed -i '/sortmyqpkgs.sh/d' "$r_shutdown_pathfile"
         echo 'shutdown hook has been removed'
     fi
 
@@ -252,14 +262,14 @@ ShowTitle()
 ShowAsTitleName()
 	{
 
-	TextBrightWhite $QPKG_NAME
+	TextBrightWhite $r_qpkg_name
 
 	}
 
 ShowAsVersion()
 	{
 
-	printf '%s' "v$QPKG_VERSION"
+	printf '%s' "v$r_qpkg_version"
 
 	}
 
@@ -269,7 +279,7 @@ ShowAsUsage()
 	echo -e "\nUsage: $0 {backup|fix|pref|reset|restart|restore|status}\n"
 	ShowSources
 	ShowPackagesCurrent
-	echo -e "\nTo re-order packages:\n\t$0 fix"
+	echo -e "\nTo re-order packages:\n\t$0 now"
 
 	}
 
@@ -312,10 +322,10 @@ ShowListsMarked()
     local a=''
     local -i n=0
 
-    for pref in "${PKGS_ALPHA_ORDERED[@]}"; do
+    for pref in "${pkgs_alpha_ordered[@]}"; do
         ((n++)); printf -v a '%03d' "$n"
 
-        if (/bin/grep -qF "[$pref]" /etc/config/qpkg.conf); then
+        if (/bin/grep -F "[$pref]" /etc/config/qpkg.conf &> /dev/null); then
             ShowLineMarked "$a" A "$pref"
         else
             ShowLineUnmarked "$a" A "$pref"
@@ -326,10 +336,10 @@ ShowListsMarked()
     ((n++)); printf -v a '%03d' "$n"; ShowLineUnmarked "$a" Φ '< existing unspecified packages go here >'
     echo
 
-    for pref in "${PKGS_OMEGA_ORDERED[@]}"; do
+    for pref in "${pkgs_omega_ordered[@]}"; do
         ((n++)); printf -v a '%03d' "$n"
 
-        if (/bin/grep -qF "[$pref]" /etc/config/qpkg.conf); then
+        if (/bin/grep -F "[$pref]" /etc/config/qpkg.conf &> /dev/null); then
             ShowLineMarked "$a" Ω "$pref"
         else
             ShowLineUnmarked "$a" Ω "$pref"
@@ -353,13 +363,13 @@ ShowPackagesUnmarked()
         ((n++)); printf -v c '%02d' "$n"
         d=$(ShowLineUnmarked "$c" Φ "$b")
 
-        for e in "${PKGS_ALPHA_ORDERED[@]}"; do
+        for e in "${pkgs_alpha_ordered[@]}"; do
             [[ $b = "$e" ]] || continue
             d=$(ShowLineUnmarked "$c" A "$b")
             break
         done
 
-        for e in "${PKGS_OMEGA_ORDERED[@]}"; do
+        for e in "${pkgs_omega_ordered[@]}"; do
             [[ $b = "$e" ]] || continue
             d=$(ShowLineUnmarked "$c" Ω "$b")
             break
@@ -385,16 +395,26 @@ SortPackages()
 
     echo -ne '\nsorting packages ... '
 
+    # Remove whitespace lines
+
+    sed -i '/^$/d' /etc/config/qpkg.conf
+
     # Read 'ALPHA' packages in-reverse and prepend each to /etc/config/qpkg.conf
-    for ((i=${#PKGS_ALPHA_ORDERED[@]}-1; i>=0; i--)); do
-		a=${PKGS_ALPHA_ORDERED[$i]}
-		/bin/grep -q "^\[$a\]" /etc/config/qpkg.conf && MoveConfigToTop "$a"
+
+    for ((i=${#pkgs_alpha_ordered[@]}-1; i>=0; i--)); do
+		a=${pkgs_alpha_ordered[$i]}
+		/bin/grep "^\[$a\]" /etc/config/qpkg.conf &> /dev/null && MoveConfigToTop "$a"
     done
 
     # Now, read 'OMEGA' packages and append each to /etc/config/qpkg.conf
-    for a in "${PKGS_OMEGA_ORDERED[@]}"; do
-		/bin/grep -q "^\[$a\]" /etc/config/qpkg.conf && MoveConfigToBottom "$a"
+
+    for a in "${pkgs_omega_ordered[@]}"; do
+		/bin/grep "^\[$a\]" /etc/config/qpkg.conf &> /dev/null && MoveConfigToBottom "$a"
     done
+
+    # Re-add whitespace lines (between config blocks) only.
+
+ 	sed -i -e ':a' -e 'N' -e '$!ba' -e 's/\n\[/\n\n\[/g' /etc/config/qpkg.conf
 
     echo 'done'
 
@@ -403,16 +423,16 @@ SortPackages()
 MoveConfigToTop()
     {
 
-    # Move $1 to the top of /etc/config/qpkg.conf
+    # Move $1 (QPKG name) to the top of /etc/config/qpkg.conf
 
     [[ -n ${1:-} ]] || return
 
     local a=''
 
-    a=$(GetConfigBlock "$1")
+    a=$(GetConfigBlock ${1:-})
     [[ -n $a ]] || return
 
-    /sbin/rmcfg "$1" -f /etc/config/qpkg.conf
+    /sbin/rmcfg ${1:-} -f /etc/config/qpkg.conf
     echo -e "$a" > /tmp/qpkg.conf.tmp
     /bin/cat /etc/config/qpkg.conf >> /tmp/qpkg.conf.tmp
     mv /tmp/qpkg.conf.tmp /etc/config/qpkg.conf
@@ -422,39 +442,39 @@ MoveConfigToTop()
 MoveConfigToBottom()
     {
 
-    # Move $1 to the bottom of /etc/config/qpkg.conf
+    # Move $1 (QPKG name) to the bottom of /etc/config/qpkg.conf
 
     [[ -n ${1:-} ]] || return
 
     local a=''
 
-    a=$(GetConfigBlock "$1")
+    a=$(GetConfigBlock ${1:-})
     [[ -n $a ]] || return
 
-    /sbin/rmcfg "$1" -f /etc/config/qpkg.conf
-    echo -e "\n${a}" >> /etc/config/qpkg.conf
+    /sbin/rmcfg ${1:-} -f /etc/config/qpkg.conf
+    echo -e "$a" >> /etc/config/qpkg.conf
 
     }
 
 GetConfigBlock()
     {
 
-    # Return the config block for the QPKG name specified as $1
+    # Output the config block for $1 (QPKG name).
 
     [[ -n ${1:-} ]] || return
 
-    local -i sl=0       # line number: start of specified config block
-    local -i ll=0       # line number: last line in file
-    local -i bl=0       # total lines in specified config block
-    local -i el=0       # line number: end of specified config block
+    local -i sl=0       # start line number of config block.
+    local -i ll=0       # last line number in file.
+    local -i tl=0       # total lines in config block.
+    local -i el=0       # end line number of config block.
 
-    sl=$(/bin/grep -n "^\[$1\]" /etc/config/qpkg.conf | /usr/bin/cut -f1 -d':')
+    sl=$(/bin/grep -n "^\[${1:-}\]" /etc/config/qpkg.conf | /usr/bin/cut -f1 -d':')
     [[ -n $sl ]] || return
 
     ll=$(/usr/bin/wc -l < /etc/config/qpkg.conf | /bin/tr -d ' ')
-    bl=$(/usr/bin/tail -n$((ll-sl)) < /etc/config/qpkg.conf | /bin/grep -n '^\[' | /usr/bin/head -n1 | /usr/bin/cut -f1 -d':')
+    tl=$(/usr/bin/tail -n$((ll-sl)) < /etc/config/qpkg.conf | /bin/grep -n '^\[' | /usr/bin/head -n1 | /usr/bin/cut -f1 -d':')
 
-    [[ $bl -ne 0 ]] && el=$((sl+bl-1)) || el=$ll
+    [[ $tl -ne 0 ]] && el=$((sl+tl-1)) || el=$ll
     [[ -n $el ]] || return
 
     echo -e "$(/bin/sed -n "$sl,${el}p" /etc/config/qpkg.conf)"     # Output this with 'echo' to strip trailing LFs from config block.
@@ -467,10 +487,11 @@ Upshift()
     # Move specified existing filename by incrementing extension value (upshift extension).
     # If extension is not a number, then create new extension of '1' and copy file.
 
-    # $1 = pathfilename to upshift
+	# Inputs: (local)
+    #	$1 = pathfilename to upshift
 
-    [[ -n $1 ]] || return
-    [[ -e $1 ]] || return
+    [[ -n ${1:-} ]] || return
+    [[ -e ${1:-} ]] || return
 
     local ext=''
     local dest=''
@@ -494,17 +515,17 @@ Upshift()
     ext=${1##*.}
     case $ext in
         *[!0-9]*)   # Specified file extension is not a number so add number and copy it.
-            dest="$1.1"
+            dest="${1:-}.1"
             [[ -e $dest ]] && Upshift "$dest"
-            cp "$1" "$dest"
+            cp "${1:-}" "$dest"
             ;;
         *)          # Extension IS a number, so move it if possible.
             if [[ $ext -lt $((rotate_limit-1)) ]]; then
                 ((ext++)); dest="${1%.*}.$ext"
                 [[ -e $dest ]] && Upshift "$dest"
-                mv "$1" "$dest"
+                mv "${1:-}" "$dest"
             else
-                rm "$1"
+                rm "${1:-}"
             fi
     esac
 
@@ -520,13 +541,13 @@ TrimLog()
     local -i op_count=0
 	local -i last_op_line_num=0
 
-	op_lines=$(/bin/grep -n '^──' "$LOG_REAL_PATHFILE")
+	op_lines=$(/bin/grep -n '^──' "$r_log_real_pathfile")
     op_count=$(/usr/bin/wc -l <<< "$op_lines")
 
     if [[ $op_count -gt $max_ops ]]; then
         last_op_line_num=$(echo "$op_lines" | /usr/bin/head -n$((max_ops+1)) | /usr/bin/tail -n1 | /usr/bin/cut -f1 -d:)
-        /usr/bin/head -n"${last_op_line_num}" "$LOG_REAL_PATHFILE" > "$LOG_TEMP_PATHFILE"
-        mv "$LOG_TEMP_PATHFILE" "$LOG_REAL_PATHFILE"
+        /usr/bin/head -n"${last_op_line_num}" "$r_log_real_pathfile" > "$r_log_temp_pathfile"
+        mv "$r_log_temp_pathfile" "$r_log_real_pathfile"
     fi
 
     }
@@ -534,68 +555,73 @@ TrimLog()
 ShowLineUnmarked()
     {
 
-    # $1 = number
-    # $2 = symbol
-    # $3 = name
+	# Inputs: (local)
+    #	$1 = number
+    #	$2 = symbol
+    #	$3 = name
 
-    printf '(%s) (%s) %s\n' "$1" "$2" "$3"
+    printf '(%s) (%s) %s\n' "${1:-}" "${2:-}" "${3:-}"
 
     }
 
 ShowLineMarked()
     {
 
-    # $1 = number
-    # $2 = symbol
-    # $3 = name
+	# Inputs: (local)
+    #	$1 = number
+    #	$2 = symbol
+    #	$3 = name
 
-    printf '(%s)#(%s) %s\n' "$1" "$2" "$3"
+    printf '(%s)#(%s) %s\n' "${1:-}" "${2:-}" "${3:-}"
 
     }
 
 RecordOperationRequest()
     {
 
-    # $1 = Operation.
+	# Inputs: (local)
+    #	$1 = Operation.
 
     local a=''
     local -i b=0
     local c=''
 
-    a="[$(/bin/date)] '$1' requested"
+    a="[$(/bin/date)] '${1:-}' requested"
     b=${#a}
     printf -v c "%${b}s"
 
-    echo -e "${c// /─}\n$QPKG_NAME ($(/sbin/getcfg "$QPKG_NAME" Build -f /etc/config/qpkg.conf))\n$a" >> "$LOG_TEMP_PATHFILE"
+    echo -e "${c// /─}\n$r_qpkg_name ($(/sbin/getcfg $r_qpkg_name Build -f /etc/config/qpkg.conf))\n$a" >> "$r_log_temp_pathfile"
 
-    LogWrite "'$1' requested" 0
+    LogWrite "'${1:-}' requested" 0
 
     }
 
 RecordOperationComplete()
     {
 
-    # $1 = Operation.
+	# Inputs: (local)
+    #	$1 = Operation.
 
-    echo -e "[$(/bin/date)] '$1' completed" >> "$LOG_TEMP_PATHFILE"
+    echo -e "[$(/bin/date)] '${1:-}' completed" >> "$r_log_temp_pathfile"
 
-    LogWrite "'$1' completed" 0
+    LogWrite "'${1:-}' completed" 0
 
     }
 
 ShowSectionTitle()
     {
 
-    # $1 = Description.
+	# Inputs: (local)
+    #	$1 = Description.
 
-    printf '\n * %s *\n' "$1"
+    printf '\n * %s *\n' "${1:-}"
 
     }
 
 CommitLog()
     {
 
-    echo -e "$(<"$LOG_TEMP_PATHFILE")\n$(<"$LOG_REAL_PATHFILE")" > "$LOG_REAL_PATHFILE"
+    echo -e "$(<"$r_log_temp_pathfile")\n$(<"$r_log_real_pathfile")" > "$r_log_real_pathfile"
 
     TrimLog
 
@@ -604,41 +630,42 @@ CommitLog()
 LogWrite()
     {
 
-    # $1 = Message to write into NAS system log.
-    # $2 = Event type:
-    #    0 : Information
-    #    1 : Warning
-    #    2 : Error
+	# Inputs: (local)
+    #	$1 = Message to write into NAS system log.
+    #	$2 = Event type:
+    #		0 : Information
+    #		1 : Warning
+    #		2 : Error
 
-    log_tool --append "[$QPKG_NAME] $1" --type "$2"
+    log_tool --append "[$r_qpkg_name] ${1:-}" --type "${2:-}"
 
     }
 
 IsQPKGEnabled()
 	{
 
-	# input:
-	#   $1 = (optional) package name to check. If unspecified, default is $QPKG_NAME
+	# Inputs: (local)
+	#   $1 = (optional) package name to check. If unspecified, default is $r_qpkg_name
 
-	# output:
+	# Outputs: (local)
 	#   $? = 0 : true
 	#   $? = 1 : false
 
-	[[ $(Lowercase "$(/sbin/getcfg "${1:-$QPKG_NAME}" Enable -d false -f /etc/config/qpkg.conf)") = true ]]
+	[[ $(Lowercase "$(/sbin/getcfg ${1:-$r_qpkg_name} Enable -d false -f /etc/config/qpkg.conf)") = true ]]
 
 	}
 
 IsNotQPKGEnabled()
 	{
 
-	# input:
-	#   $1 = (optional) package name to check. If unspecified, default is $QPKG_NAME
+	# Inputs: (local)
+	#   $1 = (optional) package name to check. If unspecified, default is $r_qpkg_name
 
-	# output:
+	# Outputs: (local)
 	#   $? = 0 : true
 	#   $? = 1 : false
 
-	! IsQPKGEnabled "${1:-$QPKG_NAME}"
+	! IsQPKGEnabled "${1:-$r_qpkg_name}"
 
 	}
 
@@ -680,14 +707,14 @@ SetServiceResultAsInProgress()
 CommitServiceAction()
 	{
 
-    echo "$service_action" > "$SERVICE_ACTION_PATHFILE"
+    echo "$service_action" > "$r_service_action_pathfile"
 
 	}
 
 CommitServiceResult()
 	{
 
-    echo "$service_result" > "$SERVICE_RESULT_PATHFILE"
+    echo "$service_result" > "$r_service_result_pathfile"
 
 	}
 
@@ -696,20 +723,20 @@ TextBrightWhite()
 
 	[[ -n ${1:-} ]] || return
 
-    printf '\033[1;97m%s\033[0m' "$1"
+    printf '\033[1;97m%s\033[0m' "${1:-}"
 
 	}
 
 Lowercase()
 	{
 
-	/bin/tr 'A-Z' 'a-z' <<< "$1"
+	/bin/tr 'A-Z' 'a-z' <<< "${1:-}"
 
 	}
 
 Init
 
-user_arg=${USER_ARGS_RAW%% *}		# Only process first argument.
+user_arg=${r_user_args_raw%% *}		# Only process first argument.
 
 case $user_arg in
     autofix)
@@ -724,11 +751,11 @@ case $user_arg in
             SetServiceResultAsFailed
         fi
         ;;
-    ?(--)fix)
-        Fix
-        ;;
     init|?(--)stop)         # Ignore these.
         /bin/sleep 1
+        ;;
+    ?(--)now)
+        Fix
         ;;
     ?(--)restart)
         SetServiceAction restart
@@ -742,7 +769,7 @@ case $user_arg in
     ?(--)pref)
         ShowSources
         ShowPreferredList
-        echo -e "\nTo re-order packages: $0 fix\n"
+        echo -e "\nTo re-order packages:\n\t$0 now"
         ;;
     remove)
         RemoveHook
@@ -789,6 +816,6 @@ case $user_arg in
         ShowAsUsage
 esac
 
-rm -f "$LOG_TEMP_PATHFILE"
+rm -f "$r_log_temp_pathfile"
 
 exit 0

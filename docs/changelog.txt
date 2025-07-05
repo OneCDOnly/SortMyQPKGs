@@ -1,3 +1,7 @@
+* Minor update: (250705)
+- add [USBSerialdrivers5] to the ALPHA list.
+- code: fix auto-line-spacing (again), change 'fix' user argument to 'now', general code refresh.
+
 * Minor update: (241214)
 - add [MySQL9, DotNETSDK9, Apache84] to the ALPHA list.
 - package: set QTS 5.1.9 as max version.
@@ -17,8 +21,7 @@
 * Minor update: (240511)
 - add [QJDK21] to the ALPHA list.
 - add [SortMyQPKGs] to the OMEGA list.
-- ensure line spacing between config blocks.
-- and a few code upgrades.
+- code: ensure line spacing between config blocks, and a few code upgrades.
 
 * Minor update: (240427)
 - add [NodeJS16, NodeJS22] to the ALPHA list.
