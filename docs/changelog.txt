@@ -1,3 +1,6 @@
+* Minor update: (250708)
+- code: replace 4 x spaces with tabs.
+
 * Minor update: (250706)
 - code: set absolute paths to a couple of utilities, show title when 'now' requested, minor changes, these can wait for the next package build.
 
