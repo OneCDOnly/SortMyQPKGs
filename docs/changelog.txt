@@ -1,3 +1,6 @@
+* Minor update: (251012)
+- add [Sonarr, Readarr Tautulli] to the OMEGA list.
+
 * Minor update: (250927)
 - code: update post-install func to include action and result.
 

@@ -28,6 +28,7 @@ qBittorrent2
 
 # searchers
 SonarrTrackTV       # load before QSonarr
+Sonarr
 QSonarr
 QSonarr3
 Sonarr3
@@ -90,6 +91,7 @@ LidarrDotNET83
 MLidarr             # load after MUSL_CROSS
 OLidarr
 LazyLibrarian
+Readarr
 Readarr81
 Readarr82
 Readarr83
@@ -103,6 +105,7 @@ Codex83
 Autobrr             # load after all torrent downloaders
 
 # management
+Tautulli
 OTautulli
 
 # malware detection and removal (these are not "live" scanners)
