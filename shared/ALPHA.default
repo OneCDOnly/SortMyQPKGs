@@ -65,6 +65,7 @@ DotNET
 DotNETSDK
 DotNETSDK8
 DotNETSDK9
+DotNETSDK10
 JRE
 JRE_ARM
 QJDK7
@@ -77,6 +78,7 @@ QJDK16
 QJDK17
 QJDK18
 QJDK21
+QJDK25
 java-installer      # available in the FileBot repo
 QVS                 # old 'Virtualization Station'
 QKVM                # new 'Virtualization Station'
