@@ -1,3 +1,7 @@
+* Minor update: (260401)
+- add [DotNETSDK10, QJDK25] to the ALPHA list.
+- code: remove pipefail as a global script setting as per: https://www.reddit.com/r/commandline/comments/g1vsxk/comment/fniifmk/
+
 * Minor update: (251012)
 - add [Sonarr, Readarr Tautulli] to the OMEGA list.
 
