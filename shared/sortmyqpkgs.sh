@@ -233,7 +233,7 @@ ResetConfig()
 AddHook()
 	{
 
-	if ! /bin/grep 'sortmyqpkgs.sh' $r_shutdown_pathfile &> /dev/null; then
+	if ! /bin/grep 'sortmyqpkgs.sh' "$r_shutdown_pathfile" &> /dev/null; then
 		findtext='#backup logs'
 		inserttext='/etc/init.d/sortmyqpkgs.sh autofix'
 		/bin/sed -i "s|$findtext|$inserttext\n$findtext|" "$r_shutdown_pathfile"
@@ -622,6 +622,7 @@ ShowSectionTitle()
 CommitLog()
 	{
 
+	touch "$r_log_temp_pathfile"
 	echo -e "$(<"$r_log_temp_pathfile")\n$(<"$r_log_real_pathfile")" > "$r_log_real_pathfile"
 
 	TrimLog

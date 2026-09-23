@@ -1,3 +1,6 @@
+* Minor update: (260924)
+- code: fix error when no previous log exists.
+
 * Minor update: (260401)
 - add [DotNETSDK10, QJDK25] to the ALPHA list.
 - code: remove pipefail as a global script setting as per: https://www.reddit.com/r/commandline/comments/g1vsxk/comment/fniifmk/
